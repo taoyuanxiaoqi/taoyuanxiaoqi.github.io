@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>openfire学习笔记（二）注册登录消息传递流程 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="openfire">
+    <meta name="description" content="前面学习了openfire服务器启动的过程，那么启动之后服务器是以怎样的形式完成它的功能呢？先放开大体框架方面的东西和其他各方面的功能实现，从单纯的客户端要出请求注册或登录这个流程看起，逐步摸索。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openfire学习笔记（二）注册登录消息传递流程">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="前面学习了openfire服务器启动的过程，那么启动之后服务器是以怎样的形式完成它的功能呢？先放开大体框架方面的东西和其他各方面的功能实现，从单纯的客户端要出请求注册或登录这个流程看起，逐步摸索。">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/socketacceptor_zpsqdl5uljf.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/connectionhandler_zps6rx3hiip.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/bindionhander_zpsxmi5sxi2.jpeg">
+<meta property="og:updated_time" content="2015-03-16T13:08:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openfire学习笔记（二）注册登录消息传递流程">
+<meta name="twitter:description" content="前面学习了openfire服务器启动的过程，那么启动之后服务器是以怎样的形式完成它的功能呢？先放开大体框架方面的东西和其他各方面的功能实现，从单纯的客户端要出请求注册或登录这个流程看起，逐步摸索。">
+<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/socketacceptor_zpsqdl5uljf.jpeg">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">openfire学习笔记（二）注册登录消息传递流程</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">openfire学习笔记（二）注册登录消息传递流程</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-11-10T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-11-11
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-openfire_note_2"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">openfire学习笔记（二）注册登录消息传递流程</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2014年11月11日 0:00" datetime="2014-11-10T16:00:00.000Z"  itemprop="datePublished">2014-11-11</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>前面学习了openfire服务器启动的过程，那么启动之后服务器是以怎样的形式完成它的功能呢？先放开大体框架方面的东西和其他各方面的功能实现，从单纯的客户端要出请求注册或登录这个流程看起，逐步摸索。<br><a id="more"></a><br>从服务器与客户端进行信息交换的视角来看，服务器必然是要监听一些端口，来接收客户端的信息的。在启动流程加载的依托module中，有个叫ConnectionManagerImpl 的，这厮在所有模块中最后一个被加载，老外给的原因是对客户端监听的加载要放到其他所有模块加载完之后，一些功能支持性的模块要先加载完，合情合理。既然是加载 module，那么必然是执行了module 的start 方法：</p>
+<pre><code>@Override
+     public void start() {
+    super.start();
+    //创建各路监听器
+    createListeners();
+    //开启各路监听器
+    startListeners();
+    //追踪soket状态开启
+    SocketSendingTracker.getInstance().start();
+    //注册接收事件
+    CertificateManager.addListener(this);
+}
+</code></pre><p>从创建开始，这货都建立了哪些监听器：</p>
+<pre><code>private synchronized void createListeners() {
+    if (isSocketStarted || sessionManager == null || deliverer == null || router == null || serverName == null) {
+        return;
+    }
+    // Create the port listener for s2s communication
+    //服务器间信息交流的
+    createServerListener(localIPAddress);
+    // Create the port listener for Connections Multiplexers
+    //各端口的链接管理监听
+    createConnectionManagerListener();
+    // Create the port listener for external components
+    //外部元件端口监听
+    createComponentListener();
+    // Create the port listener for clients
+    //客户端端口监听
+    createClientListeners();
+    // Create the port listener for secured clients
+    //SSL安全端口监听
+    createClientSSLListeners();
+}
+</code></pre><p>各种容错条件之后，挨个建立了监听器，目前我们只对客户端监听感兴趣，其他的先放着，从客户端监听的create函数内容来看，实际上是对成员变量 socketAcceptor 的初始化，对于socketAcceptor ，可以看到如下说明：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/socketacceptor_zpsqdl5uljf.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>MINA框架提供的基于TCP/IP的实现了IO传输接口的socket，具体原理和功用还得搞清楚了阿帕奇的那套框架才行。其余的设置都是针对这套接口的一些初始化。出来之后进入各路监听器的start，无独有偶，我们在startListeners 中找到了：<br>// Start the port listener for clients<br>startClientListeners(localIPAddress);<br>在开启客户端监听中，可以找到核心的绑定代码：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/connectionhandler_zps6rx3hiip.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>对头，mina 提供的socket 通过bind方法绑上了openfire实现的IoHander类ClientConnectionHandler ，该类也是后续实现监听客户端发来各路信息的关键。剩下的流程，网上找到的一张流程图就可以概括了：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/bindionhander_zpsxmi5sxi2.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>所有消息包的处理都在这张图上，当然也包括注册、登录。在理解MINA框架的基础上，熟悉了该消息传递流程，才算是迈出是了解openfire详细实现的第一步。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-03-16T13:08:30.000Z" itemprop="dateUpdated">2015年3月16日 21:08</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2014/11/11/openfire_note_2/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openfire/">openfire</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/&title=《openfire学习笔记（二）注册登录消息传递流程》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/&title=《openfire学习笔记（二）注册登录消息传递流程》 — 桃小七的博客&source=前面学习了openfire服务器启动的过程，那么启动之后服务器是以怎样的形式完成它的功能呢？先放开大体框架方面的东西和其他各方面的功能实现，从单纯的客户端..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（二）注册登录消息传递流程》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/11/15/openfire_note_3/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">openfire学习笔记（三）ConnectionManagerImpl类解析——未完待续</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/11/01/openfire_note_1/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">openfire学习笔记（一）系统启动流程</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="openfire_note_2" data-title="openfire学习笔记（二）注册登录消息传递流程" data-url="http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/&title=《openfire学习笔记（二）注册登录消息传递流程》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/&title=《openfire学习笔记（二）注册登录消息传递流程》 — 桃小七的博客&source=前面学习了openfire服务器启动的过程，那么启动之后服务器是以怎样的形式完成它的功能呢？先放开大体框架方面的东西和其他各方面的功能实现，从单纯的客户端..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（二）注册登录消息传递流程》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/11/11/openfire_note_2/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

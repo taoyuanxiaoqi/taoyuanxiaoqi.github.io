@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>小解歪果同行对SDK实现自动化测试用例 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android">
+    <meta name="description" content="背景
+我厂提供的客户端SDK封装了android端对服务端／嵌入式模块端的通信接口；
+客户根据自己的功能需求，定制嵌入式端的数据点，利用我们提供的SDK实现跟服务端／嵌入式模块的通信；
+客户工程师希望有测试程序来检测／保证SDK与嵌入式端的通信是正常的，方便双方排查问题；
+简单来说，该测试程序要拥有调用SDK接口给嵌入式端的发数据并检查其返回数据是否正确的能力，具体发送哪些数据根据客户定制的数据点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小解歪果同行对SDK实现自动化测试用例">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2016/07/19/integrationtest/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="背景
+我厂提供的客户端SDK封装了android端对服务端／嵌入式模块端的通信接口；
+客户根据自己的功能需求，定制嵌入式端的数据点，利用我们提供的SDK实现跟服务端／嵌入式模块的通信；
+客户工程师希望有测试程序来检测／保证SDK与嵌入式端的通信是正常的，方便双方排查问题；
+简单来说，该测试程序要拥有调用SDK接口给嵌入式端的发数据并检查其返回数据是否正确的能力，具体发送哪些数据根据客户定制的数据点">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/QQ20160719-0.png">
+<meta property="og:updated_time" content="2016-07-19T12:03:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="小解歪果同行对SDK实现自动化测试用例">
+<meta name="twitter:description" content="背景
+我厂提供的客户端SDK封装了android端对服务端／嵌入式模块端的通信接口；
+客户根据自己的功能需求，定制嵌入式端的数据点，利用我们提供的SDK实现跟服务端／嵌入式模块的通信；
+客户工程师希望有测试程序来检测／保证SDK与嵌入式端的通信是正常的，方便双方排查问题；
+简单来说，该测试程序要拥有调用SDK接口给嵌入式端的发数据并检查其返回数据是否正确的能力，具体发送哪些数据根据客户定制的数据点">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/QQ20160719-0.png">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">小解歪果同行对SDK实现自动化测试用例</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">小解歪果同行对SDK实现自动化测试用例</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2016-07-19T09:55:21.000Z" itemprop="datePublished" class="page-time">
+  2016-07-19
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#背景"><span class="post-toc-number">1.</span> <span class="post-toc-text">背景</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现"><span class="post-toc-number">2.</span> <span class="post-toc-text">实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#分析"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#类图"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">类图</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#异步接口的处理"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">异步接口的处理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#文档对接"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">文档对接</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一些细节"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">一些细节</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#思考"><span class="post-toc-number">3.</span> <span class="post-toc-text">思考</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-integrationtest"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">小解歪果同行对SDK实现自动化测试用例</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2016年07月19日 17:55" datetime="2016-07-19T09:55:21.000Z"  itemprop="datePublished">2016-07-19</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ul>
+<li>我厂提供的客户端SDK封装了android端对服务端／嵌入式模块端的通信接口；</li>
+<li>客户根据自己的功能需求，定制嵌入式端的数据点，利用我们提供的SDK实现跟服务端／嵌入式模块的通信；</li>
+<li>客户工程师希望有测试程序来检测／保证SDK与嵌入式端的通信是正常的，方便双方排查问题；</li>
+<li>简单来说，该测试程序要拥有调用SDK接口给嵌入式端的发数据并检查其返回数据是否正确的能力，具体发送哪些数据根据客户定制的数据点来决定。</li>
+</ul>
+<a id="more"></a>
+<p>当那个老外工程师信誓旦旦的说他需要一些测试用例的时候，能够感觉到小伙伴们的状态是懵圈的。因为之前遇到的一般状态是，使用我们SDK开发的客户不管不顾的把功能集成到他们的应用中，最后在调试过程中不停召唤我们帮忙改BUG，最离谱的一次是同事出差到客户那发现是APK打包分包配置不当导致的问题。“测试用例”这种高端词汇，似乎是一个正规军和游击队的分界线。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>很遗憾到最后我们都没能提供一份测试用例，在我看来主要是没有足够的时间资源导致的。好在那位外国同行表示他已经实现了用例，现在是你们解决问题的时候了。好吧，解决问题没什么——自己写的BUG自己改掉这不算什么，关键是这种白盒测试的工作方式值得学习和借鉴，这里就对客户的实现稍作分析，权做思考和记录。</p>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>非要下个定义来区分的话，从测试需求来讲，这不是单元测试，虽然可能使用的测试框架是同一个。它是一个白盒的自动化测试用例，和很久以前玩过的界面自动化测试又不大一样，通过模拟页面操作（点击、长按、拖动）来让应用按照测试程序跑起来主要是针对UI的测试，类似于用程序模拟一个测试人员。这里的需求是针对接口的自动化测试，那么可以想象的是，除了正常的功能覆盖之外还可以实现类似压力测试的场景。</p>
+<p>按照开发的习惯，要在实现之前要尽可能的考虑到这之间会遇到什么问题。</p>
+<ul>
+<li>站在客户使用SDK的角度而言，SDK是一个黑盒子，我们只知道一些接口和调用限制。具体一些，以发送指令为例，接口初始化实例需要context参数、SDK中必须要包含登陆过的信息、发送指令调用TuyaSmartPanel类的send函数。那么在跑用例之前，如何保证前期准备都是完善的？</li>
+<li>SDK提供给嵌入式端发送命令信息的接口，不言而喻一定是异步的，那么如何处理嵌入式端返回的数据断言？</li>
+<li>自动化测试不像单元测试那样只依赖于被测试代码本身，由于它需要知道真正嵌入式端返回的数据是否正确，所以用例是否能够正确跑起来，还需要硬件、网络环境、测试机器等的支持。那么，如果测试用例作为SDK提供者和使用者两端沟通和认可的交付方式的话，一些必要的准备工作的说明也是不可或缺的。</li>
+</ul>
+<h3 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h3><p>老外实现是这个样子的：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/QQ20160719-0.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<ul>
+<li>SDK无论如何都需要一个context，如果是单元测试我们可以考虑mock一个假货传进去，自动化测试就不行。IntegrationService是一个Service子类，所有的SDK相关操作都被封装到这个服务中；</li>
+<li>IntegrationServiceTest是一个抽象类，看到熟悉的setUp和tearDown就知道，这个抽象类封装了测试用例在运行前后的操作，也就是跑用例的环境初始化和跑过之后的清理，更重要的是，它拥有绑定服务获取的实例，调用服务中的接口间接的调用SDK接口；</li>
+<li>其他所有类就是真实的测试用例类，他们是都继承实现于IntegrationServiceTest，封装了针对各个数据点的测试用例；</li>
+</ul>
+<h3 id="异步接口的处理"><a href="#异步接口的处理" class="headerlink" title="异步接口的处理"></a>异步接口的处理</h3><p>异步接口分两步处理，第一步在服务中对接口调用的封装，增加了CountDownLatch限制来等待数据返回；第二步是测试用例定义时增加超时限制。</p>
+<pre><code>@Test(timeout=10000)
+public void testSwitch_on() throws TimeoutException, InterruptedException {
+    if((Boolean)mService.getCachedDp(&quot;1&quot;)){
+        mService.send(&quot;1&quot;, &quot;false&quot;);
+    }
+    dpUpdateReply = mService.send(&quot;1&quot;, &quot;true&quot;);
+    Log.i(TAG, &quot;testSwitch_on() - dpUpdate dp[1][&quot; + dpUpdateReply.get(&quot;1&quot;) + &quot;]&quot;);
+    assertEquals(&quot;testSwitch_on() - dpUpdate dp[1]&quot;, true, dpUpdateReply.get(&quot;1&quot;));
+}
+</code></pre><p>服务的send函数，对于用例而言是同步的，传进去输入、拿到输出判断结果即可；在真正的执行过程如果没有返回的话，10秒超时后用例会自动报异常。</p>
+<p><a href="https://github.com/demytter/TuyaSmartIntegrationTest" target="_blank" rel="external">用例实现源码</a></p>
+<h3 id="文档对接"><a href="#文档对接" class="headerlink" title="文档对接"></a>文档对接</h3><blockquote>
+<p>The test suite setup assumes:</p>
+<ul>
+<li>A TuyaSmart e-mail type account is available. If you want to use another account type, you can add the login code for this in class src\androidTest\java\com\nextapp\tuyatest\IntegrationService.java .</li>
+<li>Exactly one radiator is already connected to the account.</li>
+</ul>
+</blockquote>
+<p>外国工程师对文档的描述很详尽，也不啰嗦，总之很专业。他会把每一步该做什么、怎么做描述的很清楚。这一点十分值得学习。</p>
+<h3 id="一些细节"><a href="#一些细节" class="headerlink" title="一些细节"></a>一些细节</h3><ul>
+<li><p><a href="http://www.itzhai.com/the-introduction-and-use-of-a-countdownlatch.html#read-more" target="_blank" rel="external">CountDownLatch</a> 类，在这个测试场景下尤为好用，国际友人还专门提了一句：</p>
+<blockquote>
+<p>java.util.concurrent.CountDownLatch is used for awaiting listeners being triggered and return result to test call. We avoid using Thread.sleep().</p>
+</blockquote>
+</li>
+<li><p>用例设置超时的方法大概有<a href="http://stackoverflow.com/questions/17016011/junit-test-times-out-despite-executing-quickly" target="_blank" rel="external">两种</a>的样子，除了本例的注解实现意外还可以通过Rules来实现的样子：</p>
+<pre><code>@Rule
+ public Timeout globalTimeout= new Timeout(10);
+</code></pre></li>
+<li><p>统一的日志关键字。代码中很少出现注释，易懂的函数／变量命名和统一整齐格式的日志。</p>
+</li>
+<li>针对SDK的测试用例工程开源到github上，一些敏感信息（如SDK要求的产品key、测试需要的账号／密码等）采用XML配置的方式实现；并且在开源工程中没有放置我们提供的SDK包——保证了对外公布SDK渠道的唯一性。这些信息都做成了可配置的、并且在readMe中做了说明，优雅而专业。</li>
+</ul>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>这位外国同行的解决问题的思路显然更加程式化，更加偏向于用固有宜用的流程来思考，这就显得更加专业。代码实现上也有不少值得借鉴的地方，有此一例照猫画虎，之后针对硬件的命令传输用例的实现就非常方便，甚至可以考虑根据不同的数据点数据类型自动化生成用例代码。并且这种用例工程作为SDK的提供方和使用方的沟通工具也是不错的，能够解决一些使用问题上的误解——使用一方可以提供不通过的用例让提供方修改SDK源码／提供一方也可以通过用例证明SDK本身并无问题。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-07-19T12:03:37.000Z" itemprop="dateUpdated">2016年7月19日 20:03</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2016/07/19/integrationtest/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2016/07/19/integrationtest/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/&title=《小解歪果同行对SDK实现自动化测试用例》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/&title=《小解歪果同行对SDK实现自动化测试用例》 — 桃小七的博客&source=背景
+我厂提供的客户端SDK封装了android端对服务端／嵌入式模块端的通信接口；
+客户根据自己的功能需求，定制嵌入式端的数据点，利用我们提供的SDK实..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《小解歪果同行对SDK实现自动化测试用例》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2016/08/30/ble译文整理/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">［译］［转］Android BLE（低功耗蓝牙）开发API引导译文</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2016/06/29/mvpUnitTestTaste/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">android mvp 单元测试实践</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="integrationtest" data-title="小解歪果同行对SDK实现自动化测试用例" data-url="http://taoyuanxiaoqi.com/2016/07/19/integrationtest/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/&title=《小解歪果同行对SDK实现自动化测试用例》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/&title=《小解歪果同行对SDK实现自动化测试用例》 — 桃小七的博客&source=背景
+我厂提供的客户端SDK封装了android端对服务端／嵌入式模块端的通信接口；
+客户根据自己的功能需求，定制嵌入式端的数据点，利用我们提供的SDK实..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《小解歪果同行对SDK实现自动化测试用例》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2016/07/19/integrationtest/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

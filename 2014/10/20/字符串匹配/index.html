@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>异常分析与字符串匹配笔记 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="java">
+    <meta name="description" content="环境android 系统
+语言java
+场景采集android平板在发生内核级崩溃时记录的异常日志文件。经过了解在发生内核级崩溃时系统会把异常信息记录在”/proc/last_log”文件中，该文件是恒大小（512K）的。那么我们要做的就是在每次开机启动并且联网时查询该日志是否记录了异常，如果否则不处理；如果是则通过网络将这个文件上传到服务器。本文主要关注分析日志文件这一块。需求：有一个异常日志文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="异常分析与字符串匹配笔记">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="环境android 系统
+语言java
+场景采集android平板在发生内核级崩溃时记录的异常日志文件。经过了解在发生内核级崩溃时系统会把异常信息记录在”/proc/last_log”文件中，该文件是恒大小（512K）的。那么我们要做的就是在每次开机启动并且联网时查询该日志是否记录了异常，如果否则不处理；如果是则通过网络将这个文件上传到服务器。本文主要关注分析日志文件这一块。需求：有一个异常日志文">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_str_analysis_report.png">
+<meta property="og:updated_time" content="2015-11-04T12:13:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="异常分析与字符串匹配笔记">
+<meta name="twitter:description" content="环境android 系统
+语言java
+场景采集android平板在发生内核级崩溃时记录的异常日志文件。经过了解在发生内核级崩溃时系统会把异常信息记录在”/proc/last_log”文件中，该文件是恒大小（512K）的。那么我们要做的就是在每次开机启动并且联网时查询该日志是否记录了异常，如果否则不处理；如果是则通过网络将这个文件上传到服务器。本文主要关注分析日志文件这一块。需求：有一个异常日志文">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_str_analysis_report.png">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">异常分析与字符串匹配笔记</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">异常分析与字符串匹配笔记</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-10-20T13:56:59.000Z" itemprop="datePublished" class="page-time">
+  2014-10-20
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#环境"><span class="post-toc-number">1.</span> <span class="post-toc-text">环境</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语言"><span class="post-toc-number">2.</span> <span class="post-toc-text">语言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#场景"><span class="post-toc-number">3.</span> <span class="post-toc-text">场景</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#分析"><span class="post-toc-number">4.</span> <span class="post-toc-text">分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第一种，按行读取，String-contain-方法匹配："><span class="post-toc-number">4.1.1.</span> <span class="post-toc-text">第一种，按行读取，String.contain 方法匹配：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第二种，按行读取，正则匹配："><span class="post-toc-number">4.1.2.</span> <span class="post-toc-text">第二种，按行读取，正则匹配：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#第三种，每次读10K，KMP匹配："><span class="post-toc-number">4.1.3.</span> <span class="post-toc-text">第三种，每次读10K，KMP匹配：</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#测试"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">测试</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">总结</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-字符串匹配"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">异常分析与字符串匹配笔记</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2014年10月20日 21:56" datetime="2014-10-20T13:56:59.000Z"  itemprop="datePublished">2014-10-20</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>android 系统</p>
+<h1 id="语言"><a href="#语言" class="headerlink" title="语言"></a>语言</h1><p>java</p>
+<h1 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h1><p>采集android平板在发生内核级崩溃时记录的异常日志文件。经过了解在发生内核级崩溃时系统会把异常信息记录在”/proc/last_log”文件中，该文件是恒大小（512K）的。那么我们要做的就是在每次开机启动并且联网时查询该日志是否记录了异常，如果否则不处理；如果是则通过网络将这个文件上传到服务器。本文主要关注分析日志文件这一块。<br>需求：有一个异常日志文件，需要分析出该文件中是否记录了某种异常，该异常有一个标志字符串“EXCEPTION _ABC”。即分析出一个文件中是否包含一个字符串“EXCEPTION _ABC”。<br> <a id="more"></a></p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>把任务拆开了，就显得简单了，分治法也算是程序员的基本功。分到日志分析这一步，看起来倒是不难，无非是把文件内容独到内存中，再匹配是否有目标字符串，因为目前的需求还不需要仔细分析出是什么异常，只需要返回是否有异常就行，所以匹配起来应该还是挺轻松。可是到真正要实现的时候才发现问题还有不少，比如android下使用的是java，所以不少事情都不需要亲力亲为，直接调API搞定就行，那么问题就出来了，读文件的方式不少，字符串匹配的方法也不少，那怎么用才能保证省时省力呢？再比如，现在的环境很单一，固定路径下固定大小的文件拿来做一个字符串匹配，那么在实现的时候是否要考虑下通用性呢，就是说换到其他场景这个文件字符串匹配可以直接复用。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>一步一步来，首先是文件的读取策略。是按行读还是按块读，按行就是每次处理一行，也就是说下一步——字符串匹配这部分就是有多少行就要处理多少次，我想当然的认为这可能会耗费不少时间。但是按行读有个好处就是可以精确定位到行，如果后续还需要拓展一下要提取出错误码什么的，处理起来就方便了；按块读，唔，这个说法貌似不是很正确，就是读几次，或者说每次读N K大小的数据，一块一块去匹配。比如一次处理10K，那512K的文件处理个几十次，似乎效率能高一些，当然内存充足的话一次把文件都读进去也不是不行，这东西就是个时间与空间的互换，然后找个最合适的点。<br>然后是字符串的匹配方法，开始想到了两种，一种是直接用String类的contain方法；一种用正则表达式来匹配。后来在做分块处理文件时，读出的文件信息是byte数组，就又抄了段KMP算法的实现来匹配。总结一下，再抄抄代码，弄出三种实现来。<br>三种实现方法实现如下：<br></p>
+<h3 id="第一种，按行读取，String-contain-方法匹配："><a href="#第一种，按行读取，String-contain-方法匹配：" class="headerlink" title="第一种，按行读取，String.contain 方法匹配："></a>第一种，按行读取，String.contain 方法匹配：</h3><pre><code>private boolean analysisContain(String strFilePath) {
+    final String tag = &quot;tagContain&quot;;
+    boolean isException = false;
+    String path = strFilePath;
+    // 打开文件
+    File file = new File(path);
+    // 如果path是传递过来的参数，可以做一个非目录的判断
+    if (file.isDirectory()) {
+        Log.d(tag, &quot;The File doesn&apos;t not exist.&quot;);
+    } else {
+        String set = &quot;GBK&quot;;// &quot;UTF-16BE&quot;;// charsetDetector(file);
+        try {
+            InputStream instream = new FileInputStream(file);
+            if (instream != null) {
+                InputStreamReader inputreader = new InputStreamReader(instream, set);
+                BufferedReader buffreader = new BufferedReader(inputreader);
+                String line;
+                int lineCount = 0;
+                // 分行读取
+                while ((line = buffreader.readLine()) != null) {
+                      lineCount++;
+                      if (line.contains(EXCEPTION_TAG)) {
+                           Log.v(tag, lineCount + &quot;:&quot; + line);
+                           isException = true;
+                           break;
+                      }
+                }
+                Log.d(tag,  &quot;line count:&quot; + lineCount);
+                instream.close();
+            }
+        } catch (java.io.FileNotFoundException e) {
+              Log.d(tag, &quot;The File doesn&apos;t not exist.&quot;);
+         } catch (IOException e) {
+            Log.d(tag, e.getMessage());
+        }
+    }
+    return isException;
+}
+</code></pre><h3 id="第二种，按行读取，正则匹配："><a href="#第二种，按行读取，正则匹配：" class="headerlink" title="第二种，按行读取，正则匹配："></a>第二种，按行读取，正则匹配：</h3><pre><code>private boolean analysisRegex(String strFilePath) {
+    final String tag = &quot;tagRegex&quot;;
+    String regEx = EXCEPTION_TAG;
+    Pattern p = Pattern.compile(regEx);
+    boolean isException = false;
+    String path = strFilePath;
+    // 打开文件
+    File file = new File(path);
+    // 如果path是传递过来的参数，可以做一个非目录的判断
+    if (file.isDirectory()) {
+        Log.d(tag, &quot;The File doesn&apos;t not exist.&quot;);
+    } else {
+        String set = &quot;GBK&quot;;// &quot;UTF-16BE&quot;;// charsetDetector(file);
+        try {
+            InputStream instream = new FileInputStream(file);
+            if (instream != null) {
+                InputStreamReader inputreader = new InputStreamReader(instream, set);
+                BufferedReader buffreader = new BufferedReader(inputreader);
+                String line;
+                int lineCount = 0;
+                // 分行读取
+                while ((line = buffreader.readLine()) != null) {
+                    lineCount++;
+                    Matcher m = p.matcher(line);
+                    if (m.find()) {
+                        Log.v(&quot;tag&quot;, lineCount + &quot;:&quot; + line);
+                        isException = true;
+                        break;
+                    }
+                }
+                Log.d(tag,  &quot;line count:&quot; + lineCount);
+                instream.close();
+            }
+        } catch (java.io.FileNotFoundException e) {
+            Log.d(tag, &quot;The File doesn&apos;t not exist.&quot;);
+        } catch (IOException e) {
+            Log.d(tag, e.getMessage());
+        }
+    }
+    return isException;
+}
+</code></pre><h3 id="第三种，每次读10K，KMP匹配："><a href="#第三种，每次读10K，KMP匹配：" class="headerlink" title="第三种，每次读10K，KMP匹配："></a>第三种，每次读10K，KMP匹配：</h3><pre><code>private boolean analysisRandomAccess(String strFilePath) {
+    final int byteCountOnce = 10 * 1024;
+    final byte[] beginTag = EXCEPTION_TAG.getBytes();
+    final byte[] endTag = &quot;PREEMPT SMP&quot;.getBytes();
+    boolean isException = false;
+
+    RandomAccessFile randomFile = null;
+    try {
+        // 打开一个随机访问文件流，按只读方式
+        randomFile = new RandomAccessFile(strFilePath, &quot;r&quot;);
+        byte[] bytes = new byte[byteCountOnce];
+        int readCount = 0;
+        while (randomFile.read(bytes) != -1) {
+            readCount ++;
+            //String matched = searchKMP(bytes, beginTag, endTag);
+            //if (matched != null) {
+            if(search(bytes, beginTag)){
+                //Log.d(&quot;tag&quot;, new String(beginTag) + matched + new String(endTag) );
+                isException = true;
+                break;
+            }
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    } finally {
+        if (randomFile != null) {
+            try {
+                randomFile.close();
+            } catch (IOException e1) {
+
+               }
+        }
+    }
+
+    return isException;
+}
+
+
+//在字节数组bytes中，从offset位置开始匹配sub字节序列，
+//返回第一次匹配成功时sub的位置 。失配返回-1。
+
+public static int index(byte[] bytes, byte[] sub, int offset) {
+    int i = offset, j = 0;
+    int next[] = getNext(sub);
+
+    while (i &lt; bytes.length - 1 &amp;&amp; j &lt; sub.length - 1) {
+        if (j == 0 || bytes[i] == sub[j]) {
+            i++;
+            j++;
+        } else{
+            j = next[j] - 1;
+        }
+    }
+
+    if (j &gt; sub.length - 2) {
+        return (i - sub.length + 1);
+    } else {
+        return -1;
+    }
+}
+
+private static int[] getNext(byte[] sub) {
+    int i = 0, j = -1;
+    int[] next = new int[sub.length];
+    while (i &lt; next.length - 1) {
+        if (j == -1 || sub[i] == sub[j]) {
+            i++;
+            j++;
+            next[i] = sub[i] == sub[j] ? next[j] : j + 1;
+        } else {
+            j = next[j] - 1;
+        }
+    }
+
+    return next;
+}
+
+private boolean search(byte[] src,byte[] matched){
+    if(index(src,matched,0) != -1){
+        return true;
+    }else{
+        return false;
+    }
+}
+</code></pre><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>本着“是骡子是马牵出来溜溜”的这种实事求是的态度，针对这三种实现写了一个测试用例，丢到测试工程里跑一跑。一共在固定路径下放了七种文件上去，三个是带有异常的日志文件（但是异常位置各不相同），一个普通无异常文件，一个异常乱码日志文件（某种情况下那个诡异的日志会出现乱码，貌似是系统bug），还有两个大号的日志文件（大小5M，是正常情况的10倍，一个带异常一个不带）。测试用例代码如下：</p>
+<pre><code>public void testFileAnalysis() throws Exception {
+    final String tag = &quot;tagFileAnalysis&quot;;
+    final String testFileDir = Environment.getExternalStorageDirectory().getPath() + &quot;/testlog/&quot;;
+    final String[] testFileName = new String[]{&quot;lastlog1&quot;,&quot;lastlog2&quot;,&quot;lastlog3&quot;
+    ,&quot;lastexception&quot;,&quot;lastnormal&quot;,&quot;lastnormalex&quot;,&quot;lastlogex&quot;};
+    final String[] testFileInfo = new String[]{&quot;带有异常的日志&quot;,&quot;带有异常的日志&quot;,&quot;带有异常的日志&quot;,&quot;乱码日志&quot;,&quot;无异常的日志&quot;,&quot;大号无异常日志 5Ｍ&quot;,&quot;大号带异常日志 5Ｍ&quot;};
+    boolean ret0 = false;
+    boolean ret1 = false;
+    boolean ret2 = false;
+    long beginTime = 0;
+
+    for(int index = 0; index &lt; testFileName.length; index ++){
+        String testFilePath = testFileDir + testFileName[index];
+        Log.d(tag, testFilePath + &quot;  &quot; + testFileInfo[index]);
+
+        beginTime = System.currentTimeMillis();
+        ret0 = analysisContain(testFilePath);
+        Log.d(tag, &quot;analysis Contain:&quot; + ret0);
+        Log.d(tag, &quot;cost time:&quot; + (System.currentTimeMillis() - beginTime));
+        Log.d(tag, &quot;--------------------------------------------------------&quot;);
+
+        beginTime = System.currentTimeMillis();
+        ret1 = analysisRegex(testFilePath);
+        Log.d(tag, &quot;analysis Regex:&quot; + ret1);
+        Log.d(tag, &quot;cost time:&quot; + (System.currentTimeMillis() - beginTime));
+        Log.d(tag, &quot;--------------------------------------------------------&quot;);
+
+        beginTime = System.currentTimeMillis();
+        ret2 = analysisRandomAccess(testFilePath);
+        Log.d(tag, &quot;analysis RandomAccess:&quot; + ret2);
+        Log.d(tag, &quot;cost time:&quot; + (System.currentTimeMillis() - beginTime));
+        assertEquals(ret0, ret1);
+        assertEquals(ret0, ret2);
+        Log.d(tag, &quot;========================================================&quot;);
+    }
+}
+</code></pre><p>测试结果如下：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_str_analysis_report.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当然这并不是全部，因为中间还尝试了一些其他方面的组合。在保证分析结果正确的前提下，可以得出一下结论：<br>按行的情况下，老老实实的直接使用contain方法，正则表达式在这种情况下纯属牛刀杀鸡，既不方便也不实用。七种情况只有乱码文件的情况下正则扳回一局，其余的都是眼泪，原因是乱码文件的情况下是当作一行处理的，可以想象这个效率曲线，单纯的字符串匹配在一定数量的数据一下contain效率高，在这之上正则的效率就要高些；<br>没有异常的情况就意味着要遍历整个文件，这个时候分块处理采用KMP匹配的办法效率要高，尤其是文件变大之后尤为明显。实际上大部分情况这个日志都应该是没什么异常的，因为如果内核总是崩溃的话，产品根本无法上市；</p>
+<p>在这个实现中暴露了一些问题，那就是一些基础还不够，对读文件、字符串匹配等基础的API特性和效率还认知不足。虽然说各路API浩如烟海，但是一些基础功能还是要做到耳熟能详，这样在设计的过程中就可以免去以上那些验证的过程。在编码之前要做好代码设计，这一番算计所设计出来的结果，除了整个模块的框架之外还在于各个节点的细节，如果连每个功能点的实现细节和效率情况都掌握不了就谈不上能做出好的设计。所以细节方面还需要努力积累。再有就是合适的东西做合适的事情，大到选择一门编程语言，小到选择一个字符串匹配的方法，都是如此。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-04T12:13:23.000Z" itemprop="dateUpdated">2015年11月4日 20:13</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2014/10/20/字符串匹配/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/&title=《异常分析与字符串匹配笔记》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/&title=《异常分析与字符串匹配笔记》 — 桃小七的博客&source=环境android 系统
+语言java
+场景采集android平板在发生内核级崩溃时记录的异常日志文件。经过了解在发生内核级崩溃时系统会把异常信息记录在”..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《异常分析与字符串匹配笔记》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/10/27/《暗访十年》阅读笔记/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">《暗访十年》 系列阅读笔记</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/10/12/sonar_emma/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">sonar导入android emma单元测试报告的方法</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="字符串匹配" data-title="异常分析与字符串匹配笔记" data-url="http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/&title=《异常分析与字符串匹配笔记》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/&title=《异常分析与字符串匹配笔记》 — 桃小七的博客&source=环境android 系统
+语言java
+场景采集android平板在发生内核级崩溃时记录的异常日志文件。经过了解在发生内核级崩溃时系统会把异常信息记录在”..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《异常分析与字符串匹配笔记》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/10/20/字符串匹配/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

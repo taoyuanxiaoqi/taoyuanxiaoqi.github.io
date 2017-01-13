@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>项目时间评估小结 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="项目开发">
+    <meta name="description" content="项目时间的评估从来都不是一件简单的事儿，然而却又有很大的必要性。开发人员对项目的熟悉程度、开发人员的研发能力、需求变更、团队间相关依赖节点是否能按时达成等等都是影响到最终完成时间的因素。到目前为止，在两个版本的开发中已经有三次采用了计划因子乘以理想条件下开发时间的方法来预算开发时间。后两次不是很靠谱，对比前一次时间误差太大，主要表现是评估过于理想。这里做一些总结，后续改进。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目时间评估小结">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/07/30/projectcost/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="项目时间的评估从来都不是一件简单的事儿，然而却又有很大的必要性。开发人员对项目的熟悉程度、开发人员的研发能力、需求变更、团队间相关依赖节点是否能按时达成等等都是影响到最终完成时间的因素。到目前为止，在两个版本的开发中已经有三次采用了计划因子乘以理想条件下开发时间的方法来预算开发时间。后两次不是很靠谱，对比前一次时间误差太大，主要表现是评估过于理想。这里做一些总结，后续改进。">
+<meta property="og:updated_time" content="2015-11-04T12:30:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="项目时间评估小结">
+<meta name="twitter:description" content="项目时间的评估从来都不是一件简单的事儿，然而却又有很大的必要性。开发人员对项目的熟悉程度、开发人员的研发能力、需求变更、团队间相关依赖节点是否能按时达成等等都是影响到最终完成时间的因素。到目前为止，在两个版本的开发中已经有三次采用了计划因子乘以理想条件下开发时间的方法来预算开发时间。后两次不是很靠谱，对比前一次时间误差太大，主要表现是评估过于理想。这里做一些总结，后续改进。">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">项目时间评估小结</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">项目时间评估小结</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-07-30T08:30:23.000Z" itemprop="datePublished" class="page-time">
+  2015-07-30
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#任务的分解"><span class="post-toc-number">1.</span> <span class="post-toc-text">任务的分解</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#首先你要充分了解需求"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">首先你要充分了解需求</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#任务分解代表着设计思路"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">任务分解代表着设计思路</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#时间的评估"><span class="post-toc-number">2.</span> <span class="post-toc-text">时间的评估</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#计划的维护"><span class="post-toc-number">3.</span> <span class="post-toc-text">计划的维护</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结与后续"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结与后续</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-projectcost"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">项目时间评估小结</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年07月30日 16:30" datetime="2015-07-30T08:30:23.000Z"  itemprop="datePublished">2015-07-30</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>项目时间的评估从来都不是一件简单的事儿，然而却又有很大的必要性。开发人员对项目的熟悉程度、开发人员的研发能力、需求变更、团队间相关依赖节点是否能按时达成等等都是影响到最终完成时间的因素。到目前为止，在两个版本的开发中已经有三次采用了计划因子乘以理想条件下开发时间的方法来预算开发时间。后两次不是很靠谱，对比前一次时间误差太大，主要表现是评估过于理想。这里做一些总结，后续改进。<br><a id="more"></a></p>
+<h2 id="任务的分解"><a href="#任务的分解" class="headerlink" title="任务的分解"></a>任务的分解</h2><p>整个迭代计划的评估抽象成表格，那么它的第一列就应该是每一项要完成的任务。当这个表格打上程序员所属的标签时，那就往往要抽象到某个部分需要重构、某些功能需要抽象、某些界面需要调整等等。任务的粒度很大程度上影响最后评估时间的结果。</p>
+<h3 id="首先你要充分了解需求"><a href="#首先你要充分了解需求" class="headerlink" title="首先你要充分了解需求"></a>首先你要充分了解需求</h3><p>强调“充分”是有必要的，沟通本身就是一件存在价值损失的事儿，模棱两可的理解损失就更大。漏掉了或者理解差别引发的返工从而导致的评估误差算是最窝囊的。由于这些并不是需求变更，没办法理直气壮的要求更多的时间资源，所以功课做在前面很重要。<br>前面的评估中存在漏需求现象，导致版本更新功能缺失，要引以为戒。</p>
+<h3 id="任务分解代表着设计思路"><a href="#任务分解代表着设计思路" class="headerlink" title="任务分解代表着设计思路"></a>任务分解代表着设计思路</h3><p>你要知道如何做，才能知道要花多少时间，至少要知道努力的方向。新增功能点要知道如何实现，并且决定好使用的模式和方法才好评估时间；不了解的难点要给出充足的了解和攻坚时间；功能优化则要考虑到对原有代码的影响和复用，这时的评估又取决于对老代码的熟悉程度。</p>
+<p>说到底还是看个人能力和经验问题，从之前的评估来看，功能优化方向的没有考虑到原有代码的优化和重构时间；新功能的后续设计和最初评估时的想法相比是一个不断优化和重新抽象的过程，这种变化有主动优化的成分同时也有bug逼迫的成分在内，如果是测试驱动开发貌似无可厚非，但是从时间评估的角度讲，就要预算一下重构和优化的时间了。或者说是任务的粒度还是过粗、或者就是设计的能力还是有所欠缺，都是后面评估和设计时需要注意的事情。</p>
+<p>至于评估时间预算时需要把实现方式设计到成什么样的程度，我觉得还是取决于任务本身的复杂程度，因为某些任务的分解本身就要依赖于实现方式的设计，这似乎是个死循环，还是要具体情况具体分析。目前存在的问题是，实现的设计思路还是欠考虑，多数时候需要边实现边优化，也就有可能导致原有评估时的任务列表会有所变化，导致最终的时间误差。</p>
+<h2 id="时间的评估"><a href="#时间的评估" class="headerlink" title="时间的评估"></a>时间的评估</h2><p>这里是指针对每一个分解好的任务单元进行耗时评估，评估的条件是在理想情况完成，所谓理想情况就是无打扰、全投入的情况。我觉得在分解本身不存在问题的前提下、它的准确程度还是要取决于对相关技术点的熟悉程度。而后两次评估误差较大的主要原因在于，评估时间时并不是采用理想情况下。比如说修改一个界面，评估一个0.25h，这个时候想的不是对应的15分钟，而是这里需要的0.25h*4（计划因子）=1个小时么？显然一个小时足够了。这里可能一个两个如此想影响不大，如果全盘都这么个思路最后的偏差会非常大。</p>
+<p>时间评估上绕不过的一个心理障碍就是“真的需要这么多时间么”这个问题。假设完成图片资源管理抽象这个功能理想情况下需要1小时，那么评估时间就是4小时，想一想觉得也两小时就足够了，于是1.0就变成了0.5 。结果在实现的过程中并非如此，也许是状态影响也许是调试问题，花了不只两个小时，这是误差就产生了。软件的编写与调试很多时候会碰到莫名其妙的问题，虽然最后大都证明了事必有因，但是探索的过程所需要的时间就要取决于技术经验、搜索引擎是否给力还有一点点运气了。所以结论是评估时间还是要老老实实的按照理想时间来算，真正做事时如果很快搞定节省了预估的时间不要开心的太早、拖延了好久超出了预算也不要太过于揪心，最后能达到一个时间上的平衡才对得起那个计划因子做的乘法。</p>
+<h2 id="计划的维护"><a href="#计划的维护" class="headerlink" title="计划的维护"></a>计划的维护</h2><p>第一次做迭代计划时间预估的时候还多多少少维护了一下，记录了一下真正任务实现所花的时间、一些设计上变更导致任务的变化等等。后来两次可能是由于任务本身分解的不给力，已经不是很有效的记录这个时间消耗了，因为任务有所变化、或者任务本身跨度大不好统计时间。</p>
+<p>计划维护本身的意义在于团队层次上对项目完成程度的把控，对个人来说则在于对之前评估的反思和后续的优化。这一点后面要持续跟进一下。</p>
+<h2 id="总结与后续"><a href="#总结与后续" class="headerlink" title="总结与后续"></a>总结与后续</h2><ol>
+<li>时间评估注意按照理想状态预算；</li>
+<li>任务分解注意先做好设计；</li>
+<li>需求要充分理解之后再做事；</li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-04T12:30:12.000Z" itemprop="dateUpdated">2015年11月4日 20:30</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/07/30/projectcost/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/07/30/projectcost/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/项目开发/">项目开发</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/07/30/projectcost/&title=《项目时间评估小结》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/07/30/projectcost/&title=《项目时间评估小结》 — 桃小七的博客&source=项目时间的评估从来都不是一件简单的事儿，然而却又有很大的必要性。开发人员对项目的熟悉程度、开发人员的研发能力、需求变更、团队间相关依赖节点是否能按时达成等..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/07/30/projectcost/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《项目时间评估小结》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/07/30/projectcost/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/07/30/projectcost/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/10/27/recycleview_itemwidth/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">RecycleView 实现设置显示 item 数量的方法</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/07/14/android_second_storage/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">android second storage 大杂烩</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="projectcost" data-title="项目时间评估小结" data-url="http://taoyuanxiaoqi.com/2015/07/30/projectcost/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/07/30/projectcost/&title=《项目时间评估小结》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/07/30/projectcost/&title=《项目时间评估小结》 — 桃小七的博客&source=项目时间的评估从来都不是一件简单的事儿，然而却又有很大的必要性。开发人员对项目的熟悉程度、开发人员的研发能力、需求变更、团队间相关依赖节点是否能按时达成等..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/07/30/projectcost/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《项目时间评估小结》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/07/30/projectcost/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/07/30/projectcost/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/07/30/projectcost/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

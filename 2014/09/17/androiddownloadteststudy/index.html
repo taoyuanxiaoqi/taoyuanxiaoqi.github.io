@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>android 源码下载部分单元测试代码分析 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android">
+    <meta name="description" content="最近因为业务需要，在研究android源码的下载部分。因为要考虑代码质量的问题，所以就针对源码的测试用例做了一些分析，并在源码用例的基础上添加了我们自己增加接口部分的用例。测试代码的分析比较偏门，网上也很少见，这里权作探讨，欢迎纠错。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android 源码下载部分单元测试代码分析">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="最近因为业务需要，在研究android源码的下载部分。因为要考虑代码质量的问题，所以就针对源码的测试用例做了一些分析，并在源码用例的基础上添加了我们自己增加接口部分的用例。测试代码的分析比较偏门，网上也很少见，这里权作探讨，欢迎纠错。">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_android_download_test.JPG">
+<meta property="og:updated_time" content="2015-11-04T11:24:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="android 源码下载部分单元测试代码分析">
+<meta name="twitter:description" content="最近因为业务需要，在研究android源码的下载部分。因为要考虑代码质量的问题，所以就针对源码的测试用例做了一些分析，并在源码用例的基础上添加了我们自己增加接口部分的用例。测试代码的分析比较偏门，网上也很少见，这里权作探讨，欢迎纠错。">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_android_download_test.JPG">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">android 源码下载部分单元测试代码分析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">android 源码下载部分单元测试代码分析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-09-17T13:36:00.000Z" itemprop="datePublished" class="page-time">
+  2014-09-17
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-androiddownloadteststudy"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">android 源码下载部分单元测试代码分析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2014年09月17日 21:36" datetime="2014-09-17T13:36:00.000Z"  itemprop="datePublished">2014-09-17</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>最近因为业务需要，在研究android源码的下载部分。因为要考虑代码质量的问题，所以就针对源码的测试用例做了一些分析，并在源码用例的基础上添加了我们自己增加接口部分的用例。测试代码的分析比较偏门，网上也很少见，这里权作探讨，欢迎纠错。<br><a id="more"></a><br>在分析这个代码之前，能想到的一些问题：</p>
+<p>1.下载这部分涉及到网络环境、数据库、contentprovider、广播等依赖硬件或外部环境较多的部分，如何测试；</p>
+<p>2.网络环境复杂多变，如何能够测试全面；</p>
+<p>3.我们了解下载系统的复杂程度，是以DownloadService为核心控制下载任务的刷新，<br>DownloadProvider供增删改查各种任务为基础，供app用户管理下载任务、查询下载进度和状态，真正下载的实现则在DownloadThread中——这样一个复杂的模块的测试从何下手。</p>
+<p>然后，大体分析一下测试源码的结构，我使用EA导入代码工程的方式生成了类图，再大体调整了一下位置布局，很方便。</p>
+<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_android_download_test.JPG" alt=""></p>
+<p>来仔细分析一下测试源码的类结构：</p>
+<ol>
+<li><p>以继承关系为骨架看的话，可以分为三层，很明显抽象类是不能直接作为干活的测试类的，继承关系中的叶子节点类才是真正跑用例的类。那么其余部分肯定是为跑测试做各方面的准备；</p>
+</li>
+<li><p>最基础的 AbstractDownloadProviderFunctionalTest，是第一层的中心。左边两个是它的内部类，并且还维护着这两个内部类的实体；右面是对下载系统源码中SystemFacade的一个模拟实现类的依赖，同样维护着一个实体；在看各位组件的类名：TestContext、MockContentResolverWithNotify、FakeSystemFacade，可以说是假货一条街。总结来说，第一层就是以AbstractDownloadProviderFunctionalTest为中心的组合关系，该类维护了一系列假货的实体，那么大概齐是什么功能也能猜个八九了，具体是怎样还要读源码来验证；</p>
+</li>
+<li><p>第二层在继承前类的同时又有拓展。该层已经有一个叶子类了，DownloadProviderFunctionalTest，从一些共有方法能看到测试用例的定义，同时根据类名也能看出一二；AbstractPublicApiTest则是它的兄弟类，继续抽象，仔细一点可以看出这里添加了一个重要的实体：DownloadManager，继续做准备吧，至于它的内部类Download结构上看不出什么，还需要看接口和源码才能了解具体功能；</p>
+</li>
+<li><p>第三层，就都是叶子类了，也是大规模测试用例的聚集地。在前面两层的准备之后，可谓万事俱备，PublicApiFunctionalTest、ThreadingTest，看名字就知道了。</p>
+</li>
+<li><p>HelpersTest 该类是个闲散人员，不依赖任何环境的模拟。所以可以猜测是测试纯功能函数的。</p>
+</li>
+</ol>
+<p>了解了大体结构之后，就需要读源码了。走读一下源码，不多，大概不到1500行的样子。然后就可以拿到大体上每个类都做了什么，如下：</p>
+<ol>
+<li><p>AbstractDownloadProviderFunctionalTest 是基础抽象类，这里完成了context、systemFacade、server、contentResolver等基础环境的假冒伪劣活动，同时提供了伪造服务器响应的方法供子类使用；</p>
+</li>
+<li><p>AbstractPublicApiTest 是上面那位的子类，同样是抽象的，这里封装了以DownloadID为核心的内部类Download供后续断言使用；引入了DownloadManager的工具实体，同时提供了伪造客户端请求的各种方法供子类使用；</p>
+</li>
+<li><p>DownloadProviderFunctionalTest 绕开了对DownloadManager的测试，它使用暴力插入数据库的方法添加下载，单纯的测试下载器的功能，所以它只继承了①；</p>
+</li>
+<li><p>PublicApiFunctionalTest 主要是针对DownloadManager的功能api测试，这里模拟了各种各样的下载环境，实现了各种网络情况下的功能单元测试；</p>
+</li>
+<li><p>ThreadingTest 主要针对频繁开下载服务的特殊情况进行测试；</p>
+</li>
+<li><p>HelpersTest 则是比较独立的测试，测试/module/DownloadSystem 中Util包  Helpers 工具类中的方法；</p>
+</li>
+</ol>
+<p>好。最后我们回到刚开始的那几个问题。通过类图解析和代码走读大概就能得到答案。</p>
+<p>其一，android junit框架提供了对android service的测试支持，上面的所有测试类都是基于ServiceTestCase 实现的；</p>
+<p>其二，可以找到各种mock工具来模拟各种依赖于硬件、网络的接口实现，下载测试中使用的就是 mockwebserver.jar，来模拟服务器、响应；</p>
+<p>其三，测试代码也需要伪造相关的环境，context、resolver，包括功能源码将系统相关的信息抽象成接口，在测试的过程中测试代码可以实现测试所需要的fake版本，不得不说这就是代码可测试性良好的一个体现，目的就是绕开或模拟任何不可预期的依赖，来针对测试目标代码完成对逻辑的测试；</p>
+<p>其四，对于各种网络环境的测试，实际上是通过模拟不同的服务器响应来实现的，绝大部分用例都是围绕这个思路来编写的。不过是否能覆盖到所有情况的下载还是未知数；</p>
+<p>其五，针对一个复杂的功能系统来测试，整个测试代码的架构显然是需要提前设计的。庖丁解牛一般，一步一步把所有的环境都模拟好，再动手编写各个细节点的测试用例。当然，这与被测试的功能源码的结构设计、可测试性的考虑也是有关系的。这就是传说中的设计吧，路漫漫其修远兮啊。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-04T11:24:10.000Z" itemprop="dateUpdated">2015年11月4日 19:24</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2014/09/17/androiddownloadteststudy/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/&title=《android 源码下载部分单元测试代码分析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/&title=《android 源码下载部分单元测试代码分析》 — 桃小七的博客&source=最近因为业务需要，在研究android源码的下载部分。因为要考虑代码质量的问题，所以就针对源码的测试用例做了一些分析，并在源码用例的基础上添加了我们自己增..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《android 源码下载部分单元测试代码分析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/09/20/《我的互联网方法论》-读书笔记/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">《我的互联网方法论》 读书笔记</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/09/08/canyugan/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">《参与感 小米口碑营销内部手册》 阅读笔记</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="androiddownloadteststudy" data-title="android 源码下载部分单元测试代码分析" data-url="http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/&title=《android 源码下载部分单元测试代码分析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/&title=《android 源码下载部分单元测试代码分析》 — 桃小七的博客&source=最近因为业务需要，在研究android源码的下载部分。因为要考虑代码质量的问题，所以就针对源码的测试用例做了一些分析，并在源码用例的基础上添加了我们自己增..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《android 源码下载部分单元测试代码分析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/09/17/androiddownloadteststudy/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

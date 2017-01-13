@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>APK加壳【1】初步方案实现详解 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android,APK加壳">
+    <meta name="description" content="来源与原理本文是尝试对CSDN大牛 Jack_Jia 的博客 Android APK加壳技术方案【2】  进行实现的过程记录，该文介绍了一种对源程序APK加壳的思路并提供了对应的源码。
+所谓加壳，就是通过给目标APK加一层保护程序，把需要保护的内容加密、隐藏起来，来防止反编译的一种方法。说到底我们要做的是这样一个事情，首先把要加壳的APK用自己的加密算法加个密（实验过程中这步可以省掉），然后藏在另">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APK加壳【1】初步方案实现详解">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/01/12/apkshell1/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="来源与原理本文是尝试对CSDN大牛 Jack_Jia 的博客 Android APK加壳技术方案【2】  进行实现的过程记录，该文介绍了一种对源程序APK加壳的思路并提供了对应的源码。
+所谓加壳，就是通过给目标APK加一层保护程序，把需要保护的内容加密、隐藏起来，来防止反编译的一种方法。说到底我们要做的是这样一个事情，首先把要加壳的APK用自己的加密算法加个密（实验过程中这步可以省掉），然后藏在另">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell1_base.gif">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apk_shell1_dexclassloader.png">
+<meta property="og:updated_time" content="2016-02-01T07:17:33.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="APK加壳【1】初步方案实现详解">
+<meta name="twitter:description" content="来源与原理本文是尝试对CSDN大牛 Jack_Jia 的博客 Android APK加壳技术方案【2】  进行实现的过程记录，该文介绍了一种对源程序APK加壳的思路并提供了对应的源码。
+所谓加壳，就是通过给目标APK加一层保护程序，把需要保护的内容加密、隐藏起来，来防止反编译的一种方法。说到底我们要做的是这样一个事情，首先把要加壳的APK用自己的加密算法加个密（实验过程中这步可以省掉），然后藏在另">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell1_base.gif">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">APK加壳【1】初步方案实现详解</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">APK加壳【1】初步方案实现详解</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-01-12T13:29:26.000Z" itemprop="datePublished" class="page-time">
+  2015-01-12
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#来源与原理"><span class="post-toc-number">1.</span> <span class="post-toc-text">来源与原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#方案"><span class="post-toc-number">2.</span> <span class="post-toc-text">方案</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#源程序"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">源程序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#加密工具"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">加密工具</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#壳工程"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">壳工程</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#注意事项"><span class="post-toc-number">3.</span> <span class="post-toc-text">注意事项</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-apkshell1"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">APK加壳【1】初步方案实现详解</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年01月12日 21:29" datetime="2015-01-12T13:29:26.000Z"  itemprop="datePublished">2015-01-12</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="来源与原理"><a href="#来源与原理" class="headerlink" title="来源与原理"></a>来源与原理</h2><p>本文是尝试对CSDN大牛 Jack_Jia 的博客 <a href="http://blog.csdn.net/androidsecurity/article/details/8809542" target="_blank" rel="external">Android APK加壳技术方案【2】</a>  进行实现的过程记录，该文介绍了一种对源程序APK加壳的思路并提供了对应的源码。</p>
+<p>所谓加壳，就是通过给目标APK加一层保护程序，把需要保护的内容加密、隐藏起来，来防止反编译的一种方法。说到底我们要做的是这样一个事情，首先把要加壳的APK用自己的加密算法加个密（实验过程中这步可以省掉），然后藏在另一个APK中（就是壳工程）发布出去，这样防止破解者直接拿到源程序的APK去反编译。不好处理的是还需要壳工程在各种版本的Android系统里运行时，要把源程序解密出来还要跟直接装源程序有同样的运行效果才行。<a id="more"></a>如何实现原文都已经写清楚了：</p>
+<ol>
+<li>通过反射置换android.app.ActivityThread 中的mClassLoader为加载解密出APK的DexClassLoader，该DexClassLoader一方面加载了源程序、另一方面以原mClassLoader为父节点，这就保证了即加载了源程序又没有放弃原先加载的资源与系统代码；</li>
+<li>找到源程序的Application，通过反射建立并运行；</li>
+</ol>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell1_base.gif" alt="基本流程" title="">
+                </div>
+                <div class="image-caption">基本流程</div>
+            </figure>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>整个方案里面涉及到三种角色：</p>
+<ol>
+<li>源程序——等待被加壳的目标程序，一个APK；【原文中的加密工具代码、DexShellTool中的g:/payload.apk】</li>
+<li>加密工具——这是一个工具程序，用什么语言实现都是可以的。用来给源程序加密，这段功能对应的解密则在壳程序中实现；【原文中的DexShellTool代码，是一个java程序】</li>
+<li>壳程序——它实际上也是一个Android工程，经过加壳发布出去的APK就是壳程序经过特殊处理之后生成的。它内部保存着已被加密的源程序（apk、dex或者odex），在启动后第一时间将加密后的源程序解出来，通过类加载器动态加载运行；【原文中Menifest、ProxyApplication.java、RefInvoke.java部分】</li>
+</ol>
+<p>所以检查这个方案需要有个DEMO  APK、有个加密工具JAVA工程DexShellTool 和一个Android壳工程UnShell，最后加壳后的APK实际上是壳工程编译出的、并且把其中的dex文件替换为经过加密工具处理生成的新dex、最后重新打包签名的APK。</p>
+<h3 id="源程序"><a href="#源程序" class="headerlink" title="源程序"></a>源程序</h3><p>源程序其实没什么好讲的，最好是有个带有服务、广播、网络操作什么的基础功能比较全面的示例程序，这样测试可行性更加有说服力一些。</p>
+<h3 id="加密工具"><a href="#加密工具" class="headerlink" title="加密工具"></a>加密工具</h3><p>加密工具其实原文中给出的很容易看懂，因为没有涉及到加密算法，所以不到两百行。基本做了这样一件事：把源程序加密之后接到壳工程的dex文件尾，然后修改dex文件的文件长度、校验和什么的。这种隐藏方式略诡异。</p>
+<h3 id="壳工程"><a href="#壳工程" class="headerlink" title="壳工程"></a>壳工程</h3><p>壳工程既是壳又要有解壳功能，原文只给了两个类，实际上也只需要这两个类。ProxyApplication里有解壳与反射实现动态加载源程序的代码逻辑、RefInvoke则是反射工具。许多童鞋表示反射不好理解，一开始我也是这么觉得。不过经过一行行注释下来、对比系统源码，其实也没有多难。这里要说，静下心来分析，不到三百行的代码，能有多复杂呢？</p>
+<pre><code>protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        Log.d(TAG, &quot;attachBaseContext hello world~&quot;);
+        try {
+            File odex = this.getDir(&quot;payload_odex&quot;, MODE_PRIVATE);
+            File libs = this.getDir(&quot;payload_lib&quot;, MODE_PRIVATE);
+            odexPath = odex.getAbsolutePath();
+            libPath = libs.getAbsolutePath();
+            apkFileName = odex.getAbsolutePath() + &quot;/payload.apk&quot;;
+            File dexFile = new File(apkFileName);
+            if (!dexFile.exists())
+                dexFile.createNewFile();
+            // 读取程序classes.dex文件
+            byte[] dexdata = this.readDexFileFromApk();
+            // 分离出解壳后的apk文件已用于动态加载
+            this.splitPayLoadFromDex(dexdata);
+            // 配置动态加载环境
+            Object currentActivityThread = RefInvoke.invokeStaticMethod(
+                    &quot;android.app.ActivityThread&quot;, &quot;currentActivityThread&quot;,
+                    new Class[] {}, new Object[] {});
+            String packageName = this.getPackageName();
+            HashMap mPackages = (HashMap) RefInvoke.getFieldOjbect(
+                    &quot;android.app.ActivityThread&quot;, currentActivityThread,
+                    &quot;mPackages&quot;);
+            WeakReference wr = (WeakReference) mPackages.get(packageName);
+            //换Loader操作 动态加载如被加密又装换回来的apk文件
+            DexClassLoader dLoader = new DexClassLoader(apkFileName, odexPath,
+                    libPath, (ClassLoader) RefInvoke.getFieldOjbect(
+                            &quot;android.app.LoadedApk&quot;, wr.get(), &quot;mClassLoader&quot;));
+            RefInvoke.setFieldOjbect(&quot;android.app.LoadedApk&quot;, &quot;mClassLoader&quot;,
+                    wr.get(), dLoader);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onCreate() {
+        Log.d(TAG, &quot;on create hello world~&quot;);
+        // 如果源应用配置有Appliction对象，则替换为源应用Applicaiton，以便不影响源程序逻辑。
+        String appClassName = null;
+        try {
+            ApplicationInfo ai = this.getPackageManager().getApplicationInfo(
+                    this.getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = ai.metaData;
+            if (bundle != null &amp;&amp; bundle.containsKey(&quot;APPLICATION_CLASS_NAME&quot;)) {
+                appClassName = bundle.getString(&quot;APPLICATION_CLASS_NAME&quot;);
+            } else {
+                return;
+            }
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, &quot;the app aplication name is &quot; + appClassName);
+        /**
+         * 调用静态方法android.app.ActivityThread.currentActivityThread
+         * 获取当前activity所在的线程对象
+         */
+        Object currentActivityThread = RefInvoke.invokeStaticMethod(
+                &quot;android.app.ActivityThread&quot;, &quot;currentActivityThread&quot;,
+                new Class[] {}, new Object[] {});
+        /**
+         * 获取currentActivityThread中的mBoundApplication属性对象，该对象是一个
+         *  AppBindData类对象，该类是ActivityThread的一个内部类
+         */
+        Object mBoundApplication = RefInvoke.getFieldOjbect(
+                &quot;android.app.ActivityThread&quot;, currentActivityThread,
+                &quot;mBoundApplication&quot;);
+        /**
+         * 获取mBoundApplication中的info属性，info 是 LoadedApk类对象
+         */
+        Object loadedApkInfo = RefInvoke.getFieldOjbect(
+                &quot;android.app.ActivityThread$AppBindData&quot;, mBoundApplication,
+                &quot;info&quot;);
+        /**
+         * loadedApkInfo对象的mApplication属性置为null
+         */
+        RefInvoke.setFieldOjbect(&quot;android.app.LoadedApk&quot;, &quot;mApplication&quot;,
+                loadedApkInfo, null);
+
+        /**
+         * 获取currentActivityThread对象中的mInitialApplication属性
+         * 这货是个正牌的 Application
+         */
+        Object oldApplication = RefInvoke.getFieldOjbect(
+                &quot;android.app.ActivityThread&quot;, currentActivityThread,
+                &quot;mInitialApplication&quot;);
+        /**
+         * 获取currentActivityThread对象中的mAllApplications属性
+         * 这货是 装Application的列表
+         */
+        ArrayList&lt;Application&gt; mAllApplications = (ArrayList&lt;Application&gt;) RefInvoke
+                .getFieldOjbect(&quot;android.app.ActivityThread&quot;,
+                        currentActivityThread, &quot;mAllApplications&quot;);
+        //列表对象终于可以直接调用了 remove调了之前获取的application 抹去记录的样子
+        mAllApplications.remove(oldApplication);
+        /**
+         * 获取前面得到LoadedApk对象中的mApplicationInfo属性，是个ApplicationInfo对象
+         */
+        ApplicationInfo appinfo_In_LoadedApk = (ApplicationInfo) RefInvoke
+                .getFieldOjbect(&quot;android.app.LoadedApk&quot;, loadedApkInfo,
+                        &quot;mApplicationInfo&quot;);
+        /**
+         * 获取前面得到AppBindData对象中的appInfo属性，也是个ApplicationInfo对象
+         */
+        ApplicationInfo appinfo_In_AppBindData = (ApplicationInfo) RefInvoke
+                .getFieldOjbect(&quot;android.app.ActivityThread$AppBindData&quot;,
+                        mBoundApplication, &quot;appInfo&quot;);
+        //把这两个对象的className属性设置为从meta-data中获取的被加密apk的application路径
+        appinfo_In_LoadedApk.className = appClassName;
+        appinfo_In_AppBindData.className = appClassName;
+        /**
+         * 调用LoadedApk中的makeApplication 方法 造一个application
+         * 前面改过路径了 
+         */
+        Application app = (Application) RefInvoke.invokeMethod(
+                &quot;android.app.LoadedApk&quot;, &quot;makeApplication&quot;, loadedApkInfo,
+                new Class[] { boolean.class, Instrumentation.class },
+                new Object[] { false, null });
+        RefInvoke.setFieldOjbect(&quot;android.app.ActivityThread&quot;,
+                &quot;mInitialApplication&quot;, currentActivityThread, app);
+
+        HashMap mProviderMap = (HashMap) RefInvoke.getFieldOjbect(
+                &quot;android.app.ActivityThread&quot;, currentActivityThread,
+                &quot;mProviderMap&quot;);
+        Iterator it = mProviderMap.values().iterator();
+        while (it.hasNext()) {
+            Object providerClientRecord = it.next();
+            Object localProvider = RefInvoke.getFieldOjbect(
+                    &quot;android.app.ActivityThread$ProviderClientRecord&quot;,
+                    providerClientRecord, &quot;mLocalProvider&quot;);
+            RefInvoke.setFieldOjbect(&quot;android.content.ContentProvider&quot;,
+                    &quot;mContext&quot;, localProvider, app);
+        }
+
+        if(null == app){
+            Log.e(TAG, &quot;application get is null !&quot;);
+        }else{
+            app.onCreate();
+        }
+    }
+</code></pre><p>辅助源码看实际上还是很好理解的，不多说。 </p>
+<p>顺手推荐个android在线源码浏览网址 <a href="http://androidxref.com/" target="_blank" rel="external">http://androidxref.com/</a></p>
+<p>为了方便后续调试代码，弄了个shell脚本，同时也可以基本解释整个加壳的流程：<br></p>
+<pre><code>#!/bin/bash
+ENCRYPT_PATH=&quot;/home/kf2lc/develop/apk_encrypt&quot;
+UNSHELL_PATH=&quot;/home/kf2lc/develop/workspace/BFC/UnShell&quot;
+DEX_SHELL_TOOL_PATH=&quot;/home/kf2lc/develop/workspace/BFC/DexShellTool&quot;
+DEMO_TEMP_PATH=&quot;./demopac&quot;
+TEMP_PATH=&quot;./apk&quot;
+ARM_SO_PATH=&quot;/libs/armeabi-v7a/libNativeTool.so&quot;
+ARM_MIPS_PATH=&quot;/libs/mips/libNativeTool.so&quot;
+
+echo  &quot;清理中间文件...&quot;
+cd $ENCRYPT_PATH
+rm Demo-*.apk
+rm *.dex
+rm UnShell.apk
+
+echo  &quot;编译解壳工程...&quot;
+cd $UNSHELL_PATH
+rm -rf gen bin
+android update project -p .
+ant clean debug
+
+echo &quot;拷贝壳工程dex文件到工作目录...&quot;
+cp $UNSHELL_PATH&quot;/bin/classes.dex&quot; $ENCRYPT_PATH&quot;/unshell.dex&quot;
+cp $UNSHELL_PATH&quot;/bin/BlankActivity-debug-unaligned.apk&quot; $ENCRYPT_PATH&quot;/UnShell.apk&quot;
+
+echo &quot;编译加壳工程... 生成新的classes.dex文件到工作目录...&quot;
+cd $DEX_SHELL_TOOL_PATH
+ant clean compile jar run
+
+echo &quot;解压待加密apk... 替换classes.dex文件为加壳.dex文件...&quot;
+cd $ENCRYPT_PATH
+unzip -d $TEMP_PATH  UnShell.apk
+rm $TEMP_PATH&quot;/classes.dex&quot;
+mv ./classes.dex $TEMP_PATH
+
+echo &quot;删除签名文件夹 重新打包apk...&quot;
+cd $TEMP_PATH
+rm -rf ./META-INF
+zip -r ../Demo-encrypt-unsign.apk ./*
+cd ../
+echo &quot;清理中间目录...&quot;
+rm -rf $TEMP_PATH
+
+echo &quot;为加壳后的apk重新签名...&quot;
+jarsigner -verbose -keystore bfc.keystore -signedjar Demo-encrypt.apk Demo-encrypt-unsign.apk bfc.keystore
+</code></pre><h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<li>无论是虚拟机还是手机、平板，测试时一定要统一使用一个签名，否则很容易出无签名的安装错误；</li>
+<li>由于本方案使用DexClassLoader作为动态加载的方案，从接口上看：<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_apk_shell1_dexclassloader.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure><br>很明显，这货是需要一个文件路径的，这意味着如果直接使用该类，就必须要有个解密好的文件老老实实的躺在存储器上，这样一来无论你放在什么地方、该文件存在的时间有多短，破解者都有可能绕过壳、直接拿到解密的文件，这明显不科学；</li>
+<li>资源加载，这里面我偷了个懒，壳工程的资源文件和源程序的资源文件是完全一致的，所以加载起来没有问题。但是这样一来整个加壳的APK实际上内部有两份资源文件了，示例APK还好，碰见图片多的那这个数据增量完全无法接受；</li>
+<li>本文仅是个人理解，虽然跑通了但是也不免有瞎猫撞上死耗子的几率，错误加上错误产生正确也是可能的，仅供参考，欢迎质疑。</li>
+</ol>
+<p>其实原文所述的方案是加壳的一个基本思路，具体要预防反编译实现起来肯定不会如此简略、加壳也只是预防破解的各路招式之一。但还是要感谢大牛的芸芸分享，使我辈菜鸟有了一条入门之路。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-02-01T07:17:33.000Z" itemprop="dateUpdated">2016年2月1日 15:17</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/01/12/apkshell1/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/01/12/apkshell1/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APK加壳/">APK加壳</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/&title=《APK加壳【1】初步方案实现详解》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/&title=《APK加壳【1】初步方案实现详解》 — 桃小七的博客&source=来源与原理本文是尝试对CSDN大牛 Jack_Jia 的博客 Android APK加壳技术方案【2】  进行实现的过程记录，该文介绍了一种对源程序APK..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《APK加壳【1】初步方案实现详解》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/01/16/apkshell2/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">APK加壳【2】内存加载dex实现详解</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/12/30/japan_travel_notes1/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">东瀛游记——第一天</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="apkshell1" data-title="APK加壳【1】初步方案实现详解" data-url="http://taoyuanxiaoqi.com/2015/01/12/apkshell1/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/&title=《APK加壳【1】初步方案实现详解》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/&title=《APK加壳【1】初步方案实现详解》 — 桃小七的博客&source=来源与原理本文是尝试对CSDN大牛 Jack_Jia 的博客 Android APK加壳技术方案【2】  进行实现的过程记录，该文介绍了一种对源程序APK..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《APK加壳【1】初步方案实现详解》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/01/12/apkshell1/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

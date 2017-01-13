@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>dex注入实现详解 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="dex注入">
+    <meta name="description" content="最近在研究Android绿色安全这一块，具体到上层的业务就是“去第三方APP的广告”。如果既想使用第三方APP，又不想看到一些无良的广告，那dex注入基本无法避免。本文针对网上一些大牛分享的文章，进行了一些简单的实现，总结和分享自是不能少的。Ps：感谢金山毒霸实现了该功能，感谢大牛们破解之后的无私分享。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dex注入实现详解">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/03/16/dexinject/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="最近在研究Android绿色安全这一块，具体到上层的业务就是“去第三方APP的广告”。如果既想使用第三方APP，又不想看到一些无良的广告，那dex注入基本无法避免。本文针对网上一些大牛分享的文章，进行了一些简单的实现，总结和分享自是不能少的。Ps：感谢金山毒霸实现了该功能，感谢大牛们破解之后的无私分享。">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/runinjec_zpszoboirlu.png">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/injeclog_zpsexo6xapb.png">
+<meta property="og:updated_time" content="2015-11-04T12:25:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="dex注入实现详解">
+<meta name="twitter:description" content="最近在研究Android绿色安全这一块，具体到上层的业务就是“去第三方APP的广告”。如果既想使用第三方APP，又不想看到一些无良的广告，那dex注入基本无法避免。本文针对网上一些大牛分享的文章，进行了一些简单的实现，总结和分享自是不能少的。Ps：感谢金山毒霸实现了该功能，感谢大牛们破解之后的无私分享。">
+<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/runinjec_zpszoboirlu.png">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">dex注入实现详解</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">dex注入实现详解</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-03-16T12:26:38.000Z" itemprop="datePublished" class="page-time">
+  2015-03-16
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考文章"><span class="post-toc-number">1.</span> <span class="post-toc-text">参考文章</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#源码相关"><span class="post-toc-number">2.</span> <span class="post-toc-text">源码相关</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现目标"><span class="post-toc-number">3.</span> <span class="post-toc-text">实现目标</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#基本原理"><span class="post-toc-number">4.</span> <span class="post-toc-text">基本原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现流程"><span class="post-toc-number">5.</span> <span class="post-toc-text">实现流程</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#必备工具"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">必备工具</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#开始实现"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">开始实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#注入工具"><span class="post-toc-number">5.2.1.</span> <span class="post-toc-text">注入工具</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#注入代码库"><span class="post-toc-number">5.2.2.</span> <span class="post-toc-text">注入代码库</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#生成dex"><span class="post-toc-number">5.2.3.</span> <span class="post-toc-text">生成dex</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#验证结果"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">验证结果</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-dexinject"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">dex注入实现详解</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年03月16日 20:26" datetime="2015-03-16T12:26:38.000Z"  itemprop="datePublished">2015-03-16</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>最近在研究Android绿色安全这一块，具体到上层的业务就是“去第三方APP的广告”。如果既想使用第三方APP，又不想看到一些无良的广告，那dex注入基本无法避免。本文针对网上一些大牛分享的文章，进行了一些简单的实现，总结和分享自是不能少的。Ps：感谢金山毒霸实现了该功能，感谢大牛们破解之后的无私分享。<br><a id="more"></a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="http://blog.csdn.net/androidsecurity/article/details/8804402" target="_blank" rel="external">金山手机毒霸工作原理</a>【引用1】</p>
+<p><a href="http://bbs.pediy.com/showthread.php?t=166151" target="_blank" rel="external">【原创】手机毒霸去广告功能分析一：总体分析</a>【引用2】</p>
+<p><a href="http://bbs.pediy.com/showthread.php?t=166480" target="_blank" rel="external">【原创】手机毒霸去广告功能分析三：java代码（dex）注入</a></p>
+<p><a href="http://blog.csdn.net/jinzhuojun/article/details/9900105" target="_blank" rel="external">Android中的so注入(inject)和挂钩(hook) - For both x86 and arm</a> 【引用3】</p>
+<h2 id="源码相关"><a href="#源码相关" class="headerlink" title="源码相关"></a>源码相关</h2><p>android.os.Handler 自行eclipse 关联即可；<br><br>android.app.ActivityThread <a href="http://androidxref.com/4.2.2_r1/xref/frameworks/base/core/java/android/app/ActivityThread.java" target="_blank" rel="external">在线代码</a>；</p>
+<h2 id="实现目标"><a href="#实现目标" class="headerlink" title="实现目标"></a>实现目标</h2><p>系统：Android 4.2.2 平板<br>功能：将一段dex代码注入到HelloWord APP中，dex对应的java代码要求能够拦截目标APP中的onPause与onResume 回调，输出打印。</p>
+<h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p>其实原理在各路大牛的文章里面已经解释的很清楚了，这里再不厌其烦的絮叨絮叨，主要是捋一捋思路，别整乱喽。<br><br>1.获得root权限后，通过ptrace()注入到指定pid的进程中；<br></p>
+<p>Android下的注入都是从Linux下ptrace()函数继承下来的，具体原理不便深入。网上大牛已有相关的开源工具，这里采用【引用3】篇幅中博主开源出的代码，注意修改对应参数即可。【引用3】中是以注入系统进程/system/bin/surfaceflinger为例的，我们这里需要修改成目标APP的包名。这部分拿到开源代码之后使用ndk编译生成注入工具文件inject；<br></p>
+<p>2.注入代码调用功能库.so中的接口，它的作用是利用反射注入dex文件、并调用相应的java代码；<br></p>
+<p>这里对应的就是【引用3】中hello.c部分了，作为注入的功能代码关键部分，这部分不能打印两句草草了事。这里采用【引用1】中对金山毒霸分析结果得出的代码拿出来来实现dex注入与java层代码调用，具体实现与分析见后文。这里也是C代码通过ndk编译生成注入功能库，呃，libhelloTool.so；</p>
+<p>3.生成dex的java源码通过反射置换 ActivityThread 中mH属性中的的mCallback回调，来实现拦截Activity生命周期回调的HOOK功能；<br></p>
+<p>通过上一步程序会执行到java层中，既然要下钩子，就要弄清楚我们要钩在哪里才有效。很明显的，既然要拦截界面的onPause、onResume消息，那就必须要了解Activity的生命周期回调在底层是如何实现消息分发的，知其所以然之后才好下手。有了前面提到的几篇大牛博客的文章，我们可以很清晰的定位到android.app.ActivityThread 类中的mH变量：</p>
+<pre><code>public final class ActivityThread {
+…
+final H mH = new H();
+…
+private void queueOrSendMessage(int what, Object obj, int arg1, int arg2) {
+    synchronized (this) {
+        if (DEBUG_MESSAGES) Slog.v(
+            TAG, &quot;SCHEDULE &quot; + what + &quot; &quot; + mH.codeToString(what)
+            + &quot;: &quot; + arg1 + &quot; / &quot; + obj);
+        Message msg = Message.obtain();
+        msg.what = what;
+        msg.obj = obj;
+        msg.arg1 = arg1;
+        msg.arg2 = arg2;
+        mH.sendMessage(msg);
+    }
+}
+…
+private class H extends Handler {
+    public static final int LAUNCH_ACTIVITY         = 100;
+    public static final int PAUSE_ACTIVITY          = 101;
+    public static final int PAUSE_ACTIVITY_FINISHING= 102;
+    public static final int STOP_ACTIVITY_SHOW      = 103;
+    public static final int STOP_ACTIVITY_HIDE      = 104;
+    public static final int SHOW_WINDOW             = 105;
+    public static final int HIDE_WINDOW             = 106;
+    public static final int RESUME_ACTIVITY         = 107;
+    public static final int SEND_RESULT             = 108;
+               …
+               public void handleMessage(Message msg) {
+        if (DEBUG_MESSAGES) Slog.v(TAG, &quot;&gt;&gt;&gt; handling: &quot; + codeToString(msg.what));
+        switch (msg.what) {
+            case LAUNCH_ACTIVITY: {
+                Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, &quot;activityStart&quot;);
+                ActivityClientRecord r = (ActivityClientRecord)msg.obj;
+
+
+                r.packageInfo = getPackageInfoNoCheck(
+                        r.activityInfo.applicationInfo, r.compatInfo);
+                handleLaunchActivity(r, null);
+                Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);
+            } break;
+                                 …
+        ｝
+     ｝
+    …
+｝
+</code></pre><p>从源码上就能看出来，底层消息派发都在内部类H中实现，而H实际上是Handler的子类。对应的H本身是个final类型的内部私有类，做手脚不甚方便，考虑到要拦截的实际情况，伸手到其父类中的属性的mCallback回调就是个很好的选择了。从前面所引博客中对金山毒霸的反编译情况来看即是这个思路。引用【引用2】中的一句话即：</p>
+<blockquote>
+<p>f) 替换当前ActivityThread中的mH(Handler类型)的mCallback，用金山自定义的一个callback对象来包裹过原callback并且替换原callback，从而起到hook作用。</p>
+</blockquote>
+<h2 id="实现流程"><a href="#实现流程" class="headerlink" title="实现流程"></a>实现流程</h2><h3 id="必备工具"><a href="#必备工具" class="headerlink" title="必备工具"></a>必备工具</h3><ol>
+<li>root工具，想什么办法把测试机器root掉，或者直接用虚拟机；<br></li>
+<li>NDK工具，各路注入工具都需要ndk来编译，本人使用的版本是：android-ndk-r8b；<br></li>
+<li>基础Android 开发环境，具体就不用多说了~<br></li>
+</ol>
+<p><strong>注意：为了快速调通，这里所有参数都是写死的，这就限制了后续验证流程必须要实现过程中的代码编写的一致。如果只是作为预研、测试是否可行的阶段，这种做法无可厚非；相对的如果是正规的开发流程中，在迭代周期里面做好通用性的设计是必要的。</strong></p>
+<h3 id="开始实现"><a href="#开始实现" class="headerlink" title="开始实现"></a>开始实现</h3><p>建立目标APP<br>这一步最简单了，新建一个HelloWord Android工程，运行安装到测试机器中，我这里设置了包名为：com.inject.helloword 后面注入工具中需要用到；</p>
+<h4 id="注入工具"><a href="#注入工具" class="headerlink" title="注入工具"></a>注入工具</h4><p>如【引用3】的方法，简历文件夹填好配置文件。编辑injec.c文件更换参数，主要在main函数中：</p>
+<pre><code>int main(int argc, char** argv) {
+    pid_t target_pid;
+     //更换为目标应用的包名
+    target_pid = find_pid_of(&quot;com.inject.helloword&quot;);
+    if (-1 == target_pid) {
+        printf(&quot;Can&apos;t find the process\n&quot;);
+        return -1;
+    }
+     //设置注入代码库位置、调用接口与参数
+    inject_remote_process(target_pid, &quot;/data/libhelloTool.so&quot;, &quot;hook_entry&quot;,  &quot;I&apos;m parameter!hehe&quot;, strlen(&quot;I&apos;m parameter! hehe &quot;));
+    return 0;
+}
+</code></pre><p>如果想深入研究注入的原理，可以仔细分析相关函数的实现即可，NDK编译后生成注入工具inject文件；</p>
+<blockquote>
+<p>kf2lc@kf2lc-OptiPlex-3020:~/develop/inject/jni$ ndk-build<br><br>Compile x86    : inject &lt;= jni inject.c<br><br>Executable     : inject<br><br>Install        : inject =libs/x86/inject<br><br>Compile thumb  : inject &lt;= jni inject.c<br><br>Executable     : inject<br><br>Install        : inject =libs/armeabi-v7a/inject<br></p>
+</blockquote>
+<h4 id="注入代码库"><a href="#注入代码库" class="headerlink" title="注入代码库"></a>注入代码库</h4><p>建立文件夹如【引用3】所述，修改注入接口方法hook_entry如【引用1】中的分析实现，代码并注释如下：</p>
+<pre><code>#include &lt;unistd.h&gt; 
+#include &lt;stdio.h&gt; 
+#include &lt;stdlib.h&gt; 
+#include &lt;android/log.h&gt; 
+#include &lt;elf.h&gt; 
+#include &lt;fcntl.h&gt; 
+#include &lt;jni.h&gt;
+#include &lt;dlfcn.h&gt;
+
+#define LOG_TAG &quot;DEBUG&quot; 
+#define LOGD(fmt, args...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, fmt, ##args)   
+
+int invoke_dex_method(const char* dexPath, const char* dexOptDir, const char* className, const char* methodName, int argc, char *argv[]);
+
+int hook_entry(char * a){ 
+    LOGD(&quot;Hook success, pid = %d\n&quot;, getpid()); 
+    LOGD(&quot;Hello %s\n&quot;, a); 
+    //参数直接写死是个取巧的方法
+    int ret = invoke_dex_method(&quot;/data/injects/DexInject.apk&quot;,&quot;/data/data/com.inject.helloword/cache&quot;,&quot;com/inject/dexinject/HookTool&quot;,&quot;dexInject&quot;,0,NULL);
+    LOGD(&quot;Hello %d\n&quot;,ret);
+    return 0; 
+}
+
+JNIEnv* (*getJNIEnv)();
+/**
+* PARAM:
+* dexPath要注入的apk/jar路径
+* dexOptDir  缓存路径，注意需要目标应用进程中可写的目录
+* className  执行方法所在类名
+* methodName 执行的方法名
+* argc   参数之流这里没有使用
+* argv  参数之流这里没有使用
+*/
+int invoke_dex_method(const char* dexPath, const char* dexOptDir, const char* className, const char* methodName, int argc, char *argv[]) {
+    //获取JNIEnv
+    void* handle = dlopen(&quot;/system/lib/libandroid_runtime.so&quot;, RTLD_NOW);
+    getJNIEnv = dlsym(handle, &quot;_ZN7android14AndroidRuntime9getJNIEnvEv&quot;);
+    JNIEnv* env = getJNIEnv();
+
+    //调用ClassLoader中的getSystemClassLoader方法获取当前进程的ClassLoader
+    jclass classloaderClass = (*env)-&gt;FindClass(env,&quot;java/lang/ClassLoader&quot;);
+    jmethodID getsysloaderMethod = (*env)-&gt;GetStaticMethodID(env,classloaderClass, &quot;getSystemClassLoader&quot;, &quot;()Ljava/lang/ClassLoader;&quot;);
+    jobject loader = (*env)-&gt;CallStaticObjectMethod(env, classloaderClass, getsysloaderMethod);
+
+    //以进程现有的ClassLoader、要注入的dex路径为参数构造注入后的DexClassLoader
+    jstring dexpath = (*env)-&gt;NewStringUTF(env, dexPath);
+    jstring dex_odex_path = (*env)-&gt;NewStringUTF(env,dexOptDir);
+    jclass dexLoaderClass = (*env)-&gt;FindClass(env,&quot;dalvik/system/DexClassLoader&quot;);
+    jmethodID initDexLoaderMethod = (*env)-&gt;GetMethodID(env, dexLoaderClass, &quot;&lt;init&gt;&quot;, &quot;(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/ClassLoader;)V&quot;);
+    jobject dexLoader = (*env)-&gt;NewObject(env, dexLoaderClass, initDexLoaderMethod,dexpath,dex_odex_path,NULL,loader);
+
+    //获取新出炉的DexClassLoader中findClass方法加载dex中要执行代码所在类
+    jmethodID findclassMethod = (*env)-&gt;GetMethodID(env,dexLoaderClass,&quot;findClass&quot;,&quot;(Ljava/lang/String;)Ljava/lang/Class;&quot;);
+    jstring javaClassName = (*env)-&gt;NewStringUTF(env,className);
+    jclass javaClientClass = (*env)-&gt;CallObjectMethod(env,dexLoader,findclassMethod,javaClassName);
+
+    //获取注入dex中要执行的方法
+    jmethodID start_inject_method = (*env)-&gt;GetStaticMethodID(env, javaClientClass, methodName, &quot;()V&quot;);
+    //执行之注意目标方法必须是静态公有的
+    (*env)-&gt;CallStaticVoidMethod(env,javaClientClass,start_inject_method);
+}
+</code></pre><p>原帖中倒数第二句GetStaticMethodID方法所给的参数有误，这里修正一下，如此就完成了dex注入并调用了java代码中的：com.inject.dexinject. HookTool. dexInject() 方法。同上采用NDK编译，生成注入库：libhelloTool.so。</p>
+<h4 id="生成dex"><a href="#生成dex" class="headerlink" title="生成dex"></a>生成dex</h4><p>说是dex注入，实际上从上一段的代码中可以知道最终采用的是DexClassLoader类来实现注入。托之前研究过一段APK加壳的福，对这里还相对比较了解，DexClassLoader的主要参数路径实际上应该是一个apk/jar的路径，具体可见相关的SDK文档。这里直接编一个APK丢进去就好。<br>建立Android应用工程DexInject，干掉无关的界面配置。建立如下类：<br><br>1.自定义Callback，加入拦截操作代码(打印)；</p>
+<pre><code>public class HookCallback implements Callback{
+     public static final int RESUME_ACTIVITY         = 107;
+     public static final int PAUSE_ACTIVITY          = 101;
+
+     private Callback mParentCallback;
+     public HookCallback(Callback parentCallback){
+               mParentCallback = parentCallback;
+     }
+
+
+     @Override
+     public boolean handleMessage(Message msg) {
+               switch (msg.what) {
+               case RESUME_ACTIVITY:
+                        Log.d(HookTool.TAG, &quot;hook activity resume!!!&quot;);
+                        break;
+
+               case PAUSE_ACTIVITY:
+                        Log.d(HookTool.TAG, &quot;hook activity pause!!!&quot;);
+               default:
+                        Log.d(HookTool.TAG, &quot;hook a &quot; + msg.what);
+                        break;
+               }
+
+               if(mParentCallback != null){
+                        return mParentCallback.handleMessage(msg);
+               }else{
+                        return false;
+               }
+     }
+
+}
+</code></pre><p>2.工具类，拦截实现代码；</p>
+<pre><code>public class HookTool {
+     public static final String TAG = &quot;Inject&quot;;
+
+     public static void dexInject() {
+               Log.d(TAG, &quot;this is dex code,welcome to HookTool~&quot;);
+               try {          
+                        Object currentActivityThread = ReflectUtils.invokeStaticMethod(
+                                           &quot;android.app.ActivityThread&quot;,                                                     &quot;currentActivityThread&quot;,
+                                           new Class[] {}, new Object[] {});
+
+                        Handler localHandler = (Handler) ReflectUtils.getFiled(&quot;android.app.ActivityThread&quot;,&quot;mH&quot;,currentActivityThread);
+                        HookCallback oriCallback = (HookCallback) ReflectUtils.getFieldObject(Handler.class, localHandler, &quot;mCallback&quot;);
+                        HookCallback hookCallBack = new HookCallback(oriCallback);
+                        ReflectUtils.setFieldObject(Handler.class, localHandler, &quot;mCallback&quot;, hookCallBack);
+               } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+               }
+     }
+
+}
+</code></pre><p>3.反射工具类<br><br>这部分就不贴了，反射工具到处都是。<br>最后编译生成DexInject.apk</p>
+<h3 id="验证结果"><a href="#验证结果" class="headerlink" title="验证结果"></a>验证结果</h3><ol>
+<li>测试机器上点击目标APP HelloWord；</li>
+<li><p>Push各路工具和数据到测试机器：<br><br>adb push DexInject.apk  /data/injects<br>adb push inject /data/<br>adb push libhelloTool.so /data/ </p>
+</li>
+<li><p>运行注入工具：</p>
+</li>
+</ol>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/runinjec_zpszoboirlu.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>这是按home退出APP再进入，通过日志过滤器可以得到：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/injeclog_zpsexo6xapb.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-04T12:25:48.000Z" itemprop="dateUpdated">2015年11月4日 20:25</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/03/16/dexinject/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/03/16/dexinject/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dex注入/">dex注入</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/03/16/dexinject/&title=《dex注入实现详解》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/03/16/dexinject/&title=《dex注入实现详解》 — 桃小七的博客&source=最近在研究Android绿色安全这一块，具体到上层的业务就是“去第三方APP的广告”。如果既想使用第三方APP，又不想看到一些无良的广告，那dex注入基本..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/03/16/dexinject/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《dex注入实现详解》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/03/16/dexinject/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/03/16/dexinject/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/04/17/录像提示音问题笔记/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">android 录像提示音问题</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/02/05/droidwallstudy/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">droidwall源码实现分析</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="dexinject" data-title="dex注入实现详解" data-url="http://taoyuanxiaoqi.com/2015/03/16/dexinject/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/03/16/dexinject/&title=《dex注入实现详解》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/03/16/dexinject/&title=《dex注入实现详解》 — 桃小七的博客&source=最近在研究Android绿色安全这一块，具体到上层的业务就是“去第三方APP的广告”。如果既想使用第三方APP，又不想看到一些无良的广告，那dex注入基本..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/03/16/dexinject/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《dex注入实现详解》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/03/16/dexinject/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/03/16/dexinject/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/03/16/dexinject/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

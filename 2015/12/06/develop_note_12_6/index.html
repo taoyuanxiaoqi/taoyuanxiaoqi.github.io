@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>项目经验笔记 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android">
+    <meta name="description" content="来到新公司已经近八个月了。由于业务上的不同，开发方面的价值观也变化很大，趁着杭城初雪的这个好日子，闲话几句这段时间前后对比反差的一些思考，未见得正确，就算个笔记吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目经验笔记">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="来到新公司已经近八个月了。由于业务上的不同，开发方面的价值观也变化很大，趁着杭城初雪的这个好日子，闲话几句这段时间前后对比反差的一些思考，未见得正确，就算个笔记吧。">
+<meta property="og:updated_time" content="2015-12-12T03:48:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="项目经验笔记">
+<meta name="twitter:description" content="来到新公司已经近八个月了。由于业务上的不同，开发方面的价值观也变化很大，趁着杭城初雪的这个好日子，闲话几句这段时间前后对比反差的一些思考，未见得正确，就算个笔记吧。">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">项目经验笔记</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">项目经验笔记</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-12-06T05:24:18.000Z" itemprop="datePublished" class="page-time">
+  2015-12-06
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#全员意识"><span class="post-toc-number">1.</span> <span class="post-toc-text">全员意识</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#项目时间的评估"><span class="post-toc-number">2.</span> <span class="post-toc-text">项目时间的评估</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#技术人员的闲话会"><span class="post-toc-number">3.</span> <span class="post-toc-text">技术人员的闲话会</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#独立时间"><span class="post-toc-number">4.</span> <span class="post-toc-text">独立时间</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码质量的保障"><span class="post-toc-number">5.</span> <span class="post-toc-text">代码质量的保障</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-develop_note_12_6"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">项目经验笔记</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年12月06日 13:24" datetime="2015-12-06T05:24:18.000Z"  itemprop="datePublished">2015-12-06</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>来到新公司已经近八个月了。由于业务上的不同，开发方面的价值观也变化很大，趁着杭城初雪的这个好日子，闲话几句这段时间前后对比反差的一些思考，未见得正确，就算个笔记吧。<br><a id="more"></a> </p>
+<p>先介绍一下业务背景，前公司是以卖硬件为主要盈利模式的、较为传统的大中型企业，软件包括一些数据资源是以免费的形式作为提高产品的附加价值存在的，基本上一年两个机型、半年一个大周期两月一次小更新的节奏来做软件。由于品类的特殊性以及公司现有的业界地位，大环境上属于只要有新品就能卖得出去、拿到利润的安乐状态，由于硬件都是自己定制的，所以适配方面难度不大；现公司的产品则是手机平台上的应用软件，更新周期在一月以内，节奏比较快，android方面要兼容市面上大部分的主流机型，相对而言市场竞争激烈，互联网环境下的此起彼伏变化还是很快的，逆水行舟是不进则退的，而产品不进步、没有新意拢不住用户，则存在不进则死的风险。如果人生是场游戏的话，那么这是完全不同的两个副本。下面散记一些思考点，没有什么逻辑关系，想到哪儿写到哪儿。</p>
+<h3 id="全员意识"><a href="#全员意识" class="headerlink" title="全员意识"></a>全员意识</h3><p>一个人维护五个应用和五个人维护一个应用是完全不同的境遇。虽然工作量都差不多，但是“质”是不一样的。后者让人更加聚焦、虽然要多出适配兼容方面的考虑，但总体上技术上可以研究更深入、可以花更多时间到细节上来。近期的领导TIP是要对项目整体有全员意识，就是说各个模块都基本界定到人的时候，不要自扫门前雪，要对村儿里所有人家的雪都有点认识——对整个产品的设计思路、背后要达到的目的要明了甚至要参与讨论与决策，这里不讨论技术与产品之间的辩证关系、程序猿个人职业发展路线取向之类的哲学问题，最直观的好处就是战友不在的情况下，咱也能伸伸手改改bug；还有就是一块业务做到烦的情况下可以快速找到带有不熟悉技术点的业务练练手，降低技术上的疲乏感，基础一些不熟悉的技术点总能让人精神一振，没有进步对于技术人员而言是件可怕的事儿。</p>
+<h3 id="项目时间的评估"><a href="#项目时间的评估" class="headerlink" title="项目时间的评估"></a>项目时间的评估</h3><p>快速迭代嘛，快就代表着周期短，那么周期内能做掉多少需求、如何能保证周期内的开发进度，时间上的评估是重中之重。如何去评估业界似乎没有什么被统一认可的方案，各有各的招儿。有个前提是需求尽量在周期内不变动，评估才有意义；另外就是评估的过程实际上也是一个功能实现的设计过程，这涉及到开发者对老代码的熟识程度和设计功底，当然对需求的正确理解、拆分与细化达到技术上实现的最小粒度也是评估出准确时间的条件之一。具体前面有专门的文章表述，这里就不多说了。</p>
+<h3 id="技术人员的闲话会"><a href="#技术人员的闲话会" class="headerlink" title="技术人员的闲话会"></a>技术人员的闲话会</h3><p>比起一两周一次的技术人员咖啡闲话会，感觉前面的吃饭、唱K、看电影团建三部曲简直是弱爆了（虽然在领导请客的前提下腐败也是能得到满足感的）。我认为团队建设的意义在于加深团队人员的内部交流、提高熟悉程度，从了解到理解再到谅解，达到降低工作过程中人与人之间的摩擦阻力、矫正工作发力方向的目的。茶话会相比而言效果会好一些，咖啡还是茶并不重要，重要的是要说话、要交流，沉默才是最可怕的，因为沉默有太多种可能。至于能从交流中获得些什么，那就要看个人的理解和关注点了，有时候是危机感、有时候是一个新的解决方案、有的时候是对目标的全新理解带来的斗志昂扬，反正总有些收获。</p>
+<h3 id="独立时间"><a href="#独立时间" class="headerlink" title="独立时间"></a>独立时间</h3><p>存储器上碎片过多的话，会导致存储器的利用率降低，时间对于程序猿而言也是一样的，连续的大段时间对开发效率而言是必需品，而保障迭代周期顺利完成的条件之一正是高品质的开发效率。实际过程中各种各样的事把大段的时间资源切成碎片，运营的反馈、产品的会议、测试的问题……虽然这些“琐事”是必要并无法避免的，但是我们可以尽量的整理一下这些事情的耗时点——像磁盘整理一样。记得之前看到过某些公司有类似于“安静的礼拜三下午”之类的概念，意思是在每个礼拜三的下午是留给每个程序猿独立思考、开发的时间，这段时间团队的其他要程序猿参与处理的事件统统前置或者后置，程序猿之间也尽量避免相互打扰，保证开发人员有一大段时间高效的工作。我觉得不妨灵活的尝试一下这个概念。</p>
+<h3 id="代码质量的保障"><a href="#代码质量的保障" class="headerlink" title="代码质量的保障"></a>代码质量的保障</h3><p>项目质量的保证目前主要依赖于黑盒，前公司也是如此，不同的是前公司依赖于庞大的测试人员基数和足够长的测试时间来保证项目的稳定性，虽然项目规模不可同日而语，但是目前的状态相比之下测试资源是不足的。这也间接导致了每次发版本必要加班通宵的反常状态。技术人员除了提高自测强度、编码能力之外，总会从技术的角度去思考解决问题的方法，这样白盒测试就再次纳入到视野范围之内。当然白盒有白盒的问题，但是在没有更好的办法之前，只能在条件允许的前提下，逐步建立起来。对于这一点只能用“以观后效”来作为总结陈词了。</p>
+<p>不断总结不断积累，养成习惯才好。觉得自己六个月前写的代码是烂代码是个好事情，能推翻或者更新自己六个月前的观点和认识同样也值得肯定。记下来，才好对比，就这样。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-12-12T03:48:00.000Z" itemprop="dateUpdated">2015年12月12日 11:48</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/12/06/develop_note_12_6/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/&title=《项目经验笔记》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/&title=《项目经验笔记》 — 桃小七的博客&source=来到新公司已经近八个月了。由于业务上的不同，开发方面的价值观也变化很大，趁着杭城初雪的这个好日子，闲话几句这段时间前后对比反差的一些思考，未见得正确，就算..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《项目经验笔记》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/12/09/debug_15_12_9/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">［转载］Bitmap等比缩小后自定义view显示锯齿问题</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/11/08/travel_Phuket/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">普吉行琐记</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="develop_note_12_6" data-title="项目经验笔记" data-url="http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/&title=《项目经验笔记》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/&title=《项目经验笔记》 — 桃小七的博客&source=来到新公司已经近八个月了。由于业务上的不同，开发方面的价值观也变化很大，趁着杭城初雪的这个好日子，闲话几句这段时间前后对比反差的一些思考，未见得正确，就算..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《项目经验笔记》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/12/06/develop_note_12_6/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

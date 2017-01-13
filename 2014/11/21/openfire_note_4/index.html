@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>openfire学习笔记（四）ConnectionMultiplexerManager类解析 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="openfire">
+    <meta name="description" content="本文分析ConnectionMultiplexerManager类，目的是熟悉多路链接管理器的实现，与相关影响，为后续做链接分配的负载均衡做准备。根据类注释，该类的作用是“追踪链接管理器与其建立的会话。这货还能建立、获取、关闭基于链接请求的客户端会话”。下面就一步一步的将该类拆解开来。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openfire学习笔记（四）ConnectionMultiplexerManager类解析">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="本文分析ConnectionMultiplexerManager类，目的是熟悉多路链接管理器的实现，与相关影响，为后续做链接分配的负载均衡做准备。根据类注释，该类的作用是“追踪链接管理器与其建立的会话。这货还能建立、获取、关闭基于链接请求的客户端会话”。下面就一步一步的将该类拆解开来。">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/gloableenviarenment_zpssli65sno.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/connectionmultiplexermanager_zpsvdistgey.png">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/callhierarchy_zpsedbn2ggl.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image008_zps0xqgy34x.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/cm_call_zpsm32z3noc.gif">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/MultiplexerConnectionHandler_zps2xnn9r2f.png">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ConnectionManagerImpl_zpszmytwgee.png">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/connectionmanagertimer1_zpsa6uaqpns.png">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/connectionmultiplexermanagertime_zps5vwab1xo.png">
+<meta property="og:updated_time" content="2015-11-09T17:20:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openfire学习笔记（四）ConnectionMultiplexerManager类解析">
+<meta name="twitter:description" content="本文分析ConnectionMultiplexerManager类，目的是熟悉多路链接管理器的实现，与相关影响，为后续做链接分配的负载均衡做准备。根据类注释，该类的作用是“追踪链接管理器与其建立的会话。这货还能建立、获取、关闭基于链接请求的客户端会话”。下面就一步一步的将该类拆解开来。">
+<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/gloableenviarenment_zpssli65sno.jpeg">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">openfire学习笔记（四）ConnectionMultiplexerManager类解析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">openfire学习笔记（四）ConnectionMultiplexerManager类解析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-11-20T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-11-21
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#位置"><span class="post-toc-number">1.</span> <span class="post-toc-text">位置</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#属性"><span class="post-toc-number">2.</span> <span class="post-toc-text">属性</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#方法"><span class="post-toc-number">3.</span> <span class="post-toc-text">方法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#流程"><span class="post-toc-number">4.</span> <span class="post-toc-text">流程</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-openfire_note_4"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">openfire学习笔记（四）ConnectionMultiplexerManager类解析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2014年11月21日 0:00" datetime="2014-11-20T16:00:00.000Z"  itemprop="datePublished">2014-11-21</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>本文分析ConnectionMultiplexerManager类，目的是熟悉多路链接管理器的实现，与相关影响，为后续做链接分配的负载均衡做准备。根据类注释，该类的作用是“追踪链接管理器与其建立的会话。这货还能建立、获取、关闭基于链接请求的客户端会话”。下面就一步一步的将该类拆解开来。<br><a id="more"></a> </p>
+<h2 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h2><p>全局检索一下该类：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/gloableenviarenment_zpssli65sno.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>表面上同包的几个类有本类的实体，其他几个类没有实体也有相关引用，那除非是调用本类的静态方法，或者就是有静态方法能够获取本类实体。上类图：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/connectionmultiplexermanager_zpsvdistgey.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>类结构上更加简单，这货实现了SessionEventListener接口，说明它监听着Session事件；其他关系基本上看起来像是组合关系，同包的其他几个类拥有该类的实体，做了相关的操作。这几个类有：</p>
+<ul>
+<li>ClientSessionConnection ——客户端会话链接类</li>
+<li>MultiplexerPacketDeliverer ——多路数据包分发器</li>
+<li>MultiplexerPacketHandler ——链接管理器发送IQ包使用该类实体</li>
+</ul>
+<p>物以类聚，类以包分。具体有什么用，之间的关系是怎样的后续再分析。</p>
+<h2 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h2><p>属性上分两种，静态属性和一般属性。<br>先静态，值得注意的有两个：</p>
+<pre><code>private static final ConnectionMultiplexerManager instance = new ConnectionMultiplexerManager();
+/**
+* Pseudo-random number generator object for use with getMultiplexerSession(String).
+*/
+private static Random randGen = new Random();
+</code></pre><p>第一个，很明显，单例。更直白的是，实例直接在静态变量声明时new出，显然之前看到的组合关系，那几个类并没有初始化该类的实体，而是使用该类的单例，明确地说应该算是聚合关系。该类只有一个实体；<br><br>第二个是个随机工具实体，并且注释说只有getMultiplexerSession函数使用了该工具，那么就到方法分析时再看。<br><br>顺带提一句，静态代码块中，该类作为SessionEventListener被注册到系统：</p>
+<pre><code>static {
+     // Add the unique instance of this class as a session listener. We need to react
+     // when sessions are closed so we can clean up the registry of client sessions.
+     SessionEventDispatcher.addListener(instance);
+}
+</code></pre><p>一般属性值有三：</p>
+<pre><code>/**
+* Map that keeps track of connection managers and hosted connections.
+* Key: stream ID; Value: Domain of connection manager hosting connection
+*/
+private Map&lt;String, String&gt; streamIDs = new ConcurrentHashMap&lt;String, String&gt;();
+/**
+* Map that keeps track of connection managers and hosted sessions.
+* Key: Domain of connection manager; Value: Map with Key: stream ID; Value: Client session
+*/
+private Map&lt;String, Map&lt;String, LocalClientSession&gt;&gt; sessionsByManager =
+    new ConcurrentHashMap&lt;String, Map&lt;String, LocalClientSession&gt;&gt;();
+
+private SessionManager sessionManager;
+</code></pre><p>前两个是数据属性变量，streamIDs是一个Map保存链接管理器与主机链接的对应关系，键：stream ID，值：链接管理器对应的域；sessionsByManager同样是Map，他/它持有链接管理器与会话的对应关系，另外一个链接管理器对应多个会话，所以键：链接管理器的域，值：会话映射表（键：stream ID，值：本地客户端会话）；<br><br>另外一个属性应该算作工具变量，SessionManager，会话管理器。<br><br>从两个数据属性可以看出，该类的作用，追踪状态，管理会话、链接、数据流之间的关系，应当是处于统筹地位的类。<br></p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>静态方法有三：</p>
+<pre><code>public static ConnectionMultiplexerManager getInstance() {
+    return instance;
+}
+public static String getDefaultSecret() {
+    return JiveGlobals.getProperty(&quot;xmpp.multiplex.defaultSecret&quot;);
+}
+public static void setDefaultSecret(String defaultSecret) {
+    JiveGlobals.setProperty(&quot;xmpp.multiplex.defaultSecret&quot;, defaultSecret);
+}
+</code></pre><p>第一个自然是单例的获取函数；<br>其余的两个是密码相关的设置和获取；</p>
+<p>普通方法有一部分是实现SessionEventListener的方法，可以暂时放一边，其余的公有方法功能如下：</p>
+<pre><code>org.jivesoftware.openfire.multiplex.ConnectionMultiplexerManager｛
+    //静态方法
+    getDefaultSecret()
+    getInstance()
+    setDefaultSecret(String)
+
+    //关闭一个链接管理器建立的会话
+    closeClientSession(String, String)
+    //通过指定的链接管理器建立新的客户端会话
+    createClientSession(String, String, String, String)
+    //通过指定的链接管理器和数据流获取指定的本地客户端会话
+    getClientSession(String, String)
+    //获取所有的链接管理器域名集合
+    getMultiplexers()
+    //获取指定链接管理器上的随机一个会话
+    getMultiplexerSession(String)
+    //获取指定链接管理器制定数据流的会话
+    getMultiplexerSession(String, String)
+    //返回指定链接管理器上链接客户端的数量
+    getNumConnectedClients(String)
+    //使能指定的链接管理器
+    multiplexerAvailable(String)
+    //禁用指定的链接管理器
+    multiplexerUnavailable(String)
+
+    //SessionEventListener 接口方法
+    anonymousSessionCreated(Session)
+    anonymousSessionDestroyed(Session)
+    resourceBound(Session)
+    sessionCreated(Session)
+    sessionDestroyed(Session)
+｝
+</code></pre><p>可以看出核心功能除去使能函数、getter函数之外，就只有创建和关闭会话两个功能了：</p>
+<ul>
+<li>createClientSession(String, String, String, String)</li>
+<li>closeClientSession(String, String)</li>
+</ul>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p>以createClientSession函数为研究目标，找一找调用流程。调出调用树：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/callhierarchy_zpsedbn2ggl.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>看起来很眼熟，没错，正是与前面文章提过的消息包传递流程十分契合：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image008_zps0xqgy34x.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>不过在StanzaHandler.processID(IQ packet)之后的流程似乎不一样，其实从上面的调用树中可以看出，真正的调用流程实际上是MultiplexerStanzaHandler类操作的，该类继承于StanzaHandler，并且StanzaHandler本身也是一个抽象类不能直接使用。所以实际上的调用流程是这样的：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/cm_call_zpsm32z3noc.gif" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>其中第二步，由于MultiplexerStanzaHandler并没有复写process方法，所以实际上运行的是其父类的方法StanzaHandler. process(String stanza, XMPPPacketReader reader)；<br><br>在处理IQ节的过程中，MultiplexerStanzaHandler复写了processIQ方法，所以自此之后的流程与前面提到的流程有所不同；<br><br>最终使用了本文分析的类创建了客户端会话。</p>
+<p>上文提到过无论是StanzaHandler还是ConnectionHandler，都是有身份有地位抽象类，不是真正干活的。不妨从MultiplexerStanzaHandler开始向上逆推一下调用的流程：<br>全局检索MultiplexerStanzaHandler，得到：<br></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/MultiplexerConnectionHandler_zps2xnn9r2f.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>找到了，干活的类MultiplexerConnectionHandler，它继承于ConnectionHandler，那么再次向上，全局检索MultiplexerConnectionHandler，得到：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ConnectionManagerImpl_zpszmytwgee.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>眼前一亮，又回到了上一篇中分析的Module ConnectionManagerImpl，定位到关联函数：</p>
+<pre><code>private void startConnectionManagerListener(String localIPAddress) {
+            ...
+            multiplexerSocketAcceptor.bind(new InetSocketAddress(bindInterface, port),
+                                new MultiplexerConnectionHandler(serverName));
+
+            ports.add(new ServerPort(port, serverName, localIPAddress, false, null, ServerPort.Type.connectionManager));
+            ….
+}
+</code></pre><p>在分析注册、登录流程的那一篇中提到过MINA架构中SocketAcceptor提供的bind接口，再找找该函数的调用流程，不难得到如下流程：<br></p>
+<blockquote>
+<p>start() –&gt;startListeners()-&gt;startConnectionManagerListener(String localIPAddress)</p>
+</blockquote>
+<p>也就是说ConnectionManagerImpl启动时，MultiplexerConnectionHandler就已经绑定在相应的端口上，监听处理链接了。而它对应的socketAcceptor是multiplexerSocketAcceptor：<br></p>
+<pre><code>private synchronized void createListeners() {
+    …
+    // Create the port listener for s2s communication
+    //服务器间信息交流的
+    createServerListener(localIPAddress);
+    // Create the port listener for Connections Multiplexers
+    createConnectionManagerListener();
+    // Create the port listener for external components
+    //外部元件端口监听
+    createComponentListener();
+    // Create the port listener for clients
+    //客户端端口监听
+    …
+}
+
+private void createConnectionManagerListener() {
+    // Start multiplexers socket unless it&apos;s been disabled.
+    if (isConnectionManagerListenerEnabled()) {
+        // Create SocketAcceptor with correct number of processors
+        multiplexerSocketAcceptor = buildSocketAcceptor(&quot;multiplexer&quot;);
+        …
+}
+</code></pre><p>以上，可知Module ConnectionManagerImpl，创建链接管理器监听，对应端口的处理handler实现类是MultiplexerConnectionHandler，MultiplexerConnectionHandler复写了createStanzaHandler(NIOConnection connection)函数，所以它的StanzaHandler实体是MultiplexerStanzaHandler对象。所以在MultiplexerConnectionHandler的messageReceived回调监听到消息时，下一步就会送给MultiplexerStanzaHandler来处理，在IQ节消息的某种处理中，或许就是分析协议，接到的信息中要求建立会话，具体还要分析相关源码，最后派发到本文分析的类，调用了ConnectionMultiplexerManager.createClientSession 。</p>
+<p>系统启动时序：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/connectionmanagertimer1_zpsa6uaqpns.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>ConnectionMultiplexerManager相关时序：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/connectionmultiplexermanagertime_zps5vwab1xo.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-09T17:20:39.000Z" itemprop="dateUpdated">2015年11月10日 1:20</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2014/11/21/openfire_note_4/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openfire/">openfire</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/&title=《openfire学习笔记（四）ConnectionMultiplexerManager类解析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/&title=《openfire学习笔记（四）ConnectionMultiplexerManager类解析》 — 桃小七的博客&source=本文分析ConnectionMultiplexerManager类，目的是熟悉多路链接管理器的实现，与相关影响，为后续做链接分配的负载均衡做准备。根据类注..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（四）ConnectionMultiplexerManager类解析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/11/25/openfire_note_5/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">openfire学习笔记（五）ConnectionManager拓展模块——未完待续</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/11/15/openfire_note_3/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">openfire学习笔记（三）ConnectionManagerImpl类解析——未完待续</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="openfire_note_4" data-title="openfire学习笔记（四）ConnectionMultiplexerManager类解析" data-url="http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/&title=《openfire学习笔记（四）ConnectionMultiplexerManager类解析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/&title=《openfire学习笔记（四）ConnectionMultiplexerManager类解析》 — 桃小七的博客&source=本文分析ConnectionMultiplexerManager类，目的是熟悉多路链接管理器的实现，与相关影响，为后续做链接分配的负载均衡做准备。根据类注..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（四）ConnectionMultiplexerManager类解析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/11/21/openfire_note_4/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

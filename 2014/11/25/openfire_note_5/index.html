@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>openfire学习笔记（五）ConnectionManager拓展模块——未完待续 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="openfire">
+    <meta name="description" content="ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openfire学习笔记（五）ConnectionManager拓展模块——未完待续">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/lip_image002_zpsioedm1tm.gif">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image004_zpsvmxfi5jw.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image006_zpscknwbghc.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image008_zps9ukxmcxi.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image010_zpsczbtoqly.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image012_zpsq3gh8mhc.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image014_zpsismhfpvm.jpeg">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image002_zpsbwhatxo3.jpeg">
+<meta property="og:updated_time" content="2015-11-09T17:20:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openfire学习笔记（五）ConnectionManager拓展模块——未完待续">
+<meta name="twitter:description" content="ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。">
+<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/lip_image002_zpsioedm1tm.gif">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">openfire学习笔记（五）ConnectionManager拓展模块——未完待续</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">openfire学习笔记（五）ConnectionManager拓展模块——未完待续</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-11-24T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-11-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ConnectionManager"><span class="post-toc-number">1.</span> <span class="post-toc-text">ConnectionManager</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装与使用"><span class="post-toc-number">2.</span> <span class="post-toc-text">安装与使用</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#运行原理"><span class="post-toc-number">3.</span> <span class="post-toc-text">运行原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#服务器与CM"><span class="post-toc-number">4.</span> <span class="post-toc-text">服务器与CM</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-openfire_note_5"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">openfire学习笔记（五）ConnectionManager拓展模块——未完待续</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2014年11月25日 0:00" datetime="2014-11-24T16:00:00.000Z"  itemprop="datePublished">2014-11-25</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="ConnectionManager"><a href="#ConnectionManager" class="headerlink" title="ConnectionManager"></a><a href="http://www.igniterealtime.org/projects/openfire/connection_manager.jsp" target="_blank" rel="external">ConnectionManager</a></h2><p>Openfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。<br><br><a id="more"></a><br>Openfire 服务器可以连接一个或多个 Connection Manager 。每个 Connection Manager 可以处理一个或多个支持 XMPP 的客户端。为 Openfire 配置 Connection Manager 后，支持 XMPP 的客户端仅需要连接 Connection Manager ，由 Connection Manager 负责管理对来自 XMPP 客户端对 Openfire 服务器的连接。下图是Openfire 服务器配置 Connection Manager 后的系统架构。<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/lip_image002_zpsioedm1tm.gif" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<p>Ps：第一节是无耻的拷贝。</p>
+<h2 id="安装与使用"><a href="#安装与使用" class="headerlink" title="安装与使用"></a>安装与使用</h2><p>1.服务器设置：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image004_zpsvmxfi5jw.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<p>2.下载功能包，connection_manager_3_6_3.tar.gz，解压至任意目录CM_PATH；<br><br>3.设置CM配置文件，CM_PATH/connection_manager/conf/manager.xml，修改各路属性如下：</p>
+<ul>
+<li>domain :域名，如果DNS不支持（本文的实验环境就是这样），添加到/etc/hosts 列表，使填写的值能够ping通，如图本次添加的值为”bfc-27”；</li>
+<li>hostname：在DNS不支持的情况下，写入IP地址，其他情况不写也行；</li>
+<li>端口号和密码同服务器设置保持一致；</li>
+<li>Manager下面的name属性是显示在服务器上的CM名称，不填写的话会随即生成，注意不能包含下划线；</li>
+</ul>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image006_zpscknwbghc.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>4.运行CM，CM_PATH/connection_manager/bin/cmanager.sh脚本，可能无运行权限，加好权限即可；</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image008_zps9ukxmcxi.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>此时刷新服务器链接管理器页面可以看到：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image010_zpsczbtoqly.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>5.登录，在支持XMPP的客户端，填写帐号密码，服务器设置为CM的地址，登录后，刷新服务器链接管理器页面可以看到客户端数量有所增加。</p>
+<h2 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h2><p>1.下面草草的分析下CM的运行原理，既然是使用脚本启动的，那么从脚本开始:</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image012_zpsq3gh8mhc.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>前面一大坨基本是各种环境变量的设置，最后一两句切入主题，lib目录下的startup.jar包，被执行，从jar包目录很容易找到启动类所在，从官网下载源码文件：connection_manager_src_3_6_3.tar.gz；</p>
+<p>2.打开源码，在上面的包路径下找到启动类ServerStarter.java，就会发现眼熟的main函数、start函数、解压包操作和类加载操作，最后一步主函数毫不隐讳的加载了核心类ConnectionManager：</p>
+<pre><code>ClassLoader loader = new JiveClassLoader(parent, libDir);
+Thread.currentThread().setContextClassLoader(loader);
+Class containerClass = loader.loadClass(
+ &quot;org.jivesoftware.multiplexer.ConnectionManager&quot;);
+containerClass.newInstance();
+</code></pre><p>3.从启动器跳入到ConnectionManager类，从器包含的方法和行为方式来看倒是和openfire中的XMPPServer有几分相似，构造器中调用start函数，start函数基本上做了三件事：</p>
+<pre><code>public void start() {
+    try {
+        //第一件事初始化
+        initialize();
+        // If the server has already been setup then we can start all the server&apos;s modules
+        if (!setupMode) {
+            // 第二件事初始化并执行了Module
+            startModules();
+        }
+                        //第三件事打印启动服务信息
+        // Log that the server has been started
+        …
+    }
+    catch (Exception e) {
+        //异常处理
+                        …
+    }
+}
+</code></pre><p>主要操作在第二件事中，CM只有一个表面上看不是Module的Module——ServerSurrogate，<br>代理服务器，这个类管理了线程池，整理和派发客户端信息与主服务器链接交互。</p>
+<pre><code>private void startModules() {
+    serverSurrogate = new ServerSurrogate();
+    serverSurrogate.start();
+    String localIPAddress;
+    // Setup port info
+    try {
+        localIPAddress = InetAddress.getLocalHost().getHostAddress();
+    }
+    catch (UnknownHostException e) {
+        localIPAddress = &quot;Unknown&quot;;
+    }
+    // Start process that checks health of socket connections
+    SocketSendingTracker.getInstance().start();
+    // Check if we need to configure MINA to use Direct or Heap Buffers
+    // Note: It has been reported that heap buffers are 50% faster than direct buffers
+    if (!JiveGlobals.getBooleanProperty(&quot;xmpp.socket.directBuffer&quot;, false)) {
+        ByteBuffer.setUseDirectBuffers(false);
+        ByteBuffer.setAllocator(new SimpleByteBufferAllocator());
+    }
+    // Start the port listener for clients
+    startClientListeners(localIPAddress);
+    // Start the port listener for secured clients
+    startClientSSLListeners(localIPAddress);
+    // Start http bind listener
+    startHttpBindServlet();
+}
+</code></pre><p>从代码上可以看到前半段基本是针对ServerSurrogate进行初始化和启动，后半段则是开启各路监听接口，这个玩法又同openfire中的ConnectionManagerImpl相似了，其中值得注意的是客户端监听器startClientListeners ：</p>
+<pre><code>private void startClientListeners(String localIPAddress) {
+    …
+    // Create SocketAcceptor with correct number of processors
+    socketAcceptor = buildSocketAcceptor();
+    …
+    try {
+        …
+        // Start accepting connections
+        socketAcceptor.bind(new InetSocketAddress(bindInterface, port), new ClientConnectionHandler());
+        …
+    }
+    catch (Exception e) {
+        …
+    }
+}
+</code></pre><p>可以看到openfire中熟悉的SocketAcceptor，绑定IO端口与处理handler的操作，当然CM与openfire同是基于MINA框架的，所以它们的信息处理方式基本一致。</p>
+<p>从网络上找到一张CM的信息流程简图，可以大致说明CM的架构与信息流向：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image014_zpsismhfpvm.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p><a href="http://irusher.com/Openfire%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86%E5%99%A8/" target="_blank" rel="external">图片来源</a></p>
+<h2 id="服务器与CM"><a href="#服务器与CM" class="headerlink" title="服务器与CM"></a>服务器与CM</h2><p>CM与服务器可以是多对一的关系，并且我们在服务器网页上可以看到服务器上连接的每个CM的信息，即openfire存在获取连接在它上面的CM信息的接口，试着找出它。<br>在浏览器openfire连接管理页面查询源代码，可以得到：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image002_zpsbwhatxo3.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>找到网页对应的jsp代码文件openfire/src/web/connection-managers-settings.jsp ，可以找到如下代码：</p>
+<pre><code>&lt;%
+ConnectionMultiplexerManager multiplexerManager = ConnectionMultiplexerManager.getInstance();
+SessionManager sessionManager = SessionManager.getInstance();
+Collection&lt;String&gt; connectionManagers = multiplexerManager.getMultiplexers();
+if (connectionManagers.isEmpty()) {
+%&gt;
+    &lt;tr&gt;
+        &lt;td width=&quot;100%&quot; colspan=&quot;3&quot; align=&quot;center&quot; nowrap&gt;&lt;fmt:message key=&quot;connection-manager.details.no-managers-connected&quot; /&gt;
+&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;% } else {
+    for (String managerName : connectionManagers) {
+        List&lt;ConnectionMultiplexerSession&gt; sessions = sessionManager.getConnectionMultiplexerSessions(managerName);
+        if (sessions.isEmpty()) {
+            continue;
+        }
+        String hostAddress = sessions.get(0).getHostAddress();
+        String hostName = sessions.get(0).getHostName();
+%&gt;
+</code></pre><p>相关类ConnectionMultiplexerManager、SessionManager，与相关方法：</p>
+<pre><code>Collection&lt;String&gt; connectionManagers = multiplexerManager.getMultiplexers();
+    ——
+/**
+* Returns the names of the connected connection managers to this server.
+*       获取所有的链接管理器域名集合
+* @return the names of the connected connection managers to this server.
+*/
+public Collection&lt;String&gt; getMultiplexers() {
+    return sessionsByManager.keySet();
+}
+
+/**
+* Map that keeps track of connection managers and hosted sessions.
+* Key: Domain of connection manager; Value: Map with Key: stream ID; Value: Client *session
+*/
+private Map&lt;String, Map&lt;String, LocalClientSession&gt;&gt; sessionsByManager =
+        new ConcurrentHashMap&lt;String, Map&lt;String, LocalClientSession&gt;&gt;();
+</code></pre><p>所以，connectionManagers这个集合像是当前服务器上所有CM对应的域名，那么再看jsp代码中下面取CM信息的for循环代码，就是以域名为参数，进而取所有Session信息的：</p>
+<pre><code>for (String managerName : connectionManagers) {
+    List&lt;ConnectionMultiplexerSession&gt; sessions = sessionManager.getConnectionMultiplexerSessions(managerName);
+    …
+｝
+</code></pre><p>那么对于SessionManager，它的getConnectionMultiplexerSessions(String)函数又是如何实现的呢？</p>
+<pre><code>/**
+ * Returns a collection with all the sessions originated from the connection manager
+ * whose domain matches the specified domain. If there is no connection manager with
+ * the specified domain then an empty list is going to be returned.
+ *
+ * @param domain the domain of the connection manager.
+ * @return a collection with all the sessions originated from the connection manager
+ *         whose domain matches the specified domain.
+ */
+public List&lt;ConnectionMultiplexerSession&gt; getConnectionMultiplexerSessions(String domain) {
+    List&lt;ConnectionMultiplexerSession&gt; sessions = new ArrayList&lt;ConnectionMultiplexerSession&gt;();
+    // Add sessions of CMs connected to this JVM
+    //添加JVM里面所有的CM链接对应的Session
+    for (String address : localSessionManager.getConnnectionManagerSessions().keySet()) {
+        JID jid = new JID(address);
+        if (domain.equals(jid.getDomain())) {
+            sessions.add(localSessionManager.getConnnectionManagerSessions().get(address));
+        }
+    }
+    // Add sessions of CMs connected to other cluster nodes
+    //添加其他集群节点中的CM链接包含的Session
+    RemoteSessionLocator locator = server.getRemoteSessionLocator();
+    if (locator != null) {
+        for (Map.Entry&lt;String, byte[]&gt; entry : multiplexerSessionsCache.entrySet()) {
+            if (!server.getNodeID().equals(entry.getValue())) {
+                JID jid = new JID(entry.getKey());
+                if (domain.equals(jid.getDomain())) {
+                    sessions.add(
+                            locator.getConnectionMultiplexerSession(entry.getValue(), new JID(entry.getKey())));
+                }
+            }
+        }
+    }
+    return sessions;
+}
+</code></pre><p>相关的变量定义：</p>
+<p><strong>SessionManager</strong>：</p>
+<pre><code>/**
+* Cache (unlimited, never expire) that holds sessions of connection managers. For each
+* socket connection of the CM to the server there is going to be an entry in the cache.
+* Key: full address of the CM that identifies the socket, Value: nodeID&lt;br&gt;
+* 缓存（不受限，永不失效），保持连接管理器的会话。对于每个CM与服务器之间的socket
+* 链接，都将会有一个实体保存在缓存中。
+* key: 能够识别出socket的CM全地址 value: 节点ID
+*/
+private Cache&lt;String, byte[]&gt; multiplexerSessionsCache;
+</code></pre><p><strong>LocalSessionManager</strong>：</p>
+<pre><code>/**
+* Map of connection multiplexer sessions grouped by connection managers. Each connection
+* manager may have many connections to the server (i.e. connection pool). All connections
+* originated from the same connection manager are grouped as a single entry in the map.
+* Once all connections have been closed users that were logged using the connection manager
+* will become unavailable.
+*/
+private Map&lt;String, LocalConnectionMultiplexerSession&gt; connnectionManagerSessions =
+        new ConcurrentHashMap&lt;String, LocalConnectionMultiplexerSession&gt;();
+</code></pre><p>综上可知，以上工具类的内部都记录了CM域名、节点ID、Session的映射关系，也从侧面反映了ConnectionMultiplexerManager系的信息流程处理应当是openfire中处理CM的信息流程。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-09T17:20:55.000Z" itemprop="dateUpdated">2015年11月10日 1:20</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2014/11/25/openfire_note_5/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openfire/">openfire</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&title=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&title=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&source=ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 ..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/11/27/keduxingsuibi/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">从“把代码写得简单易懂到底好不好”想到的</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/11/21/openfire_note_4/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">openfire学习笔记（四）ConnectionMultiplexerManager类解析</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="openfire_note_5" data-title="openfire学习笔记（五）ConnectionManager拓展模块——未完待续" data-url="http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&title=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&title=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&source=ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 ..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

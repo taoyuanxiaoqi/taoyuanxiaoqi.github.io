@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>openfire学习笔记（一）系统启动流程 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="openfire">
+    <meta name="description" content="读源码，从找到入口开始。Openfire源码的入口类在org.jivesoftware.openfire.starter包中，目录结构如下：org.jivesoftware.openfire.starter|–JiveClassLoader.java|–ServerStarter.java在ServerStarter中，找到了经典的main：
+public static void main(Str">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openfire学习笔记（一）系统启动流程">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="读源码，从找到入口开始。Openfire源码的入口类在org.jivesoftware.openfire.starter包中，目录结构如下：org.jivesoftware.openfire.starter|–JiveClassLoader.java|–ServerStarter.java在ServerStarter中，找到了经典的main：
+public static void main(Str">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/openfire_module_class_zps3c8458c7.jpeg">
+<meta property="og:updated_time" content="2015-11-04T12:28:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openfire学习笔记（一）系统启动流程">
+<meta name="twitter:description" content="读源码，从找到入口开始。Openfire源码的入口类在org.jivesoftware.openfire.starter包中，目录结构如下：org.jivesoftware.openfire.starter|–JiveClassLoader.java|–ServerStarter.java在ServerStarter中，找到了经典的main：
+public static void main(Str">
+<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/openfire_module_class_zps3c8458c7.jpeg">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">openfire学习笔记（一）系统启动流程</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">openfire学习笔记（一）系统启动流程</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-10-31T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-11-01
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#相关代码设计："><span class="post-toc-number">1.</span> <span class="post-toc-text">相关代码设计：</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-openfire_note_1"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">openfire学习笔记（一）系统启动流程</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2014年11月01日 0:00" datetime="2014-10-31T16:00:00.000Z"  itemprop="datePublished">2014-11-01</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>读源码，从找到入口开始。Openfire源码的入口类在org.jivesoftware.openfire.starter包中，目录结构如下：<br><br>org.jivesoftware.openfire.starter<br><br>|–JiveClassLoader.java<br><br>|–ServerStarter.java<br><br><br>在ServerStarter中，找到了经典的main：<br></p>
+<pre><code>public static void main(String [] args) {
+new ServerStarter().start();
+}
+</code></pre><p><br><a id="more"></a><br>Start()的流程也颇为明了，一眼望去，除了判断一些异常情况外，主要做了解压压缩的库文件、加载核心服务类（XMPPServer）的操作：<br>解压工作：unpackArchives() 函数完成；<br>加载类：JiveClassLoader类完成，该类继承于java提供的类加载器 URLClassLoader，拓展内容是对于加载的文件进行了过滤，只处理zip包与jar包，在加载XMPPServer类之前，预处理了库文件的加载，之后又调用了XMPPServer的实体获取方法：<br></p>
+<pre><code>//加载器初始化 库预处理
+ClassLoader loader = new JiveClassLoader(parent, libDir);
+Thread.currentThread().setContextClassLoader(loader);
+//核心服务类
+Class containerClass = loader.loadCl(&quot;org.jivesoftware.openfire.XMPPServer&quot;);
+//获取实体
+containerClass.newInstance();
+</code></pre><p>这样，通过入口类的加载器，程序运行到核心服务类——XMPPServer，这里才是系统启动的核心实现。<br>先大概看一下它的私有成员，除了一些标志、数据存储变量和常量以外，可以称得上是工具类型的成员的只有以下几个：<br></p>
+<pre><code>private ClassLoader loader;
+
+private PluginManager pluginManager;
+private InternalComponentManager componentManager;
+private RemoteSessionLocator remoteSessionLocator;
+</code></pre><p>类加载器自不必说，剩下的倒应该是主要功能相关：plugin、component、remote。<br>从构造看起，又发现了熟悉的start(),基本流程如下：<br>初始化：<br><br>1.initialize() ;//初始化变量、缓存<br><br>2.module 处理：<br></p>
+<pre><code>//加载模块
+loadModules();
+// Initize all the modules
+initModules();
+// Start all the modules
+startModules();
+</code></pre><p>3.加载pulgin：pluginManager.start();<br>4.开各路监听接口：</p>
+<pre><code>// Notify server listeners that the server has been started
+for (XMPPServerListener listener : listeners) {
+    listener.serverStarted();
+}
+</code></pre><p>该加载的加载了，该监听的监听了，系统的启动基本也就完成了。</p>
+<h3 id="相关代码设计："><a href="#相关代码设计：" class="headerlink" title="相关代码设计："></a>相关代码设计：</h3><p>设计方面没什么出奇的地方，下面是module类型的部分类图，所有module性质的功能模块都实现了这个接口，从而达到统一启动流程的目的。<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/openfire_module_class_zps3c8458c7.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure><br>pluginManager 实现了插件管理的功能，启动过程中加载插件的工作由它完成，内容比较多，后续使用插件相关的功能时再仔细分析。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-04T12:28:05.000Z" itemprop="dateUpdated">2015年11月4日 20:28</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2014/11/01/openfire_note_1/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openfire/">openfire</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/&title=《openfire学习笔记（一）系统启动流程》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/&title=《openfire学习笔记（一）系统启动流程》 — 桃小七的博客&source=读源码，从找到入口开始。Openfire源码的入口类在org.jivesoftware.openfire.starter包中，目录结构如下：org.jiv..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（一）系统启动流程》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/11/11/openfire_note_2/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">openfire学习笔记（二）注册登录消息传递流程</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/10/31/openfire_note_0/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">openfire学习笔记（零）搜集资料在学习之前</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="openfire_note_1" data-title="openfire学习笔记（一）系统启动流程" data-url="http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/&title=《openfire学习笔记（一）系统启动流程》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/&title=《openfire学习笔记（一）系统启动流程》 — 桃小七的博客&source=读源码，从找到入口开始。Openfire源码的入口类在org.jivesoftware.openfire.starter包中，目录结构如下：org.jiv..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（一）系统启动流程》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/11/01/openfire_note_1/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

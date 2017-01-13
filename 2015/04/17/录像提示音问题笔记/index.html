@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>android 录像提示音问题 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android camera">
+    <meta name="description" content="android 录像提示音问题
+选中拍摄时关闭声音，摄像时会有声音，设备：小米note，红米note，oppo
+
+据查该问题属于一种防偷拍的潜规则类型设置，与android系统提供商相关，拍照／摄像的提示音所有实现都在底层实现，上层能够控制的有限。
+为什么拍照可以实现静默？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android 录像提示音问题">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="android 录像提示音问题
+选中拍摄时关闭声音，摄像时会有声音，设备：小米note，红米note，oppo
+
+据查该问题属于一种防偷拍的潜规则类型设置，与android系统提供商相关，拍照／摄像的提示音所有实现都在底层实现，上层能够控制的有限。
+为什么拍照可以实现静默？">
+<meta property="og:updated_time" content="2015-04-21T14:31:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="android 录像提示音问题">
+<meta name="twitter:description" content="android 录像提示音问题
+选中拍摄时关闭声音，摄像时会有声音，设备：小米note，红米note，oppo
+
+据查该问题属于一种防偷拍的潜规则类型设置，与android系统提供商相关，拍照／摄像的提示音所有实现都在底层实现，上层能够控制的有限。
+为什么拍照可以实现静默？">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">android 录像提示音问题</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">android 录像提示音问题</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-04-17T11:19:19.000Z" itemprop="datePublished" class="page-time">
+  2015-04-17
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#android-录像提示音问题"><span class="post-toc-number">1.</span> <span class="post-toc-text">android 录像提示音问题</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#为什么拍照可以实现静默？"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">为什么拍照可以实现静默？</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#那么摄像的提示音呢？"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">那么摄像的提示音呢？</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结论"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">结论</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-录像提示音问题笔记"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">android 录像提示音问题</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年04月17日 19:19" datetime="2015-04-17T11:19:19.000Z"  itemprop="datePublished">2015-04-17</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="android-录像提示音问题"><a href="#android-录像提示音问题" class="headerlink" title="android 录像提示音问题"></a>android 录像提示音问题</h1><blockquote>
+<p><em>选中拍摄时关闭声音，摄像时会有声音，设备：小米note，红米note，oppo</em></p>
+</blockquote>
+<p>据查该问题属于一种防偷拍的潜规则类型设置，与android系统提供商相关，拍照／摄像的提示音所有实现都在底层实现，上层能够控制的有限。</p>
+<h2 id="为什么拍照可以实现静默？"><a href="#为什么拍照可以实现静默？" class="headerlink" title="为什么拍照可以实现静默？"></a>为什么拍照可以实现静默？</h2><a id="more"></a>
+<p>静默拍照目前可以通过两种方式设置：<br></p>
+<ol>
+<li>android4.2以上的版本可以通过Camera提供的enableShutterSound(boolean enabled)方法禁止拍照提示音；<br></li>
+<li>通过调整接口使用来规避提示音，设置shutter callback为null来实现，该方法在<a href="https://developer.android.com/reference/android/hardware/Camera.Parameters.html#isVideoSnapshotSupported%28%29" target="_blank" rel="external">官方api</a>中有提及；</li>
+</ol>
+<p>这两种方法在底层的实现原理如下：<br>以android4.2的源码 为例，最终的提示音调用代码目录在：<a href="http://androidxref.com/4.2_r1/xref/frameworks/av/services/camera/libcameraservice/CameraClient.cpp#402" target="_blank" rel="external">/frameworks/av/services/camera/libcameraservice/CameraClient.cpp</a></p>
+<pre><code>// snapshot taken callback
+void CameraClient::handleShutter(void) {
+    //mPlayShutterSound 该值从上层设置 即第一种方法提供的接口实现，4.2以上版本有效
+    if (mPlayShutterSound) {
+        //声音调用
+        mCameraService-    &gt;playSound(CameraService::SOUND_SHUTTER);
+    }
+
+    sp&lt;ICameraClient&gt; c = mCameraClient;
+    if (c != 0) {
+        mLock.unlock();
+        c-&gt;notifyCallback(CAMERA_MSG_SHUTTER, 0, 0);
+        if (!lockIfMessageWanted(CAMERA_MSG_SHUTTER)) return;
+    }
+    disableMsgType(CAMERA_MSG_SHUTTER);
+
+    mLock.unlock();
+}
+</code></pre><p>留意一下handleShutter的调用情况，可以发现在CameraClient中仅有一处调用了该函数：</p>
+<pre><code>void CameraClient::notifyCallback(int32_t msgType, int32_t ext1,
+        int32_t ext2, void* user) {
+    LOG2(&quot;notifyCallback(%d)&quot;, msgType);
+
+    Mutex* lock = getClientLockFromCookie(user);
+    if (lock == NULL) return;
+    Mutex::Autolock alock(*lock);
+
+    CameraClient* client =
+            static_cast&lt;CameraClient*&gt;(getClientFromCookie(user));
+    if (client == NULL) return;
+
+    if (!client-&gt;lockIfMessageWanted(msgType)) return;
+
+    switch (msgType) {
+        case CAMERA_MSG_SHUTTER:
+              // 控制发声
+            // ext1 is the dimension of the yuv picture.
+            client-&gt;handleShutter();
+            break;
+        default:
+            client-&gt;handleGenericNotify(msgType, ext1, ext2);
+            break;
+    }
+}
+</code></pre><p>那么第二种规避发声的方法也有了合理的解释，底层的快门声调用放在了notifyCallback中，那么躲开了该回调的使用也就避开了快门的声音。</p>
+<h2 id="那么摄像的提示音呢？"><a href="#那么摄像的提示音呢？" class="headerlink" title="那么摄像的提示音呢？"></a>那么摄像的提示音呢？</h2><p>摄像功能在java层是通过 MediaRecorder 类实现的，但是在java层包括它对应的jni层大多也只是包裹一个接口、注册等作用，到底层最后的实现还是在CameraClient类中，与提示音有关的代码如下：</p>
+<pre><code>status_t CameraClient::startRecordingMode() {
+    LOG1(&quot;startRecordingMode&quot;);
+    status_t result = NO_ERROR;
+
+    // if recording has been enabled, nothing needs to be done
+    if (mHardware-&gt;recordingEnabled()) {
+        return NO_ERROR;
+    }
+
+    // if preview has not been started, start preview first
+    if (!mHardware-&gt;previewEnabled()) {
+        result = startPreviewMode();
+        if (result != NO_ERROR) {
+            return result;
+        }
+    }
+
+    // start recording mode
+    enableMsgType(CAMERA_MSG_VIDEO_FRAME);
+    //提示音代码
+    mCameraService-&gt;playSound(CameraService::SOUND_RECORDING);
+    result = mHardware-&gt;startRecording();
+    if (result != NO_ERROR) {
+        ALOGE(&quot;mHardware-&gt;startRecording() failed with status %d&quot;, result);
+    }
+    return result;
+}
+</code></pre><p>关联代码上下文可以发现startRecordingMode本函数无法规避，想要通过该类实现录像功能这是必走的流程，所以相对而言正规取巧的方法在上层理论上无法操控。能够看出的是4.2中也没有预留标志位给上层去控制。</p>
+<p>一些野路子方法如下：</p>
+<ul>
+<li>方案一：拍摄开始时设置系统音频流静默并调整音量为0，结束时恢复；</li>
+<li>方案二：找到提示音文件，通过改名／移动等方法让发音失灵，由于音频文件在系统中，所以需要root权限，该方案对用户要求比较高，不考虑；</li>
+</ul>
+<p>经过测试，方案一能够搞定一部分机型的情况，但不是所有的，如中兴、小米的机器都是无效的，在一篇博客<a href="http://www.cnblogs.com/wuqinghua/archive/2013/06/01/3112502.html" target="_blank" rel="external">《Android Camera快门音静音问题》</a>中找到了一种解释：</p>
+<blockquote>
+<p>但是需要注意的是：很多机器是强制快门音的，也就是说你在app里调用上述接口也许根本不起作用，你明明enableShutterSound（false）了，但是拍照的时候快门音照样响起，原因在于烧制的系统版本里面有一个值被写死了：ro.camera.sound.forced = 1</p>
+</blockquote>
+<p>在CameraClient代码中找一下这个系统属性值可以找到：</p>
+<pre><code>// enable shutter sound
+status_t CameraClient::enableShutterSound(bool enable) {
+    LOG1(&quot;enableShutterSound (pid %d)&quot;, getCallingPid());
+
+    status_t result = checkPidAndHardware();
+    if (result != NO_ERROR) return result;
+
+    if (enable) {
+        mPlayShutterSound = true;
+        return OK;
+    }
+
+    // Disabling shutter sound may not be allowed. In that case only
+    // allow the mediaserver process to disable the sound.
+    char value[PROPERTY_VALUE_MAX];
+    //取到系统值来控制 mPlayShutterSound 设置权限
+    property_get(&quot;ro.camera.sound.forced&quot;, value, &quot;0&quot;);
+    if (strcmp(value, &quot;0&quot;) != 0) {
+        // Disabling shutter sound is not allowed. Deny if the current
+        // process is not mediaserver.
+        if (getCallingPid() != getpid()) {
+            ALOGE(&quot;Failed to disable shutter sound. Permission denied (pid %d)&quot;, getCallingPid());
+            return PERMISSION_DENIED;
+        }
+    }
+
+    mPlayShutterSound = false;
+    return OK;
+}
+</code></pre><p>那么很明显，在CameraClient中这个系统值的作用就是限制 mPlayShutterSound 的设置了，也是对引文那一段的解释。我们在源码的全局范围内<a href="http://androidxref.com/4.2_r1/search?q=ro.camera.sound.forced&amp;defs=&amp;refs=&amp;path=&amp;hist=&amp;project=abi&amp;project=bionic&amp;project=bootable&amp;project=build&amp;project=cts&amp;project=dalvik&amp;project=development&amp;project=device&amp;project=docs&amp;project=external&amp;project=frameworks&amp;project=gdk&amp;project=hardware&amp;project=libcore&amp;project=libnativehelper&amp;project=ndk&amp;project=packages&amp;project=pdk&amp;project=prebuilts&amp;project=sdk&amp;project=system&amp;project=tools" target="_blank" rel="external">搜索该值</a>，可以发现除了 mPlayShutterSound 该值相关的几个cpp类中有相关的使用以外，audio_policy_hal.cpp 在该类中也可以找到对forced值的使用，经过查询可以了解到这部分是实现了提示音无视静音的功能，原理大概是在播放提示音的时候会将音量调到最大，详细的过程讲解博客见<a href="http://www.code06.com/mobile/yzhang8703/26569.html" target="_blank" rel="external">《Android 4.1 与 4.2 (老JB和小JB) 在”强制拍照摄像音”处理上的区别分析》</a>。也就是说部分设置了ro.camera.sound.forced 的系统，采用强制静音或者调音量的方法行不通，该问题基本无解。</p>
+<p>从测试的情况看，ZTE Q801L是可以通过命令获取到ro.camera.sound.forced为1的，实现上确实无法静默拍摄；而小米则比较有意思，首先它无法获取到forced值，但是从表现上看小米原生的相机是静默的、第三方的相机则静默不了，可以推测是MiUI内部有相关的内部接口或者公用属性去设置来控制。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>对于无root的应用层而言，使用系统提供的MediaRecorder实现的，针对系统的不同有以下几种情况：<br><br>1.系统强制发音，设置了ro.camera.sound.forced的，无解；－－ 如中兴ZTE Q801L<br><br>2.定制化系统提供了内部接口的并且外在表现为强制发音的，暂时无解。或许可以有针对性的的对相关的定制系统查找相关的方法；－－如小米note、红米note<br><br>3.系统未强制设定的，一部分无需设置（如htc、三星）；一部分可以通过提供静音策略来限制，这部分要保证不引发其他的音频类型问题；（魅族？）<br></p>
+<p>除此之外，自定义编写视频录制实现也是个方案，不过工作量需要评估。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-04-21T14:31:00.000Z" itemprop="dateUpdated">2015年4月21日 22:31</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/04/17/录像提示音问题笔记/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android-camera/">android camera</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/&title=《android 录像提示音问题》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/&title=《android 录像提示音问题》 — 桃小七的博客&source=android 录像提示音问题
+选中拍摄时关闭声音，摄像时会有声音，设备：小米note，红米note，oppo
+
+据查该问题属于一种防偷拍的潜规则类型设置..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《android 录像提示音问题》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/04/26/changworknote/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">换工作杂谈</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/03/16/dexinject/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">dex注入实现详解</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="录像提示音问题笔记" data-title="android 录像提示音问题" data-url="http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/&title=《android 录像提示音问题》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/&title=《android 录像提示音问题》 — 桃小七的博客&source=android 录像提示音问题
+选中拍摄时关闭声音，摄像时会有声音，设备：小米note，红米note，oppo
+
+据查该问题属于一种防偷拍的潜规则类型设置..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《android 录像提示音问题》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/04/17/录像提示音问题笔记/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

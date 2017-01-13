@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>droidwall源码实现分析 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="开源代码">
+    <meta name="description" content="Droid Wall是什么Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种">
+<meta property="og:type" content="article">
+<meta property="og:title" content="droidwall源码实现分析">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="Droid Wall是什么Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallclasslist_zps0m9zuvfu.png">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwall_zpszva8yx80.png">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallapiclass_zpsogfsuxet.png">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/apifunctionslist_zpsgdclx2ep.png">
+<meta property="og:updated_time" content="2015-11-04T12:26:17.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="droidwall源码实现分析">
+<meta name="twitter:description" content="Droid Wall是什么Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种">
+<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallclasslist_zps0m9zuvfu.png">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">droidwall源码实现分析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">droidwall源码实现分析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-02-05T02:46:18.000Z" itemprop="datePublished" class="page-time">
+  2015-02-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Droid-Wall是什么"><span class="post-toc-number">1.</span> <span class="post-toc-text">Droid Wall是什么</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Iptables是什么"><span class="post-toc-number">2.</span> <span class="post-toc-text">Iptables是什么</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#源码分析"><span class="post-toc-number">3.</span> <span class="post-toc-text">源码分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码结构"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">代码结构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#核心代码"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">核心代码</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#实现分析"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">实现分析</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-droidwallstudy"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">droidwall源码实现分析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年02月05日 10:46" datetime="2015-02-05T02:46:18.000Z"  itemprop="datePublished">2015-02-05</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="Droid-Wall是什么"><a href="#Droid-Wall是什么" class="headerlink" title="Droid Wall是什么"></a>Droid Wall是什么</h2><p>Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。<br>软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种模式，可设定允许（白名单）访问的程序或禁止（单名单）访问的程序。<br>                                                    ——<a href="http://baike.baidu.com/link?url=6pxcRaKqs12Y25NoT_5zAW4kXINotK1rOG4dUcrWQGKhUf8Wc9Itsms6viljfWmYAL8bQcT10d4z1EcdqUOeOa" target="_blank" rel="external">百度百科</a><br><a id="more"></a></p>
+<h2 id="Iptables是什么"><a href="#Iptables是什么" class="headerlink" title="Iptables是什么"></a>Iptables是什么</h2><p>iptables 是与最新的 3.5 版本 Linux 内核集成的 IP 信息包过滤系统。如果 Linux 系统连接到因特网或 LAN、服务器或连接 LAN 和因特网的代理服务器， 则该系统有利于在 Linux 系统上更好地控制 IP 信息包过滤和防火墙配置。<br>                                                    ——<a href="http://&gt; baike.baidu.com/view/504557.htm" target="_blank" rel="external">百度百科</a></p>
+<blockquote>
+<p>root@android:/ # iptables –help<br>iptables v1.4.11.1</p>
+<p>Usage: iptables -[ACD] chain rule-specification [options]<br>       iptables -I chain [rulenum] rule-specification [options]<br>       iptables -R chain rulenum rule-specification [options]<br>       iptables -D chain rulenum [options]<br>       iptables -[LS] [chain [rulenum]] [options]<br>       iptables -[FZ] [chain] [options]<br>       iptables -[NX] chain<br>       iptables -E old-chain-name new-chain-name<br>       iptables -P chain target [options]<br>       iptables -h (print this help information)</p>
+</blockquote>
+<p>由此可见，测试的android平板系统中，是支持iptables的。</p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>Droid Wall是一个开源的android项目，其核心是系统中的iptables指令功能。拿到Droid Wall源码之后，下面我们来一步一步的分析它的实现方式。</p>
+<h3 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h3><p>源码目录十分简单：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallclasslist_zps0m9zuvfu.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>除了Api.java之外，其他类代码量都很少。所有的代码功能单一，非常好区分：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwall_zpszva8yx80.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<p>可以看出，整个DroidWall的核心功能是在Api.java中实现，其他类都是界面、说明、规则配置等实现。</p>
+<h3 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h3><p>Iptables是DroidWall功能实现的核心，这里主要简单分析一下Api类中是如何调用iptables来执行命令的即可大致掌握整个应用的方向。<br><br>大体观感：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallapiclass_zpsogfsuxet.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<p>Api.java代码量在一千行以右，主要是围绕Android系统内部的iptables工具，执行相关的脚本、来达到控制整机的网络的目的，由于有针对某个应用的网络控制功能，所以这里还要有获取机器应用列表等接口操作。从Api类相关的类图和函数列表可以看出，该类有以下几个特点：<br><br>⦁    内部类，该类有三个内部类，功能分别是日志结构、Android应用信息结构和脚本执行器；<br><br>⦁    该类实际上是个静态工具类，它对外提供的都是静态方法；<br><br>⦁    所有的静态方法中，以合成规则和执行脚本类型的方法为主，其余的方法则多事纯工具类型：使能操作、判断root、日志操作等；<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/apifunctionslist_zpsgdclx2ep.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<h3 id="实现分析"><a href="#实现分析" class="headerlink" title="实现分析"></a>实现分析</h3><p>⦁    脚本执行<br><br>我们跟踪runScriptXXX 相关的函数，到最后总是会跟踪到内部类ScriptRunner中，该类是具体执行脚本的工具实现类。<br>该类是Thread的拓展子类，那么我们注意一下它的构造和run函数就会有一定的收获：<br>构造如下：</p>
+<pre><code>/**
+* Creates a new script runner.
+* @param file temporary script file
+* @param script script to run
+* @param res response output
+*@param asroot if true, executes the script as root
+*/
+public ScriptRunner(File file, String script, StringBuilder res, boolean asroot)
+</code></pre><p>构造上可以看出，输入参数有文件属性参数、脚本内容字符串、脚本响应的记录载体StringBuilder和root执行标志。后两个参数很好理解，前面两个参数还要看具体的实现分析和调用者调用方式的佐证才确定。</p>
+<p>核心run函数如下：</p>
+<pre><code>@Override
+public void run() {
+    try {
+        //文件参数调用了创建新文件，这意味着调用者传进来的不会是一个已存在的文件对象
+        file.createNewFile();
+        final String abspath = file.getAbsolutePath();
+        //执行chmod命令 添加权限
+        // make sure we have execution permission on the script file
+        Runtime.getRuntime().exec(&quot;chmod 777 &quot;+abspath).waitFor();
+        //写脚本内容到新建的文件
+        // Write the script to be executed
+        final OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file));
+        if (new File(&quot;/system/bin/sh&quot;).exists()) {
+            //检查sh是否存在后 很熟悉的脚本头
+            out.write(&quot;#!/system/bin/sh\n&quot;);
+        }
+        //写入脚本内容字符串
+        out.write(script);
+        if (!script.endsWith(&quot;\n&quot;)){
+            out.write(&quot;\n&quot;);
+        }
+        out.write(&quot;exit\n&quot;);
+        out.flush();
+        out.close();
+        //根据root标志 执行脚本文件
+        if (this.asroot) {
+            // Create the &quot;su&quot; request to run the script
+            exec = Runtime.getRuntime().exec(&quot;su -c &quot;+abspath);
+        } else {
+            // Create the &quot;sh&quot; request to run the script
+            exec = Runtime.getRuntime().exec(&quot;sh &quot;+abspath);
+        }
+        //下面应该是脚本执行响应的接收 对res参数写入响应信息 这应该算是个输出参数了
+        final InputStream stdout = exec.getInputStream();
+        final InputStream stderr = exec.getErrorStream();
+        final byte buf[] = new byte[8192];
+        int read = 0;
+        while (true) {
+            final Process localexec = exec;
+            if (localexec == null) break;
+            try {
+                // get the process exit code - will raise IllegalThreadStateException if still running
+                this.exitcode = localexec.exitValue();
+            } catch (IllegalThreadStateException ex) {
+                // The process is still running
+            }
+            // Read stdout
+            if (stdout.available() &gt; 0) {
+                read = stdout.read(buf);
+                if (res != null) {
+                    res.append(new String(buf, 0, read));
+                }
+            }
+            // Read stderr
+            if (stderr.available() &gt; 0) {
+                read = stderr.read(buf);
+                if (res != null) {
+                    res.append(new String(buf, 0, read));
+                }
+            }
+            if (this.exitcode != -1) {
+                // finished
+                break;
+            }
+            // Sleep for the next round
+            Thread.sleep(50);
+        }
+    } catch (InterruptedException ex) {
+        if (res != null) {
+            res.append(&quot;\nOperation timed-out&quot;);
+        }
+    } catch (Exception ex) {
+        if (res != null) {
+            res.append(&quot;\n&quot; + ex);
+        }
+    } finally {
+        destroy();
+    }
+}
+</code></pre><p>经过上述的观察和注释，基本可以确认，调用者需要new一个脚本文件出来，然后传递脚本内容、响应参数和root标志来执行脚本命令。ScriptRunner作为一个单独开启的线程，创建脚本文件-&gt; 添加执行权限-&gt; 写入脚本命令-&gt; 根据root标志选择执行方式执行-&gt;将执行响应写入响应的StringBuilder中，流程基本如此。该处涉及到的小知识点：<br><br>⦁    执行脚本文件采用 Runtime.getRuntime().exec(“su -c “+abspath) 方法；<br><br>⦁    读取脚本执行响应的方法，采用 Process对象的以下方法组合使用：<br></p>
+<blockquote>
+<p>final InputStream stdout = exec.getInputStream();<br><br>final InputStream stderr = exec.getErrorStream();<br><br>this.exitcode = localexec.exitValue();</p>
+</blockquote>
+<p>那么我们可以查找一下ScriptRunner的调用者，看看它的调用方式来佐证一下上面的分析：</p>
+<pre><code>private static final String SCRIPT_FILE = &quot;droidwall.sh&quot;;
+public static int runScript(Context ctx, String script, StringBuilder res, long timeout, boolean asroot) {
+    final File file = new File(ctx.getDir(&quot;bin&quot;,0), SCRIPT_FILE);
+    final ScriptRunner runner = new ScriptRunner(file, script, res, asroot);
+    runner.start();
+    …
+｝
+</code></pre><p>基本可以诠释上面的分析是正确的。</p>
+<p>⦁    规则合成<br><br>在一批规则相关的函数中，最终找到了合成规则的函数：</p>
+<pre><code>/**
+ * 合成规则
+ * Purge all iptables rules.
+ * @param ctx mandatory context
+ * @param showErrors indicates if errors should be alerted
+ * @return true if the rules were purged
+ */
+public static boolean purgeIptables(Context ctx, boolean showErrors) {
+    final StringBuilder res = new StringBuilder();
+    try {
+        assertBinaries(ctx, showErrors);
+        // Custom &quot;shutdown&quot; script
+        final String customScript = ctx.getSharedPreferences(Api.PREFS_NAME, 0).getString(Api.PREF_CUSTOMSCRIPT2, &quot;&quot;);
+        final StringBuilder script = new StringBuilder();
+        script.append(scriptHeader(ctx));
+        script.append(&quot;&quot; +
+                &quot;$IPTABLES -F\n&quot; +
+                &quot;$IPTABLES -X\n&quot; +
+                &quot;$IPTABLES -Z\n&quot; +
+                &quot;$IPTABLES -P INPUT ACCEPT\n&quot; +
+                &quot;$IPTABLES -P OUTPUT ACCEPT\n&quot; +
+                &quot;$IPTABLES -P FORWARD ACCEPT\n&quot;
+                &quot;&quot;);
+        if (customScript.length() &gt; 0) {
+            script.append(&quot;\n# BEGIN OF CUSTOM SCRIPT (user-defined)\n&quot;);
+            script.append(customScript);
+            script.append(&quot;\n# END OF CUSTOM SCRIPT (user-defined)\n\n&quot;);
+        }
+        int code = runScriptAsRoot(ctx, script.toString(), res);
+        if (code == -1) {
+            if (showErrors) alert(ctx, &quot;Error purging iptables. exit code: &quot; + code + &quot;\n&quot; + res);
+            return false;
+        }
+        return true;
+    } catch (Exception e) {
+        if (showErrors) alert(ctx, &quot;Error purging iptables: &quot; + e);
+        return false;
+    }
+}
+</code></pre><p>参数上看会有些不解，因为只有个Context和一个显示错误信息的标志，看实现才清楚在DroidWall中，规则应该是保存在SharedPreferences中的，界面上更新了规则（比如添加应用链接网络的黑名单）之后，会将规则内容保存在SharedPreferences中，而后再调用Api中的相关接口去合成规则、执行iptables实现新规则。</p>
+<p>以上是DroidWall在应用层利用iptables实现防火墙的方式，更加具体和深入的分析，则是对iptables命令的使用了。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-04T12:26:17.000Z" itemprop="dateUpdated">2015年11月4日 20:26</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/02/05/droidwallstudy/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/开源代码/">开源代码</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/&title=《droidwall源码实现分析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/&title=《droidwall源码实现分析》 — 桃小七的博客&source=Droid Wall是什么Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《droidwall源码实现分析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/03/16/dexinject/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">dex注入实现详解</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/01/25/apkshell3/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">APK加壳【3】通用内存加载dex方案分析</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="droidwallstudy" data-title="droidwall源码实现分析" data-url="http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/&title=《droidwall源码实现分析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/&title=《droidwall源码实现分析》 — 桃小七的博客&source=Droid Wall是什么Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《droidwall源码实现分析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

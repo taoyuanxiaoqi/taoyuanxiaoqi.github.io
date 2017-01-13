@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>android 图片编辑之拉直功能实现原理 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android">
+    <meta name="description" content="需求最近有个图片编辑中拉直图片的一个需求要实现，实际上就是把图片等比放大之后旋转一定的角度显示出来，当然限制条件是变换后的图片的要将取景框完全包含进来。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android 图片编辑之拉直功能实现原理">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="需求最近有个图片编辑中拉直图片的一个需求要实现，实际上就是把图片等比放大之后旋转一定的角度显示出来，当然限制条件是变换后的图片的要将取景框完全包含进来。">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_Straighten1.png">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_Straighten2.png">
+<meta property="og:updated_time" content="2015-11-16T05:00:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="android 图片编辑之拉直功能实现原理">
+<meta name="twitter:description" content="需求最近有个图片编辑中拉直图片的一个需求要实现，实际上就是把图片等比放大之后旋转一定的角度显示出来，当然限制条件是变换后的图片的要将取景框完全包含进来。">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_Straighten1.png">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">android 图片编辑之拉直功能实现原理</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">android 图片编辑之拉直功能实现原理</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-06-03T16:00:12.000Z" itemprop="datePublished" class="page-time">
+  2015-06-04
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#需求"><span class="post-toc-number">1.</span> <span class="post-toc-text">需求</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#原理"><span class="post-toc-number">2.</span> <span class="post-toc-text">原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考与工具"><span class="post-toc-number">3.</span> <span class="post-toc-text">参考与工具</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-StraightenFunction"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">android 图片编辑之拉直功能实现原理</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年06月04日 0:00" datetime="2015-06-03T16:00:12.000Z"  itemprop="datePublished">2015-06-04</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>最近有个图片编辑中拉直图片的一个需求要实现，实际上就是把图片等比放大之后旋转一定的角度显示出来，当然限制条件是变换后的图片的要将取景框完全包含进来。<a id="more"></a>作为一个伸手党当然第一反应是四处搜寻一番，同事直接把5.0系统相机Gallery部分发了过来。代码抠出来之后的demo效果正与期望效果相反——原生代码实现的是图片中心旋转、取景框实时缩放的效果，而我们需要取景框不动，图片自行旋转缩放。不过有了葫芦、瓢就不难画了，好歹咱也是初中毕过业的姿势分子，这题目不难做。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>输入是旋转的角度，我们所未知的是图片该放多大才能保证与原图等大的取景框画出合适的效果，图片的角度与放大比例算对了，效果也就出来了，至于其他的如角度如何生成、图片截取如何保存之类的事参考源码就好。于是抽象出几何题一道：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_Straighten1.png" alt="图一" title="">
+                </div>
+                <div class="image-caption">图一</div>
+            </figure>
+<p>（抱歉，几何图软件不是很会用，将就着看吧）如图所示已知矩形ABCD的宽、高为w、h，将该矩形中心旋转α度之后并放大x倍之后得到矩形A’B’C’D’，且B、D两点分别在线B’C、’A’D’上，求x。</p>
+<p>解：取ABCD横向两边的中点F、G，A’B’C’D’横向两边的中点H、I，如图所示得到辅助线HI、FG、EB，E是两个矩形的共同中心点；<br><br>∵ABCD是矩形<br><br>∴△EGB是RT△<br><br>∴∠GEB = arctan(GB/EG) = arctan(BC/AD) = arctan(w/h)<br><br>∴∠IEB = ∠GEB - ∠α<br><br>并且EB = √(EG^2+GB^2) = √(w^2+h^2)/2<br><br>∵A’B’C’D’是矩形<br><br>∴△FIB是RT△<br><br>∴EI = EB*cos∠IEB<br></p>
+<p>∵h’ = HI = 2EI<br><br>∴h’ = 2 <em> （√(w^2+h^2)/2）</em> cos（arctan(w/h) - ∠α）<br><br>∵是等比放大<br><br>∴x = h’/h = √(w^2+h^2)* cos（arctan(w/h) - ∠α）/ h<br></p>
+<p>是不是清晰的代码随着最后的等式也同步敲出了呢~不过不要急，实际检测发现这不是所有状况，w&gt;h的情况如此解是无问题的，相反的情况就不行了，道理相似如下图：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_Straighten2.png" alt="图二" title="">
+                </div>
+                <div class="image-caption">图二</div>
+            </figure>
+<p>唔，作为一个懒人不想再敲解题过程了。提示一下两部分代码是可以合成一个函数的，需要一些简单的三角函数变换。知识就是力量，谁说学习没有卵用的？</p>
+<h2 id="参考与工具"><a href="#参考与工具" class="headerlink" title="参考与工具"></a>参考与工具</h2><ol>
+<li>android5.0 Gallery部分源码；</li>
+<li>几何绘图软件math3d</li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-16T05:00:32.000Z" itemprop="dateUpdated">2015年11月16日 13:00</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/06/04/StraightenFunction/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/&title=《android 图片编辑之拉直功能实现原理》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/&title=《android 图片编辑之拉直功能实现原理》 — 桃小七的博客&source=需求最近有个图片编辑中拉直图片的一个需求要实现，实际上就是把图片等比放大之后旋转一定的角度显示出来，当然限制条件是变换后的图片的要将取景框完全包含进来。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《android 图片编辑之拉直功能实现原理》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/07/14/android_second_storage/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">android second storage 大杂烩</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/05/25/hangzhouFirstImpression/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">杭城初印象</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="StraightenFunction" data-title="android 图片编辑之拉直功能实现原理" data-url="http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/&title=《android 图片编辑之拉直功能实现原理》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/&title=《android 图片编辑之拉直功能实现原理》 — 桃小七的博客&source=需求最近有个图片编辑中拉直图片的一个需求要实现，实际上就是把图片等比放大之后旋转一定的角度显示出来，当然限制条件是变换后的图片的要将取景框完全包含进来。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《android 图片编辑之拉直功能实现原理》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/06/04/StraightenFunction/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

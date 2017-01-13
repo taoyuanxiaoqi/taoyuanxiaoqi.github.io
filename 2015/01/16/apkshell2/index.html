@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>APK加壳【2】内存加载dex实现详解 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android,APK加壳">
+    <meta name="description" content="来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APK加壳【2】内存加载dex实现详解">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/01/16/apkshell2/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%2">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell2Classes.png">
+<meta property="og:updated_time" content="2016-02-01T07:14:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="APK加壳【2】内存加载dex实现详解">
+<meta name="twitter:description" content="来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%2">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell2Classes.png">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">APK加壳【2】内存加载dex实现详解</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">APK加壳【2】内存加载dex实现详解</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-01-15T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-01-16
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#来源"><span class="post-toc-number">1.</span> <span class="post-toc-text">来源</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#方案"><span class="post-toc-number">2.</span> <span class="post-toc-text">方案</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现"><span class="post-toc-number">3.</span> <span class="post-toc-text">实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#壳工程的迭代"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">壳工程的迭代</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#本地代码"><span class="post-toc-number">3.1.1.</span> <span class="post-toc-text">本地代码</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Java层"><span class="post-toc-number">3.1.2.</span> <span class="post-toc-text">Java层</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#加密工具的跟进"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">加密工具的跟进</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-apkshell2"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">APK加壳【2】内存加载dex实现详解</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年01月16日 0:00" datetime="2015-01-15T16:00:00.000Z"  itemprop="datePublished">2015-01-16</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p>本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：<br><a href="http://blog.csdn.net/androidsecurity/article/details/9674251" target="_blank" rel="external">Android4.0内存Dex数据动态加载技术 </a> <br><br>原文的地址是 <a href="http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf" title="http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf" target="_blank" rel="external">http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf</a><br>着重参考了看雪论坛的两篇帖子：<br><br><a href="http://bbs.pediy.com/showthread.php?p=1256698" target="_blank" rel="external">【求助】Dex内存加载的Native实现过程中出现的问题</a>  <br><br><a href="http://www.kanxue.com/bbs/showthread.php?t=195865" target="_blank" rel="external">【原创】DEX文件内存加载实现中的数据构造（C部分） </a></p>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>从上一篇，基础加壳的思路最后得出的结果是方案还不够完善。因为使用的系统DexClassLoader提供的接口必须要求源程序保存在文件系统中，对手一旦过了莱茵河马其诺防线就没啥意义了。所以在前一篇的基础上，又有上面来源方案中的思路，即通过jni调用底层接口，在内存中加载dex文件。<a id="more"></a>步骤如下：</p>
+<ol>
+<li>获取Dalvik_dalvik_system_DexFile_openDexFile_bytearray方法指针；</li>
+<li>调用Dalvik_dalvik_system_DexFile_openDexFile_bytearray方法解析Dex数据；</li>
+<li>实现JAVA层Dex ClassLoader完成类的加载；</li>
+</ol>
+<p>方案本身是译文，而且没有介绍细节上的实现。不能像上一篇那样直接copy代码，那就只能老老实实的先搞清楚原理。通过短短的几百字译文，可以总结出一下几点：<br>该方案只是针对实现内存加载dex文件，对于加壳来说这只是其中的一部分、最重要的一部分；<br>方案的技术点在于通过dlopen、dlsym方法，拿到系统动态库libdvm.so中的内存加载dex文件的方法，该方法位于源码 ：dalvik/vm/native/ dalvik_system_DexFile.cpp 类中，名称是：Dalvik_dalvik_system_DexFile_openDexFile_bytearray；并且只在4.0以上版本开放；<br>底层加载dex文件后，会得到一个int型的cookie值，java层的自定义DexClassLoader需要根据该值能够拿到已加载好的dex内容才能把整个流程拼接起来；</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>虽然从方案分析上看，这个加载实现是有系统版本局限性的，不过通过dlsym方法拿到系统动态库函数指针然后来使用的思路对一个中间层认识有限的土锤来说还从来没尝试过，并且，通用的方法应该也离不开这种模式，所以完全有理由去实现它，作为一个中间过程。<br>所有尝试都是基于上一篇的基础班加壳的实现上，不要忘记我们的最终目的是实现APK加壳，内存加载dex文件只是其中的一部分。</p>
+<h3 id="壳工程的迭代"><a href="#壳工程的迭代" class="headerlink" title="壳工程的迭代"></a>壳工程的迭代</h3><h4 id="本地代码"><a href="#本地代码" class="headerlink" title="本地代码"></a>本地代码</h4><p>Jni关键代码基本都在译文博客中了，我们要做的是让它通过编译、得到so库。本地代码当然要有与之对应的java代码去加载才能用，通过上面对因为的总结，可以先这样定义本地方法：</p>
+<pre><code>static native int loadDex(byte[] dex,long dexlen);
+</code></pre><p>生成好对应的.h、.c文件之后把译文中给出的核心代码填上，下面才是难题，许多类型都是unknown的，ndk编译器会告诉你它不认识这些乱七八糟的玩意儿。接下来就是挨个补充定义了。<br>看着u4、u1这些从java程序猿眼中怪怪的类型我不禁长出一口气——幸亏当年是C出身的。溯本清源，在源码 /dalvik/vm/Common.h 类中找到了这群货的宏定义，于是照葫芦画瓢，在jni目录里弄了一个伪造版的Common.h，搜刮了一下所有需要定义的类型之后，这个文件基本上是这个样子的：</p>
+<pre><code>#ifndef DALVIK_COMMON_H_
+#define DALVIK_COMMON_H_
+
+#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;assert.h&gt;
+
+static union { char c[4]; unsigned long mylong; }endian_test = {{ &apos;l&apos;, &apos;?&apos;, &apos;?&apos;, &apos;b&apos; } };
+#define ENDIANNESS  ((char)endian_test.mylong)
+
+//#if ENDIANNESS == &quot;l&quot;
+#define HAVE_LITTLE_ENDIAN
+//#else
+//#define HAVE_BIG_ENDIAN
+//#endif
+
+#if defined(HAVE_ENDIAN_H)
+# include &lt;endian.h&gt;
+#else /*not HAVE_ENDIAN_H*/
+# define __BIG_ENDIAN 4321
+# define __LITTLE_ENDIAN 1234
+# if defined(HAVE_LITTLE_ENDIAN)
+#  define __BYTE_ORDER __LITTLE_ENDIAN
+# else
+#  define __BYTE_ORDER __BIG_ENDIAN
+# endif
+#endif /*not HAVE_ENDIAN_H*/
+
+#if !defined(NDEBUG) &amp;&amp; defined(WITH_DALVIK_ASSERT)
+# undef assert
+# define assert(x) \
+((x) ? ((void)0) : (ALOGE(&quot;ASSERT FAILED (%s:%d): %s&quot;, \
+__FILE__, __LINE__, #x), *(int*)39=39, (void)0) )
+#endif
+
+#define MIN(x,y) (((x) &lt; (y)) ? (x) : (y))
+#define MAX(x,y) (((x) &gt; (y)) ? (x) : (y))
+
+#define LIKELY(exp) (__builtin_expect((exp) != 0, true))
+#define UNLIKELY(exp) (__builtin_expect((exp) != 0, false))
+
+#define ALIGN_UP(x, n) (((size_t)(x) + (n) - 1) &amp; ~((n) - 1))
+#define ALIGN_DOWN(x, n) ((size_t)(x) &amp; -(n))
+#define ALIGN_UP_TO_PAGE_SIZE(p) ALIGN_UP(p, SYSTEM_PAGE_SIZE)
+#define ALIGN_DOWN_TO_PAGE_SIZE(p) ALIGN_DOWN(p, SYSTEM_PAGE_SIZE)
+
+#define CLZ(x) __builtin_clz(x)
+
+/*
+ * If &quot;very verbose&quot; logging is enabled, make it equivalent to ALOGV.
+ * Otherwise, make it disappear.
+ *
+ * Define this above the #include &quot;Dalvik.h&quot; to enable for only a
+ * single file.
+ */
+/* #define VERY_VERBOSE_LOG */
+#if defined(VERY_VERBOSE_LOG)
+# define LOGVV  ALOGV
+# define IF_LOGVV() IF_ALOGV()
+#else
+# define LOGVV(...) ((void)0)
+# define IF_LOGVV() if (false)
+#endif
+
+
+/*
+ * These match the definitions in the VM specification.
+ */
+typedef uint8_t u1;
+typedef uint16_tu2;
+typedef uint32_tu4;
+typedef uint64_tu8;
+typedef int8_t  s1;
+typedef int16_t s2;
+typedef int32_t s4;
+typedef int64_t s8;
+
+/*
+ * Storage for primitive types and object references.
+ *
+ * Some parts of the code (notably object field access) assume that values
+ * are &quot;left aligned&quot;, i.e. given &quot;JValue jv&quot;, &quot;jv.i&quot; and &quot;*((s4*)&amp;jv)&quot;
+ * yield the same result.  This seems to be guaranteed by gcc on big- and
+ * little-endian systems.
+ */
+
+#define OFFSETOF_MEMBER(t, f) \
+  (reinterpret_cast&lt;char*&gt;(   \
+ &amp;reinterpret_cast&lt;t*&gt;(16)-&gt;f) -  \
+   reinterpret_cast&lt;char*&gt;(16))
+
+#define NELEM(x) ((int) (sizeof(x) / sizeof((x)[0])))
+
+union JValue {
+#if defined(HAVE_LITTLE_ENDIAN)
+    u1  z;
+    s1  b;
+    u2  c;
+    s2  s;
+    s4  i;
+    s8  j;
+    float   f;
+    double  d;
+    void* l;
+#endif
+#if defined(HAVE_BIG_ENDIAN)
+    struct {
+        u1_z[3];
+        u1z;
+    };
+    struct {
+        s1_b[3];
+        s1b;
+    };
+    struct {
+        u2_c;
+        u2c;
+    };
+    struct {
+        s2_s;
+        s2s;
+    };
+    s4  i;
+    s8  j;
+    float   f;
+    double  d;
+    void*   l;
+#endif
+};
+
+/*
+ * Array objects have these additional fields.
+ *
+ * We don&apos;t currently store the size of each element.  Usually it&apos;s implied
+ * by the instruction.  If necessary, the width can be derived from
+ * the first char of obj-&gt;clazz-&gt;descriptor.
+ */
+typedef struct   {
+   void*clazz;
+   u4  lock;
+   u4  length;
+   u1*  contents;
+}ArrayObject ;
+
+#endif  // DALVIK_COMMON_H_
+</code></pre><p>这里面还有个大小端的问题，不过为求实验先通过就先定义死，过了再说。<br>还有个值得一提的结构就是最后面的ArrayObject，这玩意定义在源码的/dalvik/vm/oo/Object.h 中，原本的定义是这样的：</p>
+<pre><code>struct Object {
+    ClassObject*clazz;
+    u4  lock;
+};
+
+struct ArrayObject : Object {
+    u4  length;
+    u8  contents[1];
+};
+</code></pre><p>如果还实实在在的去弄一个ClassObject，那就是java中毒已深的表现，根据看雪里面的相关讨论（就是文首提到的两篇），直接如上定义了。得到最后的C代码如下：</p>
+<pre><code>#include &quot;com_android_dexunshell_NativeTool.h&quot;
+#include &lt;stdlib.h&gt;
+#include &lt;dlfcn.h&gt;
+#include &lt;stdio.h&gt;
+
+JNINativeMethod *dvm_dalvik_system_DexFile;
+void (*openDexFile)(const u4* args,union  JValue* pResult);
+
+int lookup(JNINativeMethod *table, const char *name, const char *sig,
+   void (**fnPtrout)(u4 const *, union JValue *)) 
+{
+    int i = 0;
+    while (table[i].name != NULL) 
+    {
+        LOGI(&quot;lookup %d %s&quot; ,i,table[i].name);
+        if ((strcmp(name, table[i].name) == 0)
+               &amp;&amp; (strcmp(sig, table[i].signature) == 0)) 
+        {
+            *fnPtrout = table[i].fnPtr;
+            return 1;
+           }
+           i++;
+    }
+     return 0;
+}
+
+/* This function will be call when the library first be load.
+ * You can do some init in the libray. return which version jni it support.
+ */
+JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) 
+{
+    void *ldvm = (void*) dlopen(&quot;libdvm.so&quot;, RTLD_LAZY);
+    dvm_dalvik_system_DexFile = (JNINativeMethod*) dlsym(ldvm,
+           &quot;dvm_dalvik_system_DexFile&quot;);
+    if(0 == lookup(dvm_dalvik_system_DexFile, &quot;openDexFile&quot;, &quot;([B)I&quot;,
+        &amp;openDexFile))
+     {
+           openDexFile = NULL;
+           LOGE(&quot;method does not found &quot;);
+    }else
+    {
+        LOGI(&quot;method found ! HAVE_BIG_ENDIAN&quot;);
+     }
+     LOGI(&quot;ENDIANNESS is %c&quot; ,ENDIANNESS );
+     void *venv;
+     LOGI(&quot;dufresne-----&gt;JNI_OnLoad!&quot;);
+     if ((*vm)-&gt;GetEnv(vm, (void**) &amp;venv, JNI_VERSION_1_4) != JNI_OK) 
+    {
+           LOGE(&quot;dufresne---&gt;ERROR: GetEnv failed&quot;);
+           return -1;
+     }
+     return JNI_VERSION_1_4;
+}
+
+JNIEXPORT jint JNICALL Java_com_android_dexunshell_NativeTool_loadDex(
+   JNIEnv * env, jclass jv, jbyteArray dexArray, jlong dexLen)
+{
+    // header+dex content
+    u1 * olddata = (u1*)(*env)-&gt; GetByteArrayElements(env,dexArray,   NULL);
+    char* arr;
+     arr=(char*)malloc(16+dexLen);
+     ArrayObject *ao=(ArrayObject*)arr;
+     ao-&gt;length=dexLen;
+     memcpy(arr+16,olddata,dexLen);
+      u4 args[] = { (u4) ao };
+    union JValue pResult;
+    jint result;
+    LOGI(&quot;call openDexFile 33...&quot; );
+    if(openDexFile != NULL)
+    {
+        openDexFile(args,&amp;pResult);
+    }
+    else
+    {
+        result = -1;
+    }
+
+    result = (jint) pResult.l;
+    LOGI(&quot;Java_com_android_dexunshell_NativeTool_loadDex %d&quot; , result);
+    return result;
+}
+</code></pre><p>ArrayObject之后的数据拷贝是从看雪上抄来的，刚开始不求甚解，后来看了源码中的调用方法就慢慢明白了：<br></p>
+<pre><code>static void Dalvik_dalvik_system_DexFile_openDexFile_bytearray(const u4* args,
+JValue* pResult)
+{
+    ArrayObject* fileContentsObj = (ArrayObject*) args[0];
+    u4 length;
+    u1* pBytes;
+    …
+    length = fileContentsObj-&gt;length;
+    pBytes = (u1*) malloc(length);
+     …
+    memcpy(pBytes, fileContentsObj-&gt;contents, length);
+    …
+｝
+</code></pre><h4 id="Java层"><a href="#Java层" class="headerlink" title="Java层"></a>Java层</h4><p>底层代码基本了然，也就是说译文提供的思路基本实现，剩下其他加壳的事儿还要自己动脑筋补上。现在java层我们有一个可以使用的以byte数组为参数的加载dex的接口了：<br>static native int loadDex(byte[] dex,long dexlen);<br>要知道我们花这么大力气实现的这个方法，实际意义在于让源程序的dex数据在内存中传递，而不是必须保存在某个地方、以文件的方式。也就是说，我们需要一个新的DexClassLoader，去替换在上一篇提到的基础加壳方案中自定义Application—— ProxyApplication 类，通过反射设置到”android.app.LoadedApk”中mClassLoder属性的那个系统DexClassLoader，即至少那一段应该改成这样：</p>
+<pre><code>DynamicDexClassLoder dLoader = new DynamicDexClassLoder(base,srcdata,
+   libPath, (ClassLoader) RefInvoke.getFieldOjbect(
+ &quot;android.app.LoadedApk&quot;, wr.get(), &quot;mClassLoader&quot;),
+ getPackageResourcePath(),getDir(&quot;.dex&quot;, MODE_PRIVATE).getAbsolutePath() );
+
+RefInvoke.setFieldOjbect(&quot;android.app.LoadedApk&quot;, &quot;mClassLoader&quot;,
+   wr.get(), dLoader);
+</code></pre><p>没错，DynamicDexClassLoder 它的构造参数中应当去接收源程序的dex数据，以byte数组的形式，这样、相关把dex数组保存为文件那段代码可以删除，/data/data 中相关目录就找不到缓存dex文件的身影了；</p>
+<p>替换DexClassLoader，要知道相对于系统版本的加载器我们的少了什么，又多出了什么，在一一对接上，就没问题了。少了什么呢？是dex文件路径、多出了什么呢？是dex byte数组，考虑到已经实现的jni库，那就是多了一个加载好的dex文件对应的cookie值。那么，这个<br>Cookie 是否能够完成替换呢？这需要到源码中找答案。<br>源码路径：libcore/dalvik/src/main/java/dalvik/system ，生成类图，取出DexClassLoader相关的一部分：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell2Classes.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>走读几遍代码基本就能了解，对于dex文件加载而言，DynamicDexClassLoder需要做的实际上只有一件事，复写findClass方法，使APK运行时能够找到和加载源程序dex中的类，至于如何实现，从类图上就可以看出，最后实际上追溯到DexFile类，可以利用到jni加载到的cookie，通过反射DexFile中的方法，实现我们的预期，具体实现如下：</p>
+<pre><code>package com.android.dexunshell;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
+
+import com.eebbk.mingming.k7utils.ReflectUtils;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+
+import dalvik.system.DexClassLoader;
+import dalvik.system.DexFile;
+
+public class DynamicDexClassLoder extends DexClassLoader {
+     private static final String TAG = DynamicDexClassLoder.class.getName();
+     private int cookie;
+     private Context mContext;
+
+     /**
+      * 原构造
+      *
+      * @param dexPath
+      * @param optimizedDirectory
+      * @param libraryPath
+      * @param parent
+      */
+     public DynamicDexClassLoder(String dexPath, String optimizedDirectory,
+                        String libraryPath, ClassLoader parent) {
+               super(dexPath, optimizedDirectory, libraryPath, parent);
+     }
+
+     /**
+      * 直接从内存加载 新构造
+      *
+      * @param dexBytes
+      * @param libraryPath
+      * @param parent
+      * @throws Exception
+      */
+
+     public DynamicDexClassLoder(Context context, byte[] dexBytes,
+                        String libraryPath, ClassLoader parent, String oriPath,
+                        String fakePath) {
+               super(oriPath, fakePath, libraryPath, parent);
+               setContext(context);
+               setCookie(NativeTool.loadDex(dexBytes, dexBytes.length));
+     }
+
+     private void setCookie(int kie) {
+               cookie = kie;
+     }
+
+     private void setContext(Context context) {
+               mContext = context;
+     }
+
+     private String[] getClassNameList(int cookie) {
+               return (String[]) ReflectUtils.invokeStaticMethod(DexFile.class,
+                                 &quot;getClassNameList&quot;, new Class[] { int.class },
+                                 new Object[] { cookie });
+     }
+
+     private Class defineClass(String name, ClassLoader loader, int cookie) {
+               return (Class) ReflectUtils.invokeStaticMethod(DexFile.class,
+                                 &quot;defineClass&quot;, new Class[] { String.class, ClassLoader.class,
+                                                    int.class }, new Object[] { name, loader, cookie });
+     }
+
+     @Override
+     protected Class&lt;?&gt; findClass(String name) throws ClassNotFoundException {
+               Log.d(TAG, &quot;findClass-&quot; + name);
+               Class&lt;?&gt; cls = null;
+
+               String as[] = getClassNameList(cookie);
+               for (int z = 0; z &lt; as.length; z++) {
+                        if (as[z].equals(name)) {
+                                 cls = defineClass(as[z].replace(&apos;.&apos;, &apos;/&apos;),
+                                                    mContext.getClassLoader(), cookie);
+                        } else {
+                                 defineClass(as[z].replace(&apos;.&apos;, &apos;/&apos;), mContext.getClassLoader(),
+                                                    cookie);
+                        }
+               }
+
+               if (null == cls) {
+                        cls = super.findClass(name);
+               }
+
+               return cls;
+     }
+
+     @Override
+     protected URL findResource(String name) {
+               Log.d(TAG, &quot;findResource-&quot; + name);
+               return super.findResource(name);
+     }
+
+     @Override
+     protected Enumeration&lt;URL&gt; findResources(String name) {
+               Log.d(TAG, &quot;findResources ssss-&quot; + name);
+               return super.findResources(name);
+     }
+
+     @Override
+     protected synchronized Package getPackage(String name) {
+               Log.d(TAG, &quot;getPackage-&quot; + name);
+               return super.getPackage(name);
+     }
+
+     @Override
+     protected Class&lt;?&gt; loadClass(String className, boolean resolve)
+                        throws ClassNotFoundException {
+               Log.d(TAG, &quot;loadClass-&quot; + className + &quot; resolve &quot; + resolve);
+               Class&lt;?&gt; clazz = super.loadClass(className, resolve);
+               if (null == clazz) {
+                        Log.e(TAG, &quot;loadClass fail,maybe get a null-point exception.&quot;);
+               }
+               return clazz;
+     }
+
+     @Override
+     protected Package[] getPackages() {
+               Log.d(TAG, &quot;getPackages sss-&quot;);
+               return super.getPackages();
+     }
+
+     @Override
+     protected Package definePackage(String name, String specTitle,
+                        String specVersion, String specVendor, String implTitle,
+                        String implVersion, String implVendor, URL sealBase)
+                        throws IllegalArgumentException {
+               Log.d(TAG, &quot;definePackage&quot; + name);
+              return super.definePackage(name, specTitle, specVersion, specVendor,
+                                 implTitle, implVersion, implVendor, sealBase);
+     }
+</code></pre><p>}</p>
+<h3 id="加密工具的跟进"><a href="#加密工具的跟进" class="headerlink" title="加密工具的跟进"></a>加密工具的跟进</h3><p>加密工具需要变化的是，加入壳程序dex的加密数据不再是整个源程序的APK，而是源程序中的dex文件。这一点修改加密代码中的目标文件、并修改操作脚本即可，无需多说。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>结合译文方案，实现了内存加载dex文件，并通过自定义DexClassLoader的方式，巩固了之前的加壳方案，使源程序不在以文件的形式出现。壳的意义也在于此，至于防止内存中获取dex这种高级的破解方法，壳似乎略显无力，所以先放到后面考虑。目前的问题是，内存加载dex所依赖的底层方法，只在4.0以上几个版本存在，5.0没有查询还是未知数，还没能满足通用性的要求，要需要进一步寻找方案。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-02-01T07:14:35.000Z" itemprop="dateUpdated">2016年2月1日 15:14</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/01/16/apkshell2/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/01/16/apkshell2/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APK加壳/">APK加壳</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&title=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&title=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&source=来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/01/25/apkshell3/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">APK加壳【3】通用内存加载dex方案分析</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/01/12/apkshell1/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">APK加壳【1】初步方案实现详解</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="apkshell2" data-title="APK加壳【2】内存加载dex实现详解" data-url="http://taoyuanxiaoqi.com/2015/01/16/apkshell2/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&title=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&title=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&source=来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

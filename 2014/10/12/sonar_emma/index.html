@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>sonar导入android emma单元测试报告的方法 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="sonar">
+    <meta name="description" content="代码质量这个事儿一直是组内关注的重点，指标包括findbugs、checkstyle和单元测试覆盖。一直以来前两个静态检查都是采用eclipse安装相应插件的方法，单元测试采用命令行emma生成。刚开始时工程数量比较少，还能撑得住，后来工程越来越多，弄一次报告统计要浪费不少时间，手动效率着实低的可以。正琢磨着换换工具，忽然在某次课程分享中听到了sonar，发现确实省事，而且统计的指标和形式也很多，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sonar导入android emma单元测试报告的方法">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="代码质量这个事儿一直是组内关注的重点，指标包括findbugs、checkstyle和单元测试覆盖。一直以来前两个静态检查都是采用eclipse安装相应插件的方法，单元测试采用命令行emma生成。刚开始时工程数量比较少，还能撑得住，后来工程越来越多，弄一次报告统计要浪费不少时间，手动效率着实低的可以。正琢磨着换换工具，忽然在某次课程分享中听到了sonar，发现确实省事，而且统计的指标和形式也很多，">
+<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/sonar_emma_zpsmwqfkh5c.jpeg">
+<meta property="og:updated_time" content="2015-11-09T17:22:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sonar导入android emma单元测试报告的方法">
+<meta name="twitter:description" content="代码质量这个事儿一直是组内关注的重点，指标包括findbugs、checkstyle和单元测试覆盖。一直以来前两个静态检查都是采用eclipse安装相应插件的方法，单元测试采用命令行emma生成。刚开始时工程数量比较少，还能撑得住，后来工程越来越多，弄一次报告统计要浪费不少时间，手动效率着实低的可以。正琢磨着换换工具，忽然在某次课程分享中听到了sonar，发现确实省事，而且统计的指标和形式也很多，">
+<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/sonar_emma_zpsmwqfkh5c.jpeg">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">sonar导入android emma单元测试报告的方法</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">sonar导入android emma单元测试报告的方法</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-10-12T03:29:26.000Z" itemprop="datePublished" class="page-time">
+  2014-10-12
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-sonar_emma"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">sonar导入android emma单元测试报告的方法</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2014年10月12日 11:29" datetime="2014-10-12T03:29:26.000Z"  itemprop="datePublished">2014-10-12</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>代码质量这个事儿一直是组内关注的重点，指标包括findbugs、checkstyle和单元测试覆盖。一直以来前两个静态检查都是采用eclipse安装相应插件的方法，单元测试采用命令行emma生成。刚开始时工程数量比较少，还能撑得住，后来工程越来越多，弄一次报告统计要浪费不少时间，手动效率着实低的可以。正琢磨着换换工具，忽然在某次课程分享中听到了sonar，发现确实省事，而且统计的指标和形式也很多，初试很爽，到最后卡在了单元测试覆盖率这个指标上，专门抽了一个上午弄了一下，终于搞通，这里做个笔记。<br> <a id="more"></a><br>我这边场景还是比较古朴的，android工程以往采用的是emma报告，生成报告这一步可以统一弄个shell脚本搞定，那么比较简单粗暴的方法就是想个辙——把生成好的报告结果导入进sonar的数据库就万事大吉了。<br>所谓“外事不决问谷歌”，找到一篇国际友人的博客，<a href="http://blog.questmaster.de/index.php/2012/07/24/android-unit-tests-and-coverage-in-sonar/" target="_blank" rel="external">Android Unit Tests and Coverage in Sonar</a> ，虽然时间略久远但是还是非常具有指导意义，该大牛把这个事儿主要分了一下几步：</p>
+<ol>
+<li>使用eclipse生成单元测试报告；</li>
+<li>把测试报告的各路结果弄到一个工程目录下面去；</li>
+<li>弄一个能被sonar读明白的配置文件；</li>
+<li>配置sonar插件，让它能读上面那个配置文件；</li>
+<li>把文件路径跟sonar-runner的配置再关联在一起；</li>
+<li>走起sonar-runner，出结果；</li>
+</ol>
+<p>大概齐是这样一个过程，但是有些步骤现在的环境不合适，比如生成报告，现在的方法跟博客中介绍的已有不同；再比如导入emma的插件，博文中介绍的Sonar-emma-plugin-1.2.1 with EMMA 2.0 目前已不推荐使用。不过总体流程大体不差，磕磕绊绊终于弄通了，具体分下面几步：</p>
+<p>1.修改android sdk 中 ant配置，防止中间文件被删除；<br>如上面博文所说：<br>找到 your-android-sdk-dir/tools/ant/build.xml ，打开；<br>搜索关键词“Cleaning up temporary files”；<br>干掉关键词附近的下面这两行：</p>
+<pre><code>&lt;delete file=&quot;${out.absolute.dir}/coverage.ec&quot; /&gt;
+&lt;delete file=&quot;${out.absolute.dir}/coverage.em&quot; /&gt;
+</code></pre><p>经常折腾emma单元测试的人对coverage.xx 这两个文件应当不会陌生。</p>
+<p>2.安装sonar插件，Android Plugin；<br>Sonar-emma-plugin-1.2.1 with EMMA 2.0这东西已经不推荐使用了，在这货的链接网页里发现了推荐Android Plugin，在Android Plugin的主页中有这么两段介绍：</p>
+<blockquote>
+<p>Makes the plugin compatible with multi-language analysis introduced in SonarQube 4.2 and adds support of Emma 2.0 reports</p>
+<p>Code Coverage<br>To display code coverage data:<br>Prior to the SonarQube analysis, execute your unit tests and generate the Emma 2.0 reports (.em and .ec files)<br>Import these reports while running the SonarQube analysis by setting the sonar.android.emma.report property to the path of the directory containing the Emma reports. The path may be absolute or relative to the project base directory for standard projects, relative to the module base directory for multi-module projects.</p>
+</blockquote>
+<p>确定事情能办，并且提供了配置方法。装好插件，继续干活。</p>
+<p>3.生成报告，集合文件；<br>生成报告就不多说了，就是当下emma生成报告的方法。值得一提的是：coverage.em 这个文件默认在主工程bin文件夹下；coverage.ec 与相关的其他文件在测试工程的bin文件夹下，我目前的处理是把coverage.em拷贝到测试工程的bin下面去，由于不了解具体文件功能，所以这里是否合适还不明确。留一段脚本代码：</p>
+<pre><code>clean_project()
+{
+  cd $1
+  rm -rf bin gen
+  android update project -p .
+}
+
+emma_run()
+{
+  mainpath=$1
+  testpath=$2
+  clean_project $mainpath
+  android update test-project -m $mainpath -p $testpath
+  clean_project $testpath
+  ant emma debug install test
+  cp $mainpath&quot;/bin/coverage.em&quot; $testpath/bin
+}
+</code></pre><p>4.配置sonar-runner 的配置文件；<br>按照Android Plugin的代码覆盖率导入那一段介绍来，在主工程目录下的sonar-runner的配置文件sonar-project.properties 中添加一句：</p>
+<pre><code>sonar.android.emma.report=../MainProjectTest/bin/
+</code></pre><p>5.到主工程目录下，sonar-runner 走起。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/sonar_emma_zpsmwqfkh5c.jpeg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>这样基本就能在sonar结果中看到测试覆盖率的导入了。不过有一些小问题，就是只能看到覆盖率，用例数、行覆盖、方法覆盖、块覆盖都不见了。<br>估计是在第三步的拷贝操作漏掉了什么东西，先记于此，日后找到原因更新。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-09T17:22:11.000Z" itemprop="dateUpdated">2015年11月10日 1:22</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2014/10/12/sonar_emma/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sonar/">sonar</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/&title=《sonar导入android emma单元测试报告的方法》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/&title=《sonar导入android emma单元测试报告的方法》 — 桃小七的博客&source=代码质量这个事儿一直是组内关注的重点，指标包括findbugs、checkstyle和单元测试覆盖。一直以来前两个静态检查都是采用eclipse安装相应插..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sonar导入android emma单元测试报告的方法》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/10/20/字符串匹配/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">异常分析与字符串匹配笔记</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/10/04/utsummary/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">单元测试小结</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="sonar_emma" data-title="sonar导入android emma单元测试报告的方法" data-url="http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/&title=《sonar导入android emma单元测试报告的方法》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/&title=《sonar导入android emma单元测试报告的方法》 — 桃小七的博客&source=代码质量这个事儿一直是组内关注的重点，指标包括findbugs、checkstyle和单元测试覆盖。一直以来前两个静态检查都是采用eclipse安装相应插..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sonar导入android emma单元测试报告的方法》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/10/12/sonar_emma/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

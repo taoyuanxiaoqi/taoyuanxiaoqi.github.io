@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Android BLE 开发小结 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android">
+    <meta name="description" content="当对方给你丢过来一份协议当嵌入式同事发来一篇讲蓝牙协议的博文时，蓝牙协议分析——BLE连接有关的技术分析，站在一个Android应用程序猿的角度来看，基本上是懵圈的。如果仔细研究一下，再回忆回忆当初大学里面自动化、嵌入式、网络通信协议之类的基础知识，其实还是能看懂一二的。但问题在于，在android平台上，这些东西该怎么操作，对于第一次接触android BLE的菜鸟来说，这是个伤脑筋的问题。与此">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android BLE 开发小结">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2016/09/03/BLE/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="当对方给你丢过来一份协议当嵌入式同事发来一篇讲蓝牙协议的博文时，蓝牙协议分析——BLE连接有关的技术分析，站在一个Android应用程序猿的角度来看，基本上是懵圈的。如果仔细研究一下，再回忆回忆当初大学里面自动化、嵌入式、网络通信协议之类的基础知识，其实还是能看懂一二的。但问题在于，在android平台上，这些东西该怎么操作，对于第一次接触android BLE的菜鸟来说，这是个伤脑筋的问题。与此">
+<meta property="og:updated_time" content="2016-09-05T12:43:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android BLE 开发小结">
+<meta name="twitter:description" content="当对方给你丢过来一份协议当嵌入式同事发来一篇讲蓝牙协议的博文时，蓝牙协议分析——BLE连接有关的技术分析，站在一个Android应用程序猿的角度来看，基本上是懵圈的。如果仔细研究一下，再回忆回忆当初大学里面自动化、嵌入式、网络通信协议之类的基础知识，其实还是能看懂一二的。但问题在于，在android平台上，这些东西该怎么操作，对于第一次接触android BLE的菜鸟来说，这是个伤脑筋的问题。与此">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Android BLE 开发小结</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Android BLE 开发小结</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2016-09-03T12:42:20.000Z" itemprop="datePublished" class="page-time">
+  2016-09-03
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#当对方给你丢过来一份协议"><span class="post-toc-number">1.</span> <span class="post-toc-text">当对方给你丢过来一份协议</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#了解概念"><span class="post-toc-number">2.</span> <span class="post-toc-text">了解概念</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#API熟悉"><span class="post-toc-number">3.</span> <span class="post-toc-text">API熟悉</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#对接到需求"><span class="post-toc-number">4.</span> <span class="post-toc-text">对接到需求</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#设备识别"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">设备识别</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#连接设备"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">连接设备</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#协议对接"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">协议对接</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#其他"><span class="post-toc-number">5.</span> <span class="post-toc-text">其他</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-BLE"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Android BLE 开发小结</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2016年09月03日 20:42" datetime="2016-09-03T12:42:20.000Z"  itemprop="datePublished">2016-09-03</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="当对方给你丢过来一份协议"><a href="#当对方给你丢过来一份协议" class="headerlink" title="当对方给你丢过来一份协议"></a>当对方给你丢过来一份协议</h2><p>当嵌入式同事发来一篇讲蓝牙协议的博文时，<a href="http://murata.eetrend.com/blog/5038?sukey=3997c0719f1515206d5b53074644e046a49b12ac193b10397943589c8f35c3b6a48ca6348a5306aa776446baae9c7076" target="_blank" rel="external">蓝牙协议分析——BLE连接有关的技术分析</a>，站在一个Android应用程序猿的角度来看，基本上是懵圈的。如果仔细研究一下，再回忆回忆当初大学里面自动化、嵌入式、网络通信协议之类的基础知识，其实还是能看懂一二的。但问题在于，在android平台上，这些东西该怎么操作，对于第一次接触android BLE的菜鸟来说，这是个伤脑筋的问题。与此同时，嵌入式的大神又丢过来一份我们自己产品的私有蓝牙通信协议，于是事情变得比较紧迫了。<br><a id="more"></a></p>
+<h2 id="了解概念"><a href="#了解概念" class="headerlink" title="了解概念"></a>了解概念</h2><p>在应用开发的层面上，能够很清晰的知道的是，很多基础的东西framework都封装好了，大部分时间我们只是在调用系统提供的API。所以就android而言，要去详读的是它的BLE部分的开发者引导——<a href="https://developer.android.com/guide/topics/connectivity/bluetooth-le.html" target="_blank" rel="external">Bluetooth Low Energy</a>，找到一篇译文，也是转载的，找不到出处，由于格式看起来不是很友好，就自己重新捋了一遍——<a href="http://taoyuanxiaoqi.com/2016/08/30/ble%E8%AF%91%E6%96%87%E6%95%B4%E7%90%86/">［译］［转］Android BLE（低功耗蓝牙）开发API引导译文</a>。通过这篇专业的引导文章，可以了解到一些必要的基本概念，帮助很大。</p>
+<ul>
+<li>谷歌在4.3以后才提供了BLE的API，兼容性问题要提前考虑；</li>
+<li>BLE通信协议GATT/ATT；</li>
+<li>services／characteristic／descriptor；</li>
+<li>中央设备／外围设备的概念（一说android sdk5.0以后才支持两种身份）；</li>
+<li>权限问题——引申到6.0以上的权限动态申请；</li>
+<li>API功能类，BluetoothAdapter／BluetoothDevice／BluetoothGattCallback等；</li>
+</ul>
+<h2 id="API熟悉"><a href="#API熟悉" class="headerlink" title="API熟悉"></a>API熟悉</h2><p>有了一定的基础概念以后，下面就是要去寻找DEMO。那么最基础、最权威的就应该是谷歌提供的sample了——<a href="https://github.com/googlesamples/android-BluetoothLeGatt" target="_blank" rel="external">android-BluetoothLeGatt</a>。跑通DEMO的意义在于熟悉整个BLE的控制流程、API的使用方式。调试的话，IOS有个模拟蓝牙设备的应用<strong>LightBlue</strong>，实际测试下使用Android BluetoothLeGatt DEMO APK来链接IOS的LightBlue模拟设备经常断线，效果不是很好，暂时调试一下主要流程还是勉强能用。</p>
+<h2 id="对接到需求"><a href="#对接到需求" class="headerlink" title="对接到需求"></a>对接到需求</h2><p>协议协议，就是大家都认可的一套的规则；那么通信协议就是大家都认可的一套数据交换的规则，蓝牙协议是协议、http／tcp也是，我们日常使用的文字语言也能算是个通信协议。从一般的设备间数据通信大体可以预计到应该有这么几个步骤，发现设备－&gt;设备间校验身份－&gt;通信（上报和下发），Android平台把基础的数据交换都封装成API接口了，从第一步开始。在上一步DEMO中可以看到，只一个函数就可以扫描到周围的BLE设备了。</p>
+<pre><code>mBluetoothAdapter.startLeScan(mLeScanCallback);
+// Device scan callback.
+private BluetoothAdapter.LeScanCallback mLeScanCallback =
+        new BluetoothAdapter.LeScanCallback() {
+    @Override
+    public void onLeScan(final BluetoothDevice device, int rssi,
+            byte[] scanRecord) {
+       //do something
+   }
+};
+</code></pre><h3 id="设备识别"><a href="#设备识别" class="headerlink" title="设备识别"></a>设备识别</h3><p>我们又不是黑客，所以只对自己的设备感兴趣，连上别人的设备没有意义。通过对BLE协议的种种了解，知道外围蓝牙设备是通过不断发送广播来实现跟中心设备的交互对接的。在广播一般会附带一段初始数据，在被中央设备扫描到之后会发送一段扫描应答数据，两段数据是有长度限制的。而我们识别自己设备的实现就是在这几十个字节中做文章。</p>
+<p>那么在android API中，广播数据在哪里获取呢？见楼上的回调函数：</p>
+<blockquote>
+<p>onLeScan</p>
+<p>void onLeScan (BluetoothDevice device,<br>                int rssi,<br>                byte[] scanRecord)</p>
+<p>Callback reporting an LE device found during a device scan initiated by the startLeScan(BluetoothAdapter.LeScanCallback) function.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Parameters</th>
+<th style="text-align:left"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>device</td>
+<td style="text-align:left">BluetoothDevice: Identifies the remote device</td>
+</tr>
+<tr>
+<td>rssi</td>
+<td style="text-align:left">int: The RSSI value for the remote device as reported by the Bluetooth hardware. 0 if no RSSI value is available.<br></td>
+</tr>
+<tr>
+<td>scanRecord</td>
+<td style="text-align:left">byte: The content of the advertisement record offered by the remote device.</td>
+</tr>
+</tbody>
+</table>
+<p>呐，就在scanRecord参数中。安卓中会把两段广播数据合在一起回调给上层，即scanRecord字节数组包含了蓝牙设备的广播数据和广播应答数据，听说IOS也是如此。我们可以规定某几个字节作为解析标识，来识别我们的设备，这本身就是私有协议的一部分。</p>
+<h3 id="连接设备"><a href="#连接设备" class="headerlink" title="连接设备"></a>连接设备</h3><p>通过扫描接口，如果顺利的话，我们可以获取到<strong>BluetoothDevice</strong>。那么下一步就是尝试连接设备，并且获取到设备中的services／characteristic／descriptor信息，才能进行下一步的数据交换。</p>
+<p>我们需要从BluetoothDevice中，获取BluetoothGatt来进行连接、发现设备数据。</p>
+<blockquote>
+<p>Public API for the Bluetooth GATT Profile.</p>
+<p>This class provides Bluetooth GATT functionality to enable communication with Bluetooth Smart or Smart Ready devices.</p>
+<p>To connect to a remote peripheral device, create a BluetoothGattCallback and call connectGatt(Context, boolean, BluetoothGattCallback) to get a instance of this class. GATT capable devices can be discovered using the Bluetooth device discovery or BLE scan process.</p>
+</blockquote>
+<p>API上说的很清楚，通过BluetoothDevice调用connectGatt，通过BluetoothGattCallback获取连接状态。BluetoothGattCallback是个抽象类，通过onConnectionStateChange接口可以判断设备的连接状态。状态连接成功之后，就可以继续调用BluetoothGatt的discoverServices()来获取设备内部的配置情况，这些在开发引导、谷歌Samlpe中都可以看到。值得注意的是，通过BluetoothGatt来discover、获取service等操作必须是在正确的状态下来调用才能获取到正确的结果，这不难理解，连接设备、获取数据这些都是异步操作的，所以获取数据时需要遵守时序规则。正如<strong>discoverServices</strong>的函数的API描述所言：</p>
+<blockquote>
+<p>discoverServices</p>
+<p>boolean discoverServices ()<br>Discovers services offered by a remote device as well as their characteristics and descriptors.</p>
+<p>This is an asynchronous operation. Once service discovery is completed, the onServicesDiscovered(BluetoothGatt, int) callback is triggered. If the discovery was successful, the remote services can be retrieved using the getServices() function.</p>
+</blockquote>
+<p>在我目前的理解下，到这一步为止都完全是公用的蓝牙协议。从扫描发现到尝试连接再到获取设备的配置信息，对于同一个设备大家调用同样的接口都能获取到同样的设备配置，也就是说，蓝牙设备在未连接的状态下，任何一个安卓应用都可以扫描到、连接并且看到它的内部配置。你可以看到、但未必能控制，否则蓝牙门锁之类的产品就是玩笑般的存在了，这时嵌入式的同事丢过来的私有通讯协议就派上用场了。</p>
+<h3 id="协议对接"><a href="#协议对接" class="headerlink" title="协议对接"></a>协议对接</h3><p>蓝牙的协议解决了蓝牙设备之间的基础通信问题，那么不同厂商的不同设备会在此基础之上，设立自己的数据解析协议。那么对于菜鸟而言，首先要解决的问题是，要弄清楚基础通信是如何实现的。其实还是接到上一步，discoverServices成功之后，可以拿到蓝牙设备的services／characteristic／descriptor配置信息，我们同蓝牙设备进行数据交换，实际上就是对它的这些设备配置进行读写，通过各路回调完成交换流程。简单的举例，可以通过对characteristic进行读／写操作，实现对蓝牙设备的读／写数据，前提是该characteristic具有读写操作权限；同时。蓝牙设备具有NOTIFY特性的characteristic会通过回调接口BluetoothGattCallback的：</p>
+<blockquote>
+<p>onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)<br>Callback triggered as a result of a remote characteristic notification.</p>
+</blockquote>
+<p>接口通知手机端数据发生变化。这样就简单的完成了两端相互的数据交换。</p>
+<p>而私有协议即在这些基础的连接／通信基础上的一些私有数据交互约定。由于蓝牙数据发送的字节数是有限的，所以免不了的就是发送与接收都要有拆包／组包的策略实现。到这里就是八仙过海各显神通了。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>github上有一些BLE操作的开源库，本质上也是对系统API的重新封装。不过它们应当是针对API的调用特点有针对性的做了一些调用策略和回调接口，让整个调用流程更加顺畅，跳一些坑儿；并且还会使接口调用更人性化，使起来顺手。但是查一些根本问题还是要对API有一些了解——最好是对蓝牙协议本身有所涉猎。</p>
+<p>一些有价值的参考：</p>
+<ul>
+<li><a href="http://www.jianshu.com/notebooks/5477219/latest" target="_blank" rel="external">android Ble开发的那些事</a> </li>
+<li><a href="http://blog.csdn.net/lckj686/article/details/41630305" target="_blank" rel="external">android ble 蓝牙4.0 cc2540 开发(一)</a></li>
+</ul>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-09-05T12:43:30.000Z" itemprop="dateUpdated">2016年9月5日 20:43</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2016/09/03/BLE/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2016/09/03/BLE/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2016/09/03/BLE/&title=《Android BLE 开发小结》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2016/09/03/BLE/&title=《Android BLE 开发小结》 — 桃小七的博客&source=当对方给你丢过来一份协议当嵌入式同事发来一篇讲蓝牙协议的博文时，蓝牙协议分析——BLE连接有关的技术分析，站在一个Android应用程序猿的角度来看，基本..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2016/09/03/BLE/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android BLE 开发小结》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2016/09/03/BLE/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2016/09/03/BLE/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2016/09/29/ConstantinopleFall/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">帝国迟暮——读《1453：君士坦丁堡的陷落》</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2016/08/30/ble译文整理/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">［译］［转］Android BLE（低功耗蓝牙）开发API引导译文</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="BLE" data-title="Android BLE 开发小结" data-url="http://taoyuanxiaoqi.com/2016/09/03/BLE/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2016/09/03/BLE/&title=《Android BLE 开发小结》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2016/09/03/BLE/&title=《Android BLE 开发小结》 — 桃小七的博客&source=当对方给你丢过来一份协议当嵌入式同事发来一篇讲蓝牙协议的博文时，蓝牙协议分析——BLE连接有关的技术分析，站在一个Android应用程序猿的角度来看，基本..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2016/09/03/BLE/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android BLE 开发小结》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2016/09/03/BLE/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2016/09/03/BLE/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2016/09/03/BLE/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

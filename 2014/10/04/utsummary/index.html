@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>单元测试小结 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="代码质量">
+    <meta name="description" content="最近一段时间工作重点在单元测试上，在这里总结一些两个月来对android单元测试的收获。
+单元测试，在android应用这一层主要还是针对类的方法成员或者一个基本功能单元。大体上可以分三步：模拟测试环境；运行测试目标；检查运行结果。
+模拟测试环境，实际上就是做好针对测试目标代码的运行准备。在junit框架中，setUp 和 tearDown 回调，就是干这个的。前者运行于每个测试用例之前，在这里实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单元测试小结">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2014/10/04/utsummary/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="最近一段时间工作重点在单元测试上，在这里总结一些两个月来对android单元测试的收获。
+单元测试，在android应用这一层主要还是针对类的方法成员或者一个基本功能单元。大体上可以分三步：模拟测试环境；运行测试目标；检查运行结果。
+模拟测试环境，实际上就是做好针对测试目标代码的运行准备。在junit框架中，setUp 和 tearDown 回调，就是干这个的。前者运行于每个测试用例之前，在这里实">
+<meta property="og:updated_time" content="2015-03-15T12:46:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="单元测试小结">
+<meta name="twitter:description" content="最近一段时间工作重点在单元测试上，在这里总结一些两个月来对android单元测试的收获。
+单元测试，在android应用这一层主要还是针对类的方法成员或者一个基本功能单元。大体上可以分三步：模拟测试环境；运行测试目标；检查运行结果。
+模拟测试环境，实际上就是做好针对测试目标代码的运行准备。在junit框架中，setUp 和 tearDown 回调，就是干这个的。前者运行于每个测试用例之前，在这里实">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">单元测试小结</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">单元测试小结</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-10-04T11:00:07.000Z" itemprop="datePublished" class="page-time">
+  2014-10-04
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-utsummary"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">单元测试小结</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2014年10月04日 19:00" datetime="2014-10-04T11:00:07.000Z"  itemprop="datePublished">2014-10-04</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>最近一段时间工作重点在单元测试上，在这里总结一些两个月来对android单元测试的收获。</p>
+<p>单元测试，在android应用这一层主要还是针对类的方法成员或者一个基本功能单元。大体上可以分三步：模拟测试环境；运行测试目标；检查运行结果。</p>
+<p>模拟测试环境，实际上就是做好针对测试目标代码的运行准备。在junit框架中，setUp 和 tearDown 回调，就是干这个的。前者运行于每个测试用例之前，在这里实现用例中需要的环境；后者运行于每个用例之后，做一些关闭、释放的操作，算是扫尾。我认为在这个环节中实际上是一个解依赖的过程，需要把影响到测试目标运行的依赖解除掉或者模拟一个假的依赖来供给它运行，目的只有一个——在测试工程中让目标代码可控。<br><a id="more"></a><br>运行测试目标，当然就是跑代码。但是这里应该还是有讲究的，比如针对一个功能函数，那就要考虑不同的参数与相应的运行结果，包括运行中可能发生的异常。从参数上，大概分三种，正常参数、边界参数和异常参数，用例的输入的丰富程度，在某些方面决定了目标代码的覆盖程度，也就是整个测试用例的有效性。</p>
+<p>检查运行结果，就是一个期望值与运行值的对比。Android junit把这部分功能函数都封得差不多了，各种assertXXX用起来还是挺方便的。实际上断言运行结果这部分还是比较考验目标代码的可测试性的，我的理解是，一个函数或功能是否可测、易测，除了它运行的环境是否容易模拟和注入以外，还有一点就是它运行产生的影响是否明确、是否容易获取。比如说我最喜欢看到的纯功能的静态函数，这种货色一般就是多参然后返回值就是结果，以类名调用用例写起来相当轻松。</p>
+<p>针对已有代码建立测试工程时，就会发现需要考虑到要在对目标代码封装性破坏最小的前提下来实现测试。久而久之很自然的就认为在代码设计或重构的过程中，需要在可测试性这方面要多加注意。考虑在前面总比后面在写用例时强行添加注入方法、重新抽象依赖接口要来的实在，设计时照顾到这一点后面就会省不少事儿。下面几点算是在这些方面一些方法的总结：</p>
+<ol>
+<li><p>设计时需要考虑将硬件相关的功能（如磁盘剩余容量、时间、广播发送、网络状态获取等）抽象成接口；<br>测试代码的运行要尽可能少的依赖硬件，因为我们的目标是检查另外一段代码的逻辑、运行结果是否正确，成本自然越小越好，并且部分硬件相关的功能目前还没有好的办法去检测。所以好的处理方式是将硬件相关的部分功能抽象在一起，形成一个SystemFacade接口类，在工程代码中使用真正的系统功能实现RealSystemFacade；而在测试工程中，我们可以再模拟一个MockSystemFacade出来通过注入或者继承的方式替换掉原本的真正的实现类，万事大吉，这一招是从android 下载部分代码中学到的。举个例子，广播，广播的发送过程是由系统控制的，在应用这个层面上能做什么呢？只能知道发送了什么、知道收到了什么之后的处理过程。所以在测试过程中就要丢掉发送的过程，我们保证发送的Intent都是正确的就足够了。这时就可以把发广播这个动作抽象到前面说的SystemFacade中，然后在模拟的facade中只需要记录下发送了哪些Intent，之后取出来断言发送的是否正确就可以了。《重构》一书中的“接缝”的概念与此大致相同。</p>
+</li>
+<li><p>继承与注入；<br>测试一个实现好的工程，很多时候都要在一定程度上破坏目标工程的封装，也算是不得已而为之吧。目前我用的比较带劲儿的就是继承与注入：继承，目标类中存在一些碍于运行的属性或方法，需要替换成我们想要的数据或返回值，这时可以在目标代码中提升这个属性或方法的权限到protected以上。然后在测试工程中新建一个测试目标类继承被测试类，以override的方式替换掉碍眼的东西；注入，就需要在目标代码中开一个set接口，然后在测试工程中把我们模拟好的类set进取，这一招一般与前面的抽象接口的方法配合使用。</p>
+</li>
+<li><p>代码设计时需要考虑函数的断言方法，提高可测试性（纯计算或逻辑的功能函数可以考虑抽象成静态方法）；<br>就这一点而言，可以说函数设计，功能要单一、长短要适中，和可读性的要求基本是一致的，不一致的地方是，可测试性好的代码则还要求能够容易地找到代码带来的改变，从而能够容易的断言出函数是否运行的符合期望。和之前提到的测试用例编写的第三步是一回事。</p>
+</li>
+<li><p>采取测试工程测试代码与目标代码同包名的方法，尽量降低对目标代码封装的破坏；<br>我没有深入的了解整个测试框架的编译和运行过程，但是从实际效果来看很有可能两部分代码最终是打包到一起编译的。测试工程的包名和目标工程的包名可以相同，并且实际编译效果也与同包名下类之间的相同。这样就在一定程度上能够避免对目标工程代码的修改，破坏原来的封装了。</p>
+</li>
+<li><p>mock，擅用已有的成熟的mock库；<br>mock是单元测试的常用手段，比如模拟符合测试需要的网络响应、收集网络请求来提供断言依据等。目前使用到两种，一种是针对http协议的 mockwebserver 库；另外一种是针对ftp协议的 MockFtpServer 库。用起来也比较顺手，非常方便。</p>
+</li>
+</ol>
+<p>暂时就这么多，不断总结，不断进步。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-03-15T12:46:04.000Z" itemprop="dateUpdated">2015年3月15日 20:46</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2014/10/04/utsummary/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/10/04/utsummary/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码质量/">代码质量</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/10/04/utsummary/&title=《单元测试小结》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/10/04/utsummary/&title=《单元测试小结》 — 桃小七的博客&source=最近一段时间工作重点在单元测试上，在这里总结一些两个月来对android单元测试的收获。
+单元测试，在android应用这一层主要还是针对类的方法成员或者..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/10/04/utsummary/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《单元测试小结》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/10/04/utsummary/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/10/04/utsummary/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/10/12/sonar_emma/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">sonar导入android emma单元测试报告的方法</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/09/20/《我的互联网方法论》-读书笔记/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">《我的互联网方法论》 读书笔记</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="utsummary" data-title="单元测试小结" data-url="http://taoyuanxiaoqi.com/2014/10/04/utsummary/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/10/04/utsummary/&title=《单元测试小结》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/10/04/utsummary/&title=《单元测试小结》 — 桃小七的博客&source=最近一段时间工作重点在单元测试上，在这里总结一些两个月来对android单元测试的收获。
+单元测试，在android应用这一层主要还是针对类的方法成员或者..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/10/04/utsummary/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《单元测试小结》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/10/04/utsummary/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/10/04/utsummary/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/10/04/utsummary/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

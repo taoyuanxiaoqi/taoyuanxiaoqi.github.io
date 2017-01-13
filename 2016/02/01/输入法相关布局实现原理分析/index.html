@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>类微信聊天界面输入法随动布局实现原理分析 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android">
+    <meta name="description" content="需求类似于微信聊天界面的布局，有一些特殊的编辑功能，要求有功能布局随着输入法键盘显示，一部分要显示在键盘上方，在某些模式切换后，输入法键盘区域要替换成相应的功能布局。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类微信聊天界面输入法随动布局实现原理分析">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="需求类似于微信聊天界面的布局，有一些特殊的编辑功能，要求有功能布局随着输入法键盘显示，一部分要显示在键盘上方，在某些模式切换后，输入法键盘区域要替换成相应的功能布局。">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_code.png">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_class_diagram.jpg">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_bar_layout.png">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_activitys.png">
+<meta property="og:updated_time" content="2016-02-01T04:46:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="类微信聊天界面输入法随动布局实现原理分析">
+<meta name="twitter:description" content="需求类似于微信聊天界面的布局，有一些特殊的编辑功能，要求有功能布局随着输入法键盘显示，一部分要显示在键盘上方，在某些模式切换后，输入法键盘区域要替换成相应的功能布局。">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_code.png">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">类微信聊天界面输入法随动布局实现原理分析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">类微信聊天界面输入法随动布局实现原理分析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2016-02-01T04:38:20.000Z" itemprop="datePublished" class="page-time">
+  2016-02-01
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#需求"><span class="post-toc-number">1.</span> <span class="post-toc-text">需求</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#源码"><span class="post-toc-number">2.</span> <span class="post-toc-text">源码</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现分析"><span class="post-toc-number">3.</span> <span class="post-toc-text">实现分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#结构和简析"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">结构和简析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码分析"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">代码分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ResizeLayout-——-布局变化监听的实现，通过三个函数的复写："><span class="post-toc-number">3.2.1.</span> <span class="post-toc-text">ResizeLayout —— 布局变化监听的实现，通过三个函数的复写：</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#AutoHeightLayout-——-如何随动起来"><span class="post-toc-number">3.2.2.</span> <span class="post-toc-text">AutoHeightLayout —— 如何随动起来</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#XhsEmoticonsKeyBoardBar-最终的实现"><span class="post-toc-number">3.2.3.</span> <span class="post-toc-text">XhsEmoticonsKeyBoardBar 最终的实现</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-输入法相关布局实现原理分析"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">类微信聊天界面输入法随动布局实现原理分析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2016年02月01日 12:38" datetime="2016-02-01T04:38:20.000Z"  itemprop="datePublished">2016-02-01</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>类似于微信聊天界面的布局，有一些特殊的编辑功能，要求有功能布局随着输入法键盘显示，一部分要显示在键盘上方，在某些模式切换后，输入法键盘区域要替换成相应的功能布局。<br><a id="more"></a><br>输入法键盘本质是个dialog，由系统控制，作为第三方应用能够使上力的地方并不多，然而业界有一句经典的话很著名，叫“XX能实现，我们为什么不行”，确实，解决方案还是能够找到的。</p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p>实际上这类型的需求也是很多第三方输入法要做的基本功能，在github上找到了一个开源的输入法项目 <a href="https://github.com/w446108264/XhsEmoticonsKeyboard" target="_blank" rel="external">XhsEmoticonsKeyboard</a> ，其中找到了实现的上述功能的办法，本文是针对该项目上述功能实现的方案分析。另外，感谢项目贡献者 <a href="https://github.com/w446108264" target="_blank" rel="external">zhongdaxia</a>的开源分享。</p>
+<h2 id="实现分析"><a href="#实现分析" class="headerlink" title="实现分析"></a>实现分析</h2><p>整个开源工程的功能不少，大约有四个界面。针对我所遇到的需求这里只分析com.keyboard.activity.ChattingListActivity 这个界面，是一个类似于微信聊天界面的ACTIVITY。跟所有网上的输入法使用demo一致，该功能的实现也是基于manifest中定义adjustResize：</p>
+<pre><code>android:windowSoftInputMode=&quot;adjustResize&quot;
+</code></pre><p>而此定义有效的前提是相对应的activity不能设为全屏模式。</p>
+<h3 id="结构和简析"><a href="#结构和简析" class="headerlink" title="结构和简析"></a>结构和简析</h3><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_code.png" alt="源码目录" title="">
+                </div>
+                <div class="image-caption">源码目录</div>
+            </figure>
+<p>核心源码在XhsEmoticonsKeyboard库工程中，整个随动功能在红框框出的几个类中实现，它们的类图关系如下：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_class_diagram.jpg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>可以看到功能是基于ReleativeLayout实现的。其中ResizeLayout复写了onSizeChanged、onMeasure和onLayout方法，并定义了OnResizeListener接口：</p>
+<pre><code>public interface OnResizeListener {
+
+    /** 软键盘弹起 */
+    void OnSoftPop(int height);
+
+    /** 软键盘关闭 */
+    void OnSoftClose(int height);
+
+    /** 软键盘高度改变 */
+    void OnSoftChanegHeight(int height);
+}
+</code></pre><p>实现了布局变化的监听，并且拥有判别软键盘弹起、关闭和改变的能力，通过接口回调给使用者；</p>
+<p>AutoHeightLayout 则在 ResizeLayout 的基础上复写了 addView 方法，通过有条件的布局规范约束、对OnResizeListener的实现从而在合适的时机动态布局需要变化的部分，实现了需求中“随动”的部分；</p>
+<p>至于 XhsEmoticonsKeyBoardBar ，则是最重工程代码中使用的类，它包装了很多比较定制化的接口和功能，整个布局的初始化和回调处理可以再这里分析。</p>
+<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><h4 id="ResizeLayout-——-布局变化监听的实现，通过三个函数的复写："><a href="#ResizeLayout-——-布局变化监听的实现，通过三个函数的复写：" class="headerlink" title="ResizeLayout —— 布局变化监听的实现，通过三个函数的复写："></a>ResizeLayout —— 布局变化监听的实现，通过三个函数的复写：</h4><ol>
+<li>onSizeChanged：记录初始高度（在本工程中则是全屏高度）到变量mMaxParentHeight；</li>
+<li>onMeasure：在测量函数中将高度强制写死到初始高度，manifest中的配置使输入法布局发生变化时activitty的整个布局会跟随重新测绘，这里的复写保证本布局不会在这个过程中被压缩或者平移；</li>
+<li>onLayout：布局过程的复写其实没有布局的事儿，只是通过测量时保存的高度列表heightList，来分析当前布局的状态 —— 也对应着输入法键盘的状态，从而通过回调接口返回当前的输入法状态；</li>
+</ol>
+<h4 id="AutoHeightLayout-——-如何随动起来"><a href="#AutoHeightLayout-——-如何随动起来" class="headerlink" title="AutoHeightLayout —— 如何随动起来"></a>AutoHeightLayout —— 如何随动起来</h4><pre><code>@Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        int childSum = getChildCount();
+        if (getChildCount() &gt; 1) {
+            throw new IllegalStateException(&quot;can host only one direct child&quot;);
+        }
+
+    super.addView(child, index, params);
+    if (childSum == 0) {
+        //设置第一个子view 为RelativeLayout.ALIGN_PARENT_BOTTOM 并记录ID
+        mAutoHeightLayoutId = child.getId();
+        if (mAutoHeightLayoutId &lt; 0) {
+            child.setId(ID_CHILD);
+            mAutoHeightLayoutId = ID_CHILD;
+        }
+        RelativeLayout.LayoutParams paramsChild = (LayoutParams) child.getLayoutParams();
+        paramsChild.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        child.setLayoutParams(paramsChild);
+    } else if (childSum == 1) {
+        //唯一可以有的第二个子view 设置居于AutoHeightLayout之上
+        RelativeLayout.LayoutParams paramsChild = (LayoutParams) child.getLayoutParams();
+        paramsChild.addRule(RelativeLayout.ABOVE, mAutoHeightLayoutId);
+        child.setLayoutParams(paramsChild);
+    }
+}
+</code></pre><p>其一、在于对addView的复写限制了这个Layout的子view数量，实际上也变相的要求继承者在本身的布局设置上要设定好自动调节高度（AutoHeight）这一块，而其子view限定必须放在自动调节高度布局之上。那么在AutoHeight高度发生变化时，子view就能够跟随AutoHeight来变化了；</p>
+<p>其二、AutoHeightLayout实现了OnResizeListener，并且在所有其所有接口中都调用了下面这个函数：</p>
+<pre><code>private void setAutoViewHeight(final int height) {
+    int heightDp = Utils.px2dip(mContext, height);
+    if (heightDp &gt; 0 &amp;&amp; heightDp != mAutoViewHeight) {
+        mAutoViewHeight = heightDp;
+        Utils.setDefKeyboardHeight(mContext, mAutoViewHeight);
+    }
+
+    if (mAutoHeightLayoutView != null) {
+        mAutoHeightLayoutView.setVisibility(View.VISIBLE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mAutoHeightLayoutView.getLayoutParams();
+        params.height = height;
+        mAutoHeightLayoutView.setLayoutParams(params);
+    }
+}
+</code></pre><p>可以看出，在键盘布局发生变化时，mAutoHeightLayoutView被重新设置了布局参数，重新测绘，而mAutoHeightLayoutView需要外部通过set来设定。也就是说AutoHeightLayout本身不能直接使用，实现功能的同时也对其下一步的实现者作出了一定的约束，并且这些约束是由代码逻辑决定的，比较隐晦。</p>
+<h4 id="XhsEmoticonsKeyBoardBar-最终的实现"><a href="#XhsEmoticonsKeyBoardBar-最终的实现" class="headerlink" title="XhsEmoticonsKeyBoardBar 最终的实现"></a>XhsEmoticonsKeyBoardBar 最终的实现</h4><p>这部分是最终定制功能的实现部分，实际上对于最初的需求实现我们只要关心几个点就足够了。AutoHeightLayout对应本身的布局定义、调用的setAutoHeightLayoutView设置进去的是哪一块view、该Layout包裹的子view定义（实际上这部分在这个工程中就是Activity的布局）。</p>
+<p>对于前两个点、在 XhsEmoticonsKeyBoardBar 得到构造中就能够找到，本身在构造的过程中通过 inflate 工具解析加载 R.layout.view_keyboardbar 布局文件、并在接下来的初始化过程中将ID为 R.id.ly_foot_func 的 view 进行了 setAutoHeightLayoutView设置。代码比较简单，直接看这两处布局的定义：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_bar_layout.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>整个布局会在addView的复写代码中（childSum == 0）这个分支上强制布局为向父布局底部对齐，其中表情区的部分被设置为AutoHeightLayoutView。那么表情区这一部分随着输入法的变化而变化，可以预见的是：当输入法隐藏时，表情区高度重新布局为0，输入区则会紧贴父布局底部；当输入法显示是，表情区高度随输入法布局高度变化而变化，至于是否显示要依靠功能逻辑，输入区则一直紧靠输入法上端显示。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_activitys.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>至于对应Activity的布局，其中唯一一个子布局（XhsEmoticonsKeyBoardBar中也仅能包含一个）会在addView的复写代码中（childSum == 1）这个分支中，布局为处于第一个子view上放，在这里也就是始终显示在输入框、分割线以上，保证了内部显示内容的输入法随动。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>移植过程中，我们只是针对XhsEmoticonsKeyBoardBar这一部分，根据自己的不同的功能部分进行改造，当然，要留意上文所提到的一些约束。再上层的两个类直接引用即可；</li>
+<li>对于输入法相关的布局问题，根据监听布局变化来动态布局这个解决方案的难点实际上都在两个基础类中实现，解决了很大一部分问题，避开坑之后使用起来还是比较顺手、兼容性也不错；</li>
+<li>最大的前提是要设置 adjustResize 属性，所以缺憾之处在于界面无法设置为全屏。</li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-02-01T04:46:34.000Z" itemprop="dateUpdated">2016年2月1日 12:46</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2016/02/01/输入法相关布局实现原理分析/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/&title=《类微信聊天界面输入法随动布局实现原理分析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/&title=《类微信聊天界面输入法随动布局实现原理分析》 — 桃小七的博客&source=需求类似于微信聊天界面的布局，有一些特殊的编辑功能，要求有功能布局随着输入法键盘显示，一部分要显示在键盘上方，在某些模式切换后，输入法键盘区域要替换成相应..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《类微信聊天界面输入法随动布局实现原理分析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2016/03/13/法国历史/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">《图说天下系列之法国》读书小记</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2016/01/03/《图说天下系列之英国》读书小记/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">《图说天下系列之英国》读书小记</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="输入法相关布局实现原理分析" data-title="类微信聊天界面输入法随动布局实现原理分析" data-url="http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/&title=《类微信聊天界面输入法随动布局实现原理分析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/&title=《类微信聊天界面输入法随动布局实现原理分析》 — 桃小七的博客&source=需求类似于微信聊天界面的布局，有一些特殊的编辑功能，要求有功能布局随着输入法键盘显示，一部分要显示在键盘上方，在某些模式切换后，输入法键盘区域要替换成相应..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《类微信聊天界面输入法随动布局实现原理分析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

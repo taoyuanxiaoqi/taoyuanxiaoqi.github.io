@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="undefined">
+    <meta property="og:type" content="website">
+<meta property="og:title" content="桃小七的博客">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/page/6/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="桃小七的博客">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">桃小七的博客</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header index-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">桃小七的博客</h1>
+        <h5 class="subtitle">
+            
+                文章信口雌黄易 思想锥心坦白难
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+<div class="container body-wrap">
+
+    <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-sonar_emma"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年10月12日 11:29" datetime="2014-10-12T03:29:26.000Z"  itemprop="datePublished">2014-10-12</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/10/12/sonar_emma/">sonar导入android emma单元测试报告的方法</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        代码质量这个事儿一直是组内关注的重点，指标包括findbugs、checkstyle和单元测试覆盖。一直以来前两个静态检查都是采用eclipse安装相应插件的方法，单元测试采用命令行emma生成。刚开始时工程数量比较少，还能撑得住，后来工程越来越多，弄一次报告统计要浪费不少时间，手动效率着实低的可以。正琢磨着换换工具，忽然在某次课程分享中听到了sonar，发现确实省事，而且统计的指标和形式也很多，初试很爽，到最后卡在了单元测试覆盖率这个指标上，专门抽了一个上午弄了一下，终于搞通，这里做个笔记。
+    
+
+        <a href="/2014/10/12/sonar_emma/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sonar/">sonar</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-utsummary"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年10月04日 19:00" datetime="2014-10-04T11:00:07.000Z"  itemprop="datePublished">2014-10-04</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/10/04/utsummary/">单元测试小结</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        最近一段时间工作重点在单元测试上，在这里总结一些两个月来对android单元测试的收获。
+单元测试，在android应用这一层主要还是针对类的方法成员或者一个基本功能单元。大体上可以分三步：模拟测试环境；运行测试目标；检查运行结果。
+模拟测试环境，实际上就是做好针对测试目标代码的运行准备。在junit框架中，setUp 和 tearDown 回调，就是干这个的。前者运行于每个测试用例之前，在这里实现用例中需要的环境；后者运行于每个用例之后，做一些关闭、释放的操作，算是扫尾。我认为在这个环节中实际上是一个解依赖的过程，需要把影响到测试目标运行的依赖解除掉或者模拟一个假的依赖来供给它运行，目的只有一个——在测试工程中让目标代码可控。
+    
+
+        <a href="/2014/10/04/utsummary/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码质量/">代码质量</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-《我的互联网方法论》-读书笔记"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年09月20日 23:06" datetime="2014-09-20T15:06:04.000Z"  itemprop="datePublished">2014-09-20</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/读书笔记/">读书笔记</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/09/20/《我的互联网方法论》-读书笔记/">《我的互联网方法论》 读书笔记</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        
+                
+                    
+                    
+                
+                
+            
+最近有些忙碌，零零散散花了一个礼拜的时间才看完了这本互联网大佬的新书《我的互联网方法论》，又隔了一个礼拜才想起还欠一篇笔记，终于抽得出时间回忆和总结一下对于这本书的收获了。
+    
+
+        <a href="/2014/09/20/《我的互联网方法论》-读书笔记/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读书笔记/">读书笔记</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-androiddownloadteststudy"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年09月17日 21:36" datetime="2014-09-17T13:36:00.000Z"  itemprop="datePublished">2014-09-17</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/09/17/androiddownloadteststudy/">android 源码下载部分单元测试代码分析</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        最近因为业务需要，在研究android源码的下载部分。因为要考虑代码质量的问题，所以就针对源码的测试用例做了一些分析，并在源码用例的基础上添加了我们自己增加接口部分的用例。测试代码的分析比较偏门，网上也很少见，这里权作探讨，欢迎纠错。
+    
+
+        <a href="/2014/09/17/androiddownloadteststudy/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-canyugan"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年09月08日 22:36" datetime="2014-09-08T14:36:00.000Z"  itemprop="datePublished">2014-09-08</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/读书笔记/">读书笔记</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/09/08/canyugan/">《参与感 小米口碑营销内部手册》 阅读笔记</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        
+                
+                    
+                    
+                
+                
+            
+最近静极思动，哦不，是嬉极思勤，想抓几本书看看，于是这本《参与感——小米口碑营销内部手册》就来到了我的案头。从目录导图上看这是一本讲产品营销的书，时至今日软件开发人员如果只是单纯的关注写代码那就有点跟不上时代的脚步了，代码实现只是产品的一部分，所以了解产品的方方面面都是有好处的，至少可以提高你针对策划人员的防忽悠能力（总之我不想承认下单之前根本没看清楚的事儿）。书看起来皮尔薄馅儿大，实际上只有两百多页，我花了两个晚上的时间走了一遍——很久没有碰到想一口气读完的书了，里面主要讲互联网背景下产品设计、营销的方法，我觉得整体上是一种方法论的总结，与我这几年浅薄的开发经验和当下各路带有互联网属性产品的走势结合在一起思考，裨益良多。
+    
+
+        <a href="/2014/09/08/canyugan/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读书笔记/">读书笔记</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-shuihu3"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年08月13日 20:36" datetime="2014-08-13T12:36:00.000Z"  itemprop="datePublished">2014-08-13</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/读书笔记/">读书笔记</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/08/13/shuihu3/">那些年没读懂的水浒（三）——诡异的无间道</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        这回咱们讲讲《水浒》里面的一个框架和一段公案。明清小说，大都带一些玄学色彩，放一些神怪、宿命在里面，现在呢我们称之为“封建糟粕”，这一点《红楼梦》、《三国演义》都有相关的内容。至于水浒，在楔子里就介绍了众好汉的来历——张天师祈禳瘟疫，洪太尉误走妖魔。说仁宗时候东京闹瘟疫，皇上派一个姓洪的太尉到江西龙虎山请天师祈福，正事儿办完了之后，洪太尉就在那儿游山忽然看见了个伏魔殿上边贴着各种封条，道士们说是唐朝时候的天师封了魔王在里面，有道是“好奇害死猫”。洪大官偏要看看魔王长啥样，硬是刨开了封镇，放走了一百单八个妖魔。这就清楚了，梁山好汉本来就是妖魔转世，所以呢一些杀戮啊、不讲道理啊貌似也是合乎情理的。那这妖魔鬼怪的转世，到最后怎么还挂起了“替天行道”的大旗呢，这里边有个关键人物——宋江。
+    
+
+        <a href="/2014/08/13/shuihu3/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读书笔记/">读书笔记</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-shuihu2"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年08月05日 19:43" datetime="2014-08-05T11:43:00.000Z"  itemprop="datePublished">2014-08-05</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/读书笔记/">读书笔记</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/08/05/shuihu2/">那些年没读懂的水浒（二）——好汉们的强盗逻辑</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        上回主要讲《水浒》中那些号称替天行道的家伙们的一些“英雄”行径，诸位看官大概齐清楚这是一伙什么人了吧，千万可别被演电视拍电影的那帮人忽悠住，毕竟别人也是再加工。本回呢，再深入一些，说说这伙儿好汉的办事逻辑，呃，吾谓之“强盗逻辑”。好吧，强盗逻辑也不是什么新鲜词汇。咱们还是有一说一，有二说二吧。
+    
+
+        <a href="/2014/08/05/shuihu2/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读书笔记/">读书笔记</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-daoshi"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年08月04日 21:36" datetime="2014-08-04T13:36:00.000Z"  itemprop="datePublished">2014-08-04</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/读书笔记/">读书笔记</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/08/04/daoshi/">我当道士那些年 读后小记</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        我当道士那些年 ，算是篇网络文学吧。开始的时候像是纪实小说到后面有些玄幻的意思了。主要讲的是一个道家弟子的故事，在主要讲玄学的大背景下，纠葛着各种爱恨情仇，十分好看。看了一千章，现在本书已被下架，原因也是众说纷纭，抛开所有纠结的问题不说，单论此书对人间温情的描绘，和劝人向善的主题来讲，已经超出大部分纯yy的网络文学太多，感人处，也让人不禁泪下。我认为能感动人的作品，都是值得称道的，所以在此推荐一下，以下是一些原文摘录，奉上。
+    
+
+        <a href="/2014/08/04/daoshi/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读书笔记/">读书笔记</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-shuihu1"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年07月31日 19:23" datetime="2014-07-31T11:23:00.000Z"  itemprop="datePublished">2014-07-31</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/读书笔记/">读书笔记</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/07/31/shuihu1/">那些年，没读懂的水浒（一）——杀人放火的好汉</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        关于《水浒传》，小人书啊、70回版、120回版的都有涉猎，再加上电视剧，一直觉得自己对这部小说还算得上是熟悉的，一百单八将人名和绰号对着来不重复也能一口气说出几十个。后来小双推荐了一个网络名人——吴闲云，看了此人的新浪博客之后，深深地觉得自己以前的书都白读了，急急忙的弄了本《水浒》又重读了一遍，果然有些细思恐极。但拾吴先生牙慧，在此分辨一二。
+    
+
+        <a href="/2014/07/31/shuihu1/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读书笔记/">读书笔记</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-guanduzhizhan"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年06月23日 8:56" datetime="2014-06-23T00:56:00.000Z"  itemprop="datePublished">2014-06-23</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/随笔/">随笔</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/06/23/guanduzhizhan/">官渡之战</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        本文发表于简书《中国青年写中国史》，《官渡之战》，小号梦如生。
+官渡之战发生在建安五年，也就是公元200年。
+我们先把眼光放大到全世界，这个时候西方最强盛的是罗马帝国，正是军人出身的赛维鲁皇帝当政，虽然这个皇帝打了不少胜仗，国家人口也达到了四千多万，但是形势却是日薄西山，乱象已成；美洲的印第安人应该还在快乐的啃着玉米；非洲人呢，估计正在忙着普及着铁器；回到亚洲，日本，如果他们编的那些天皇都存在的话，大概是第十几任在位——不过在几十年后有倭女王卑弥呼遣使到魏国，玩过《三国群英传》的朋友对这个名字应该比较熟悉，倭女王这段在《三国志》中是有记载的。
+    
+
+        <a href="/2014/06/23/guanduzhizhan/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/历史杂谈/">历史杂谈</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+    </ul>
+
+    
+<nav id="page-nav">
+    <div class="inner">
+    <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+    </div>
+</nav>
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/page/6/&title=桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/page/6/&title=桃小七的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/page/6/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=桃小七的博客&url=http://taoyuanxiaoqi.com/page/6/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/page/6/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/page/6/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

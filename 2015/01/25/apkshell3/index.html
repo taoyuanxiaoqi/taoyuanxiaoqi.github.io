@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>APK加壳【3】通用内存加载dex方案分析 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android,APK加壳">
+    <meta name="description" content="来源Andorid APK反逆向解决方案：梆梆加固原理探寻 CSDN    作者Jack_Jia该篇博文中的：“3. 如何使DexClassLoader加载加密的dex文件？ ”这部分。
+方案上一篇实现的内存加载dex方案，具有Android系统版本的局限性。为了克服这个问题，在不断的百度、google下，找到了本文的来源博文，该文章是分析梆梆加固的，作为一个以APK安全为业的公司级产品，实现的加">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APK加壳【3】通用内存加载dex方案分析">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2015/01/25/apkshell3/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="来源Andorid APK反逆向解决方案：梆梆加固原理探寻 CSDN    作者Jack_Jia该篇博文中的：“3. 如何使DexClassLoader加载加密的dex文件？ ”这部分。
+方案上一篇实现的内存加载dex方案，具有Android系统版本的局限性。为了克服这个问题，在不断的百度、google下，找到了本文的来源博文，该文章是分析梆梆加固的，作为一个以APK安全为业的公司级产品，实现的加">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apk_shell_flow.png">
+<meta property="og:updated_time" content="2016-02-01T07:07:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="APK加壳【3】通用内存加载dex方案分析">
+<meta name="twitter:description" content="来源Andorid APK反逆向解决方案：梆梆加固原理探寻 CSDN    作者Jack_Jia该篇博文中的：“3. 如何使DexClassLoader加载加密的dex文件？ ”这部分。
+方案上一篇实现的内存加载dex方案，具有Android系统版本的局限性。为了克服这个问题，在不断的百度、google下，找到了本文的来源博文，该文章是分析梆梆加固的，作为一个以APK安全为业的公司级产品，实现的加">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apk_shell_flow.png">
+    
+        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">桃小七</h5>
+          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">APK加壳【3】通用内存加载dex方案分析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">APK加壳【3】通用内存加载dex方案分析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-01-25T02:46:18.000Z" itemprop="datePublished" class="page-time">
+  2015-01-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#来源"><span class="post-toc-number">1.</span> <span class="post-toc-text">来源</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#方案"><span class="post-toc-number">2.</span> <span class="post-toc-text">方案</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析与实验"><span class="post-toc-number">3.</span> <span class="post-toc-text">分析与实验</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#临时结论"><span class="post-toc-number">4.</span> <span class="post-toc-text">临时结论</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-apkshell3"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">APK加壳【3】通用内存加载dex方案分析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015年01月25日 10:46" datetime="2015-01-25T02:46:18.000Z"  itemprop="datePublished">2015-01-25</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p><a href="http://www.csdn.net/article/2013-06-26/2815995-Android-apk-bangcle" target="_blank" rel="external">Andorid APK反逆向解决方案：梆梆加固原理探寻</a> <br><br>CSDN    作者Jack_Jia<br><br>该篇博文中的：“3. 如何使DexClassLoader加载加密的dex文件？ ”这部分。</p>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>上一篇实现的内存加载dex方案，具有Android系统版本的局限性。为了克服这个问题，在不断的百度、google下，找到了本文的来源博文，该文章是分析梆梆加固的，作为一个以APK安全为业的公司级产品，实现的加密当然是全面的。<a id="more"></a>在对梆梆加固实现的猜想部分，在“如何使DexClassLoader加载加密的dex文件？”这个技术点下，作者提出了这样一个方案猜想，步骤如下：</p>
+<ol>
+<li><p>读取dexFileName文件内容并解密到byte数组。<br>调用dexFileParse函数解析byte数组为DexFile：\dalvik\libdex\DexFile.c</p>
+<pre><code>DexFile* dexFileParse(const u1* data, size_t length,     int flags)//dlsym(handle, &quot;dexFileParse&quot;);
+</code></pre></li>
+<li><p>调用allocateAuxStructures转换DexFile为DvmDex（由于该方法为static方法，因此需要按照其逻辑自行实现）。\dalvik\vm\DvmDex.c</p>
+<pre><code>static DvmDex* allocateAuxStructures(DexFile* pDexFile)
+</code></pre></li>
+<li><p>添加DvmDex到gDvm.userDexFiles \dalvik\vm\Init.c</p>
+<pre><code>struct DvmGlobals gDvm; //gDvm = dlsym(handle, &quot;gDvm&quot;);
+</code></pre></li>
+<li><p>修改MyDexClassLoader中的mDexs对象的mCookie值。mCookie主要用于映射底层DvmDex数据——DexClassLoader.mDexs[0].mCookie值。</p>
+</li>
+</ol>
+<h2 id="分析与实验"><a href="#分析与实验" class="headerlink" title="分析与实验"></a>分析与实验</h2><p>对于一个对底层代码了解有限的菜鸟而言，对于这个猜想方案只能表示一头雾水。好在有了之前方案实现的基础，仔细分析起来还是有迹可循的。在开始实验之前，针对这个方案提出一个想不明白的问题，然后通过走读、对比源码来找到答案，以期能够快速的吃透这个思路的原理。</p>
+<ol>
+<li>需要证明 //dlsym(handle, “dexFileParse”); 这种加载方式，是否能拿到函数指针，这个调用与方案二还是有形式上的区别的；<br></li>
+<li>第3步为什么C++中的静态方法要自行实现逻辑，如果需要在jni中自行实现，难度有多大；<br></li>
+<li>把解析出的DvmDex设置进init.cpp的一个全局变量中，是不是可以理解为注册到底层系统中，原理是什么？这需要对系统加载apk的整个流程有所了解；<br></li>
+<li>返回到上层一个cookie值，这一点同方案二是一致的，java层需要根据这个cookie取到底层对应的类。问题是在前两步的操作中哪里能得到这个cookie呢？<br></li>
+<li>是不是可以理解Dalvik_dalvik_system_DexFile_openDexFile_bytearray 该函实际上完成了方案一中第2到第4三步的操作呢，该方法所在的动态库和本方案中的动态库在系统中是什么样的关系？<br></li>
+<li>不同版本源码是否有涉及到的函数接口？<br></li>
+</ol>
+<p>这些是在动手实践之前想不通的问题，那么带着问题，就开始在源码、搜索引擎、前两个方案的实例中寻找答案。在不断摸索中，慢慢的还是可以形成一些看法的。对整个方案的认识也会更进一步。挨个回答吧。</p>
+<p>第一题，答案是同样的方法根本拿不到dexFileParse这个指针。<br>根据同目录下的 Android.mk 文件配置可知：</p>
+<pre><code>LOCAL_MODULE := libdex
+include $(BUILD_HOST_STATIC_LIBRARY)
+</code></pre><p>实际上这货是个静态库，生成的是lib.a,所以不能使用同样的方法搞出函数指针来用；</p>
+<p>第二题，只能捂着脸来答了，因为这属于C基础知识范围的内容，C语言中的静态函数与java中的静态函数意义完全不一样，C中static主要限定该函数只能在该文件中使用。我觉得我该考虑修改一下简历里对C语言的熟悉程度了，好久没碰果然忘得够快。其实上个方案调用的方法也是静态的：</p>
+<pre><code>static void Dalvik_dalvik_system_DexFile_openDexFile_bytearray(const u4* args,
+JValue* pResult);
+</code></pre><p>不过仔细看函数指针的获取方法就知道，源码中是将这个静态函数相关信息保存在一个常量数组里面的，而上个方案也是先获取常量数组的标号之后再获取该函数的指针。</p>
+<pre><code>const DalvikNativeMethod dvm_dalvik_system_DexFile[] = {
+{ &quot;openDexFile&quot;,        &quot;(Ljava/lang/String;Ljava/lang/String;I)I&quot;,
+    Dalvik_dalvik_system_DexFile_openDexFile },
+{ &quot;openDexFile&quot;,        &quot;([B)I&quot;,
+    Dalvik_dalvik_system_DexFile_openDexFile_bytearray },
+    …
+｝
+</code></pre><p>此外，对于静态函数allocateAuxStructures，除了需要模拟相关联到的结构体之外，抠出来通过编译并不难；</p>
+<p>第三题，去指定的Init.cpp文件看看那个全局变量，基本上能猜测一二。每一个APK的启动与运行，在底层都会对应一个Android DVM，同时也就是有一个全局变量gDvm，通过dlsym获取全局变量的地址是没问题的。问题是不同版本的DVM，拥有不同版本的DvmGlobals结构，只有指针的情况下无法拿到正确的gDvm值。不过这个问题可以先放一放，大不了使用最笨的方法——根据版本选用不同的结构体去解析也可实现；</p>
+<p>第四题，cookie。实际上到这一步的时候基本上可以脱离原猜想方案来看问题了。想知道如何获取cookie，最简单的办法就是通过已有的代码找找这货究竟是个什么东西。那么，很明显上个方案中Dalvik_dalvik_system_DexFile_openDexFile_bytearray——它就返回过一个cookie。</p>
+<pre><code>static void Dalvik_dalvik_system_DexFile_openDexFile_bytearray(const u4* args,
+JValue* pResult)
+{
+     …
+    pDexOrJar = (DexOrJar*) malloc(sizeof(DexOrJar));
+    pDexOrJar-&gt;isDex = true;
+    pDexOrJar-&gt;pRawDexFile = pRawDexFile;
+    pDexOrJar-&gt;pDexMemory = pBytes;
+    pDexOrJar-&gt;fileName = strdup(&quot;&lt;memory&gt;&quot;); // Needs to be free()able.
+    …
+
+    RETURN_PTR(pDexOrJar);
+}
+</code></pre><p>或许到这里还不甚清晰，因为返回类型是void，那么返回的任务肯定是落在输入参数pResult上了，看看这个RETURN_PTR宏定义基本也就清楚了：</p>
+<pre><code>#define RETURN_PTR(_val)do { pResult-&gt;l = (Object*)(_val); return; } while(0)
+</code></pre><p>好，所谓cookie其实是个DexOrJar类型结构体的指针。JAVA层需要这个cookie值，到最后也就是C/C++中需要这个结构体，有了这个结构体中的信息就能拿到加载dex的内容。反观猜想方案中的步骤：<br>通过dexFileParse拿到一个DexFile指针（虽然动态加载无法实现，我们先假设能够拿到）-&gt;以DexFile指针为参数，通过allocateAuxStructures方法转换一个DvmDex 指针-&gt;找到DVM中的gDvm，将DvmDex设置进该全局变量的userDexFiles属性中（这一步没有指明具体的方法，但是我们也假设能找到合适的方法）-&gt;返回cookie到JAVA层使用。<br><br><br>可以看出cookie在整个方案中出现的很突兀，参照前面几步用到的函数也找不到任何有cookie的地方。上文所引函数已经很清晰的说明了cookie实际上是个DexOrJar指针（这一点需要通过不同版本的Android源码来对比验证，确实如此），指针只是地址，真正起作用的是这个结构：</p>
+<pre><code>struct DexOrJar {
+    char*       fileName;
+    bool        isDex;
+    bool        okayToFree;
+    RawDexFile* pRawDexFile;
+    JarFile*    pJarFile;
+    u1*         pDexMemory; // malloc()ed memory, if any
+};
+</code></pre><p>4.0以前的版本没有最后一个变量，但这不影响我们对整个流程的理解。很关键的一点，该结构需要一个RawDexFile指针，而显然我们到目前为止只有一个DvmDex指针，这之间明显缺乏一个转换的步骤。<br>同时，我们再看看第五题，会不会产生一个完善的思路出来？没错，相关流程中4.0版本与之前的版本相比，除了相关的代码从C变成C++之外，它多出了实现内存读取dex的功能，就在Dalvik_dalvik_system_DexFile_openDexFile_bytearray函数中，猜想方案中的步骤也无非应该是在2.3版本中对应可能实现该功能的一种方式，两者相差不会很大。我们把4.0中实现的方法、流程吃的透彻一点，对于实验方案的出炉一定有事半功倍的效果。于是，在文件、函数各种跳转之后，有了下面一个流程简图：<br> <figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_apk_shell_flow.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<p><br><br>这是4.1版本源码的函数调用简易流程，去掉了各种容错、抛异常的部分，只列出了关键函数，每个虚线框中表示一个文件。通过代码可以很明确的了解，所谓内存加载dex也就做了两件事，第一是加载；第二是注册（实际操作是写入全局变量的一个属性表，我觉得用“注册”来描述这个动作也蛮贴切）。通过代码走读，也完全可以了解到猜测方案中的第三步，使用allocateAuxStructures方法得到DvmDex其实无法达到加载dex的目的，该函数只是做了一个转换，malloc了一个DvmDex结构而已。也就是说，完全按照猜想方案来，是无法正确加载dex数据的。<br><br><br>这个时候再看第六题就显得无足轻重，Android 版本问题固然是阻碍通用方案实现的最大障碍之一，但是重点不在猜想方案设计的诸函数中，因为猜想方案本身就略显骨感，不能实现预期的目的。</p>
+<p>综上，我们可以根据猜想方案衍生出一个预计可行的方案。其实无论是猜想方案还是4.0之后系统中的实现，它们的目的是相同的：加载、注册。加载实现的重点在于DexPrepare文件中的rewriteDex函数；注册的实现重点则在于Init文件中的gDvm变量。打通这两个关节，应该可以算是又向前迈上了一步。抛开不同版本的DVM其相关数据结构、实现过程的差别带来的阻碍，先考虑在低版本拉通这个过程，那新的思路与实现目标就是：<br>仿照4.0的Dalvik_dalvik_system_DexFile_openDexFile_bytearray函数实现，在jni中实现内存加载的方法，测试系统为Android2.3。</p>
+<p>Jni实现的大体思路如下：</p>
+<ol>
+<li>以2.3为准，引入相关结构的定义； </li>
+<li>以上面的简易流程图为例，实现内存加载的模拟方法：涉及到底层对应的方法时，静态的方法，抠出3源码在jni代码中实现； </li>
+<li>其他方法采用dlsym的方式指针调用； </li>
+<li>gDvm通过dlsym获取；</li>
+</ol>
+<p>大致类似于：</p>
+<pre><code>int mock_dalvik_system_DexFile_openDexFile_bytearray(u1 * olddata, long len) {
+     LOGI(&quot;before make pRawDexFile !!&quot;);
+     DexOrJar* pDexOrJar = NULL;
+     RawDexFile* pRawDexFile = (RawDexFile*) calloc(1, sizeof(RawDexFile));
+
+     if (0 == dvmRawDexFileOpenArray(olddata, len, &amp;pRawDexFile)) {
+               LOGV(&quot;Unable to open in-memory DEX file&quot;);
+     } else {
+               LOGV(&quot;open in-memory DEX file success!&quot;);
+     }
+
+     pDexOrJar = (DexOrJar*) malloc(sizeof(DexOrJar));
+     pDexOrJar-&gt;isDex = true;
+     pDexOrJar-&gt;pRawDexFile = pRawDexFile;
+     //pDexOrJar-&gt;pDexMemory = olddata;
+     pDexOrJar-&gt;fileName = strdup(&quot;&lt;memory&gt;&quot;); // Needs to be free()able.
+     LOGI(&quot;before addToDexFileTable, and pRawDexFile %p&quot;, pRawDexFile);
+     addToDexFileTable(pDexOrJar);
+
+     LOGI(&quot;addToDexFileTable success return %p&quot;, pDexOrJar);
+     return (int) pDexOrJar;
+}
+</code></pre><p>抠源码和结构并不是个简单的活计，当然并不是说很难，准确的说是有点枯燥。测试好能够正常拿到gDvm和各相关函数指针之后就可以开始验证了。</p>
+<h2 id="临时结论"><a href="#临时结论" class="headerlink" title="临时结论"></a>临时结论</h2><p>在2.3系统的验证中，依样画葫芦还是出了问题，在抠出来的rewriteDex代码实现中，最后一步验证和优化class数据的函数verifyAndOptimizeClasses报错异常。由于该函数是通过函数指针直接调用底层代码的，所以无法直接看出出错原因，项目暂停，没有时间继续探索了，暂时记录在此。<br>思考一下依样画葫芦的方法，依的是4.0的样在2.3上画葫芦可以预见的是版本间的差别可能会造成不可预期的谬误。具体如何在2.3中实现内存加载，估计还要从2.3本身如何加载dex入手去分析实现过程，来优化上面的实现。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-02-01T07:07:24.000Z" itemprop="dateUpdated">2016年2月1日 15:07</time>
+</span><br>
+
+
+        转载请注明原文链接：<a href="/2015/01/25/apkshell3/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/01/25/apkshell3/</a>
+    </div>
+    <footer>
+        <a href="http://taoyuanxiaoqi.com">
+            <img src="/img/avatar.jpeg" alt="桃小七">
+            桃小七
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APK加壳/">APK加壳</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/&title=《APK加壳【3】通用内存加载dex方案分析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/&title=《APK加壳【3】通用内存加载dex方案分析》 — 桃小七的博客&source=来源Andorid APK反逆向解决方案：梆梆加固原理探寻 CSDN    作者Jack_Jia该篇博文中的：“3. 如何使DexClassLoader加..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《APK加壳【3】通用内存加载dex方案分析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/02/05/droidwallstudy/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">droidwall源码实现分析</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/01/16/apkshell2/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">APK加壳【2】内存加载dex实现详解</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="apkshell3" data-title="APK加壳【3】通用内存加载dex方案分析" data-url="http://taoyuanxiaoqi.com/2015/01/25/apkshell3/"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.6');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        感谢您赏个荷包蛋～
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
+        
+        <li>
+            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>桃小七的博客 &copy; 2014 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/&title=《APK加壳【3】通用内存加载dex方案分析》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/&title=《APK加壳【3】通用内存加载dex方案分析》 — 桃小七的博客&source=来源Andorid APK反逆向解决方案：梆梆加固原理探寻 CSDN    作者Jack_Jia该篇博文中的：“3. 如何使DexClassLoader加..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《APK加壳【3】通用内存加载dex方案分析》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/01/25/apkshell3/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.6"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.6" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>
