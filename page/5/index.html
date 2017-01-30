@@ -134,6 +134,56 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-apkshell2"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015年01月16日 0:00" datetime="2015-01-15T16:00:00.000Z"  itemprop="datePublished">2015-01-16</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/01/16/apkshell2/">APK加壳【2】内存加载dex实现详解</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf着重参考了看雪论坛的两篇帖子：【求助】Dex内存加载的Native实现过程中出现的问题  【原创】DEX文件内存加载实现中的数据构造（C部分） 
+方案从上一篇，基础加壳的思路最后得出的结果是方案还不够完善。因为使用的系统DexClassLoader提供的接口必须要求源程序保存在文件系统中，对手一旦过了莱茵河马其诺防线就没啥意义了。所以在前一篇的基础上，又有上面来源方案中的思路，即通过jni调用底层接口，在内存中加载dex文件。
+    
+
+        <a href="/2015/01/16/apkshell2/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APK加壳/">APK加壳</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-apkshell1"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -565,56 +615,6 @@ new ServerStarter().start();
     
 
         <a href="/2014/11/01/openfire_note_1/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openfire/">openfire</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-openfire_note_0"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2014年10月31日 0:00" datetime="2014-10-30T16:00:00.000Z"  itemprop="datePublished">2014-10-31</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2014/10/31/openfire_note_0/">openfire学习笔记（零）搜集资料在学习之前</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        ps：这是一篇无耻的资料整合笔记。
-整体观感Openfire源码目录结构1.build目录：build目录下收录的是生成安装文件（例如：rpm）所要的一些文件，例如JRE等；2.resources目录：resources目录下收录的是一些为实现国际化（i18n）和本地化的一些编码文件（例如：英文，中文，法文，德文等）；3.documentation目录：documentation目录下收录的是一些关于Openfire安装和配置的信息，但最终要的是这里有Openfire开发的Javado；4.src目录：顾名思义这个src文件夹就是我们想要的Openfire源代码了，这下面又有许多文件夹，我们只要Java文件夹就好，这里面实现的Openfire的核心功能，通过它就可以调试Openfire了。
-    
-
-        <a href="/2014/10/31/openfire_note_0/" class="post-more waves-effect waves-button">
             阅读全文...
         </a>
     </div>
