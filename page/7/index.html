@@ -134,6 +134,106 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-sonar_emma"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年10月12日 11:29" datetime="2014-10-12T03:29:26.000Z"  itemprop="datePublished">2014-10-12</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/10/12/sonar_emma/">sonar导入android emma单元测试报告的方法</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        代码质量这个事儿一直是组内关注的重点，指标包括findbugs、checkstyle和单元测试覆盖。一直以来前两个静态检查都是采用eclipse安装相应插件的方法，单元测试采用命令行emma生成。刚开始时工程数量比较少，还能撑得住，后来工程越来越多，弄一次报告统计要浪费不少时间，手动效率着实低的可以。正琢磨着换换工具，忽然在某次课程分享中听到了sonar，发现确实省事，而且统计的指标和形式也很多，初试很爽，到最后卡在了单元测试覆盖率这个指标上，专门抽了一个上午弄了一下，终于搞通，这里做个笔记。
+    
+
+        <a href="/2014/10/12/sonar_emma/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sonar/">sonar</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-utsummary"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2014年10月04日 19:00" datetime="2014-10-04T11:00:07.000Z"  itemprop="datePublished">2014-10-04</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/10/04/utsummary/">单元测试小结</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        最近一段时间工作重点在单元测试上，在这里总结一些两个月来对android单元测试的收获。
+单元测试，在android应用这一层主要还是针对类的方法成员或者一个基本功能单元。大体上可以分三步：模拟测试环境；运行测试目标；检查运行结果。
+模拟测试环境，实际上就是做好针对测试目标代码的运行准备。在junit框架中，setUp 和 tearDown 回调，就是干这个的。前者运行于每个测试用例之前，在这里实现用例中需要的环境；后者运行于每个用例之后，做一些关闭、释放的操作，算是扫尾。我认为在这个环节中实际上是一个解依赖的过程，需要把影响到测试目标运行的依赖解除掉或者模拟一个假的依赖来供给它运行，目的只有一个——在测试工程中让目标代码可控。
+    
+
+        <a href="/2014/10/04/utsummary/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码质量/">代码质量</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-《我的互联网方法论》-读书笔记"
   class="article-card article-type-post" itemprop="blogPost">
 
