@@ -1,26 +1,93 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
-    
-
-    
-
-    
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
 
 
-    <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
     
     
+  
+
+  
+
+  
+
+  
+
+  
+
+  
     
-    <title>APK加壳【2】内存加载dex实现详解 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="android,APK加壳">
-    <meta name="description" content="来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%2">
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="android,APK加壳," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%2">
 <meta property="og:type" content="article">
 <meta property="og:title" content="APK加壳【2】内存加载dex实现详解">
 <meta property="og:url" content="http://taoyuanxiaoqi.com/2015/01/16/apkshell2/index.html">
@@ -32,149 +99,293 @@
 <meta name="twitter:title" content="APK加壳【2】内存加载dex实现详解">
 <meta name="twitter:description" content="来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%2">
 <meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell2Classes.png">
-    
-        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
-    
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
-    <script>window.lazyScripts=[]</script>
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2015/01/16/apkshell2/"/>
+
+
+
+
+
+  <title> APK加壳【2】内存加载dex实现详解 | 桃小七的博客 </title>
 </head>
 
-<body>
-    <div id="loading" class="active"></div>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpeg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">桃小七</h5>
-          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
-        </hgroup>
-      </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">桃小七的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
     </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/tags"  >
-                <i class="icon icon-lg icon-tags"></i>
-                Tags
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/categories"  >
-                <i class="icon icon-lg icon-th-list"></i>
-                Categories
-              </a>
-            </li>
-        
-      </ul>
-    </div>
+      
+        <p class="site-subtitle">文章信口雌黄易 思想锥心坦白难</p>
+      
   </div>
-</aside>
 
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">APK加壳【2】内存加载dex实现详解</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
-    </div>
-</header>
-<header class="content-header post-header">
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
 
-    <div class="container fade-scale">
-        <h1 class="title">APK加壳【2】内存加载dex实现详解</h1>
-        <h5 class="subtitle">
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
             
-                <time datetime="2015-01-15T16:00:00.000Z" itemprop="datePublished" class="page-time">
-  2015-01-16
-</time>
-
-
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
-
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-        </h5>
-    </div>
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
 
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
     
 
-</header>
+  
 
+  
+  
+  
 
-<div class="container body-wrap">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2015/01/16/apkshell2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="桃小七">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="桃小七的博客">
+    </span>
+
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#来源"><span class="post-toc-number">1.</span> <span class="post-toc-text">来源</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#方案"><span class="post-toc-number">2.</span> <span class="post-toc-text">方案</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现"><span class="post-toc-number">3.</span> <span class="post-toc-text">实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#壳工程的迭代"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">壳工程的迭代</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#本地代码"><span class="post-toc-number">3.1.1.</span> <span class="post-toc-text">本地代码</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Java层"><span class="post-toc-number">3.1.2.</span> <span class="post-toc-text">Java层</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#加密工具的跟进"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">加密工具的跟进</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">小结</span></a></li></ol>
-        </nav>
-    </aside>
-    
-<article id="post-apkshell2"
-  class="post-article article-type-post fade" itemprop="blogPost">
+      <header class="post-header">
 
-    <div class="post-card">
-        <h1 class="post-card-title">APK加壳【2】内存加载dex实现详解</h1>
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                APK加壳【2】内存加载dex实现详解
+              
+            
+          </h1>
+        
+
         <div class="post-meta">
-            <time class="post-time" title="2015年01月16日 0:00" datetime="2015-01-15T16:00:00.000Z"  itemprop="datePublished">2015-01-16</time>
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-01-16T00:00:00+08:00">
+                2015-01-16
+              </time>
+            
 
             
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
-
-
 
             
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+          </span>
 
-
+          
+            <span class="post-category" >
             
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术探究/" itemprop="url" rel="index">
+                    <span itemprop="name">技术探究</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2015/01/16/apkshell2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/01/16/apkshell2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
 
         </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p>本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：<br><a href="http://blog.csdn.net/androidsecurity/article/details/9674251" target="_blank" rel="external">Android4.0内存Dex数据动态加载技术 </a> <br><br>原文的地址是 <a href="http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf" title="http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf" target="_blank" rel="external">http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf</a><br>着重参考了看雪论坛的两篇帖子：<br><br><a href="http://bbs.pediy.com/showthread.php?p=1256698" target="_blank" rel="external">【求助】Dex内存加载的Native实现过程中出现的问题</a>  <br><br><a href="http://www.kanxue.com/bbs/showthread.php?t=195865" target="_blank" rel="external">【原创】DEX文件内存加载实现中的数据构造（C部分） </a></p>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="来源"><a href="#来源" class="headerlink" title="来源"></a>来源</h2><p>本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：<br><a href="http://blog.csdn.net/androidsecurity/article/details/9674251" target="_blank" rel="external">Android4.0内存Dex数据动态加载技术 </a> <br><br>原文的地址是 <a href="http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf" title="http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf" target="_blank" rel="external">http://2013.hackitoergosum.org/presentations/Day1-05.Nifty%20stuff%20that%20you%20can%20still%20do%20with%20Android%20by%20Xavier%20Martin.pdf</a><br>着重参考了看雪论坛的两篇帖子：<br><br><a href="http://bbs.pediy.com/showthread.php?p=1256698" target="_blank" rel="external">【求助】Dex内存加载的Native实现过程中出现的问题</a>  <br><br><a href="http://www.kanxue.com/bbs/showthread.php?t=195865" target="_blank" rel="external">【原创】DEX文件内存加载实现中的数据构造（C部分） </a></p>
 <h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>从上一篇，基础加壳的思路最后得出的结果是方案还不够完善。因为使用的系统DexClassLoader提供的接口必须要求源程序保存在文件系统中，对手一旦过了莱茵河马其诺防线就没啥意义了。所以在前一篇的基础上，又有上面来源方案中的思路，即通过jni调用底层接口，在内存中加载dex文件。<a id="more"></a>步骤如下：</p>
 <ol>
 <li>获取Dalvik_dalvik_system_DexFile_openDexFile_bytearray方法指针；</li>
@@ -448,13 +659,7 @@ RefInvoke.setFieldOjbect(&quot;android.app.LoadedApk&quot;, &quot;mClassLoader&q
    wr.get(), dLoader);
 </code></pre><p>没错，DynamicDexClassLoder 它的构造参数中应当去接收源程序的dex数据，以byte数组的形式，这样、相关把dex数组保存为文件那段代码可以删除，/data/data 中相关目录就找不到缓存dex文件的身影了；</p>
 <p>替换DexClassLoader，要知道相对于系统版本的加载器我们的少了什么，又多出了什么，在一一对接上，就没问题了。少了什么呢？是dex文件路径、多出了什么呢？是dex byte数组，考虑到已经实现的jni库，那就是多了一个加载好的dex文件对应的cookie值。那么，这个<br>Cookie 是否能够完成替换呢？这需要到源码中找答案。<br>源码路径：libcore/dalvik/src/main/java/dalvik/system ，生成类图，取出DexClassLoader相关的一部分：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell2Classes.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell2Classes.png" alt=""></p>
 <p>走读几遍代码基本就能了解，对于dex文件加载而言，DynamicDexClassLoder需要做的实际上只有一件事，复写findClass方法，使APK运行时能够找到和加载源程序dex中的类，至于如何实现，从类图上就可以看出，最后实际上追溯到DexFile类，可以利用到jni加载到的cookie，通过反射DexFile中的方法，实现我们的预期，具体实现如下：</p>
 <pre><code>package com.android.dexunshell;
 
@@ -597,276 +802,393 @@ public class DynamicDexClassLoder extends DexClassLoader {
 <h3 id="加密工具的跟进"><a href="#加密工具的跟进" class="headerlink" title="加密工具的跟进"></a>加密工具的跟进</h3><p>加密工具需要变化的是，加入壳程序dex的加密数据不再是整个源程序的APK，而是源程序中的dex文件。这一点修改加密代码中的目标文件、并修改操作脚本即可，无需多说。</p>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>结合译文方案，实现了内存加载dex文件，并通过自定义DexClassLoader的方式，巩固了之前的加壳方案，使源程序不在以文件的形式出现。壳的意义也在于此，至于防止内存中获取dex这种高级的破解方法，壳似乎略显无力，所以先放到后面考虑。目前的问题是，内存加载dex所依赖的底层方法，只在4.0以上几个版本存在，5.0没有查询还是未知数，还没能满足通用性的要求，要需要进一步寻找方案。</p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2016-02-01T07:14:35.000Z" itemprop="dateUpdated">2016年2月1日 15:14</time>
-</span><br>
-
-
-        转载请注明原文链接：<a href="/2015/01/16/apkshell2/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2015/01/16/apkshell2/</a>
+      
     </div>
-    <footer>
-        <a href="http://taoyuanxiaoqi.com">
-            <img src="/img/avatar.jpeg" alt="桃小七">
-            桃小七
-        </a>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢您赏个荷包蛋～</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/myWechatPay2.png" alt="桃小七 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/myAliPay2.jpeg" alt="桃小七 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/APK加壳/" rel="tag"># APK加壳</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/01/12/apkshell1/" rel="next" title="APK加壳【1】初步方案实现详解">
+                <i class="fa fa-chevron-left"></i> APK加壳【1】初步方案实现详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/01/25/apkshell3/" rel="prev" title="APK加壳【3】通用内存加载dex方案分析">
+                APK加壳【3】通用内存加载dex方案分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
     </footer>
-</blockquote>
-
-        
-<div class="page-reward">
-    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
-</div>
+  </article>
 
 
 
-        <div class="post-footer">
-            
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/APK加壳/">APK加壳</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
 
 
-            
-<div class="page-share-wrap">
+          
+  <div class="comments" id="comments">
     
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&title=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&title=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&source=来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2..." data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
+      <div class="ds-thread" data-thread-key="2015/01/16/apkshell2/"
+           data-title="APK加壳【2】内存加载dex实现详解" data-url="http://taoyuanxiaoqi.com/2015/01/16/apkshell2/">
+      </div>
+    
+  </div>
 
 
         </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
+        
+          
   
-    <div class="waves-block waves-effect prev">
-      <a href="/2015/01/25/apkshell3/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">APK加壳【3】通用内存加载dex方案分析</h4>
-      </a>
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
     </div>
-  
+  </div>
 
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2015/01/12/apkshell1/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">APK加壳【1】初步方案实现详解</h4>
-      </a>
-    </div>
-  
-</nav>
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
 
+      
 
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-    
-
-<div class="comments" id="comments">
-    <div class="ds-thread" data-thread-key="apkshell2" data-title="APK加壳【2】内存加载dex实现详解" data-url="http://taoyuanxiaoqi.com/2015/01/16/apkshell2/"></div>
-</div>
-<script>
-lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
-
-var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
-lazyScripts.push('/js/embed.min.js?v=1.4.6');
-
-
-</script>
-
-
-
-
-
-
-
-</article>
-
-<div id="reward" class="page-modal reward-lay">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <h3 class="reward-title">
-        <i class="icon icon-quote-left"></i>
-        感谢您赏个荷包蛋～
-        <i class="icon icon-quote-right"></i>
-    </h3>
-    <ul class="reward-items">
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpeg"
+               alt="桃小七" />
+          <p class="site-author-name" itemprop="name">桃小七</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
         
-        <li>
-            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
-            <p>微信</p>
-        </li>
-        
-
-        
-        <li>
-            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
-            <p>支付宝</p>
-        </li>
-        
-    </ul>
-</div>
-
-
-
-</div>
-
-        <footer class="footer">
-    <div class="top">
-        
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p>
-            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
-            <span>桃小七的博客 &copy; 2014 - 2017</span>
-        </p>
-    </div>
-</footer>
-
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-
-
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&title=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&title=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&source=来源本文要实验的方案同样来源于CSDN大牛Jack_Jia的一篇翻译博文：Android4.0内存Dex数据动态加载技术  原文的地址是 http://2..." data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《APK加壳【2】内存加载dex实现详解》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2015/01/16/apkshell2/" alt="微信分享二维码">
-</div>
-
-
-
-
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
-
-
-
-</script>
-
-<script src="/js/main.min.js?v=1.4.6"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">69</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
             </div>
-            <time class="flex-col time">{date}</time>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
         </div>
-    </a>
-</li>
-</template>
 
-<script src="/js/search.min.js?v=1.4.6" async></script>
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              睦邻友好，欢迎串门！
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="94" target="_blank">94</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#来源"><span class="nav-number">1.</span> <span class="nav-text">来源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方案"><span class="nav-number">2.</span> <span class="nav-text">方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">3.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#壳工程的迭代"><span class="nav-number">3.1.</span> <span class="nav-text">壳工程的迭代</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#本地代码"><span class="nav-number">3.1.1.</span> <span class="nav-text">本地代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java层"><span class="nav-number">3.1.2.</span> <span class="nav-text">Java层</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加密工具的跟进"><span class="nav-number">3.2.</span> <span class="nav-text">加密工具的跟进</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">桃小七</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
 
 
 
 
 
 
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"taoyuanxiaoqi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
 
 </body>
 </html>

@@ -1,26 +1,93 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
-    
-
-    
-
-    
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
 
 
-    <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
     
     
+  
+
+  
+
+  
+
+  
+
+  
+
+  
     
-    <title>openfire学习笔记（零）搜集资料在学习之前 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="openfire">
-    <meta name="description" content="ps：这是一篇无耻的资料整合笔记。
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="openfire," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="ps：这是一篇无耻的资料整合笔记。
 整体观感Openfire源码目录结构1.build目录：build目录下收录的是生成安装文件（例如：rpm）所要的一些文件，例如JRE等；2.resources目录：resources目录下收录的是一些为实现国际化（i18n）和本地化的一些编码文件（例如：英文，中文，法文，德文等）；3.documentation目录：documentation目录下收录的是一些">
 <meta property="og:type" content="article">
 <meta property="og:title" content="openfire学习笔记（零）搜集资料在学习之前">
@@ -36,149 +103,293 @@
 <meta name="twitter:description" content="ps：这是一篇无耻的资料整合笔记。
 整体观感Openfire源码目录结构1.build目录：build目录下收录的是生成安装文件（例如：rpm）所要的一些文件，例如JRE等；2.resources目录：resources目录下收录的是一些为实现国际化（i18n）和本地化的一些编码文件（例如：英文，中文，法文，德文等）；3.documentation目录：documentation目录下收录的是一些">
 <meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/mina_infrastructure_zpsc82947dc.jpg">
-    
-        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
-    
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
-    <script>window.lazyScripts=[]</script>
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/"/>
+
+
+
+
+
+  <title> openfire学习笔记（零）搜集资料在学习之前 | 桃小七的博客 </title>
 </head>
 
-<body>
-    <div id="loading" class="active"></div>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpeg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">桃小七</h5>
-          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
-        </hgroup>
-      </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">桃小七的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
     </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/tags"  >
-                <i class="icon icon-lg icon-tags"></i>
-                Tags
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/categories"  >
-                <i class="icon icon-lg icon-th-list"></i>
-                Categories
-              </a>
-            </li>
-        
-      </ul>
-    </div>
+      
+        <p class="site-subtitle">文章信口雌黄易 思想锥心坦白难</p>
+      
   </div>
-</aside>
 
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">openfire学习笔记（零）搜集资料在学习之前</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
-    </div>
-</header>
-<header class="content-header post-header">
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
 
-    <div class="container fade-scale">
-        <h1 class="title">openfire学习笔记（零）搜集资料在学习之前</h1>
-        <h5 class="subtitle">
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
             
-                <time datetime="2014-10-30T16:00:00.000Z" itemprop="datePublished" class="page-time">
-  2014-10-31
-</time>
-
-
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
-
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-        </h5>
-    </div>
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
 
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
     
 
-</header>
+  
 
+  
+  
+  
 
-<div class="container body-wrap">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="桃小七">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="桃小七的博客">
+    </span>
+
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#整体观感"><span class="post-toc-number">1.</span> <span class="post-toc-text">整体观感</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#命名规则"><span class="post-toc-number">2.</span> <span class="post-toc-text">命名规则</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#XXStarter"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">XXStarter</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#XXListener"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">XXListener</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#XXDispatcher"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">XXDispatcher</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#XXPlugin"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">XXPlugin</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#XXProvider"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">XXProvider</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#XXHandler"><span class="post-toc-number">2.6.</span> <span class="post-toc-text">XXHandler</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#系统配置项"><span class="post-toc-number">3.</span> <span class="post-toc-text">系统配置项</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关于MINA"><span class="post-toc-number">4.</span> <span class="post-toc-text">关于MINA</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#具体实现部分"><span class="post-toc-number">5.</span> <span class="post-toc-text">具体实现部分</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#客户端"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">客户端</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#客户端和服务器的连接"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">客户端和服务器的连接</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#IoFilter："><span class="post-toc-number">5.2.1.</span> <span class="post-toc-text">IoFilter：</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Protocol-Codec-Factory："><span class="post-toc-number">5.2.2.</span> <span class="post-toc-text">Protocol Codec Factory：</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#IoHandler"><span class="post-toc-number">5.2.3.</span> <span class="post-toc-text">IoHandler:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#IOSession"><span class="post-toc-number">5.2.4.</span> <span class="post-toc-text">IOSession</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#客户端连接的处理过程："><span class="post-toc-number">5.3.</span> <span class="post-toc-text">客户端连接的处理过程：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#MessageRoute处理"><span class="post-toc-number">5.3.1.</span> <span class="post-toc-text">MessageRoute处理</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#IQRoute-处理"><span class="post-toc-number">5.3.2.</span> <span class="post-toc-text">IQRoute 处理</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#PresenceRoute处理"><span class="post-toc-number">5.3.3.</span> <span class="post-toc-text">PresenceRoute处理</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#数据库处理"><span class="post-toc-number">5.3.4.</span> <span class="post-toc-text">数据库处理</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#常用类"><span class="post-toc-number">5.3.5.</span> <span class="post-toc-text">常用类</span></a></li></ol></li></ol></li></ol>
-        </nav>
-    </aside>
-    
-<article id="post-openfire_note_0"
-  class="post-article article-type-post fade" itemprop="blogPost">
+      <header class="post-header">
 
-    <div class="post-card">
-        <h1 class="post-card-title">openfire学习笔记（零）搜集资料在学习之前</h1>
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                openfire学习笔记（零）搜集资料在学习之前
+              
+            
+          </h1>
+        
+
         <div class="post-meta">
-            <time class="post-time" title="2014年10月31日 0:00" datetime="2014-10-30T16:00:00.000Z"  itemprop="datePublished">2014-10-31</time>
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-10-31T00:00:00+08:00">
+                2014-10-31
+              </time>
+            
 
             
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
-
-
 
             
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+          </span>
 
-
+          
+            <span class="post-category" >
             
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术探究/" itemprop="url" rel="index">
+                    <span itemprop="name">技术探究</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2014/10/31/openfire_note_0/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/10/31/openfire_note_0/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
 
         </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <p>ps：这是一篇无耻的资料整合笔记。</p>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>ps：这是一篇无耻的资料整合笔记。</p>
 <h2 id="整体观感"><a href="#整体观感" class="headerlink" title="整体观感"></a>整体观感</h2><p>Openfire源码目录结构<br><br>1.build目录：build目录下收录的是生成安装文件（例如：rpm）所要的一些文件，例如JRE等；<br>2.resources目录：resources目录下收录的是一些为实现国际化（i18n）和本地化的一些编码文件（例如：英文，中文，法文，德文等）；<br><br>3.documentation目录：documentation目录下收录的是一些关于Openfire安装和配置的信息，但最终要的是这里有Openfire开发的Javado；<br><br>4.src目录：顾名思义这个src文件夹就是我们想要的Openfire源代码了，这下面又有许多文件夹，我们只要Java文件夹就好，这里面实现的Openfire的核心功能，通过它就可以调试Openfire了。<br><a id="more"></a></p>
 <h2 id="命名规则"><a href="#命名规则" class="headerlink" title="命名规则"></a>命名规则</h2><p>Openfire中常见的类名后缀命名包括Starter、Plugin、Listener、Dispatcher、Handler、Manager、Provider，通常情况下，这些命名类包括如下意义：<br></p>
 <h3 id="XXStarter"><a href="#XXStarter" class="headerlink" title="XXStarter"></a>XXStarter</h3><p>系统启动类，如org.jivesoftware.openfire.starter.ServerStarter，调用其start()方法可启动系统应用。</p>
@@ -195,19 +406,8 @@
 <li>ofproperty中的各条记录，该表中包括两个字段name和propvalue，分别代表配置项名和配置项值。</li>
 </ol>
 <h2 id="关于MINA"><a href="#关于MINA" class="headerlink" title="关于MINA"></a>关于MINA</h2><p>MINA是Apache组织下的一个项目，它可以帮助用户轻松的开发高性能和高扩展性的网络应用。MINA提供了一个抽象的、支持各种传输协议的（如TCP/IP、UDP/IP）、基于Java NIO的异步事件驱动的API。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/mina_infrastructure_zpsc82947dc.jpg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure><br><br><strong>MINA 的架构图</strong> from <a href="http://www.ibm.com/developerworks/cn/opensource/os-cn-apmina/" target="_blank" rel="external">使用 Apache MINA 开发高性能网络应用程序</a><br><br><br><br>Openfire的ConnectionHandler类继承了MINA的IoHandlerAdaper，他主要负责连接的创建、销毁，以及接收到XML数据包的投递。ConnectionHandler有三个子类，其中ClientConnectionHandler负责客户端与服务器端的连接，ComponentConnectionHandler负责组件与服务器端的连接。<br><br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ConnectionHandler_zps221afae3.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/mina_infrastructure_zpsc82947dc.jpg" alt=""><br><br><strong>MINA 的架构图</strong> from <a href="http://www.ibm.com/developerworks/cn/opensource/os-cn-apmina/" target="_blank" rel="external">使用 Apache MINA 开发高性能网络应用程序</a><br><br></p>
+<p>Openfire的ConnectionHandler类继承了MINA的IoHandlerAdaper，他主要负责连接的创建、销毁，以及接收到XML数据包的投递。ConnectionHandler有三个子类，其中ClientConnectionHandler负责客户端与服务器端的连接，ComponentConnectionHandler负责组件与服务器端的连接。<br><br><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ConnectionHandler_zps221afae3.png" alt=""></p>
 <h2 id="具体实现部分"><a href="#具体实现部分" class="headerlink" title="具体实现部分"></a>具体实现部分</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>Openfire的socket网络连接包括：<br></p>
 <ol>
 <li>服务器和服务器之间的连接（监听在端口5269）；<br></li>
@@ -228,278 +428,391 @@
 <h4 id="数据库处理"><a href="#数据库处理" class="headerlink" title="数据库处理"></a>数据库处理</h4><p>Openfire的数据库处理采用直接调用JDBC 的方式。核心类为org.jivesoftware.database.DbConnectionManager。数据库的处理与业务处理耦合，没有划分出专门的业务逻辑层。<br><br><strong>ConnectionProvider</strong><br>此类为数据库提供者接口，如需连接mysql、hsqldb等数据库，需首先实现些接口。<br>处理方式<br 通常直接调用xxmanager中的实例方法，xxmanager中又调用的是对应的接口xxprovider的方法，实际操作在该接口的实现类中实现。实现类是动态绑定的（默认的实现类通常命名规则为defaultxxprovider），在运行时根据ofproperty表中对应配置项值选择。下面以添加用户组为例进行说明。<br=""><br>首先获得GroupManager的一个实例，在调用其构造函数时调用initProvider()方法，在该方法中获取数据库中配置项的值，若不为空则根据该值通过反射机制获取GroupProvider接口的实现类实例对象。</p>
 <h4 id="常用类"><a href="#常用类" class="headerlink" title="常用类"></a>常用类</h4><p>org.jivesoftware.database.DbConnectionManager<br>——连接管理类<br><br>org.jivesoftware.util.JiveGlobals<br>——通常用于操作ofproperty表中记录</p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2015-11-04T12:27:46.000Z" itemprop="dateUpdated">2015年11月4日 20:27</time>
-</span><br>
-
-
-        转载请注明原文链接：<a href="/2014/10/31/openfire_note_0/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/</a>
+      
     </div>
-    <footer>
-        <a href="http://taoyuanxiaoqi.com">
-            <img src="/img/avatar.jpeg" alt="桃小七">
-            桃小七
-        </a>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢您赏个荷包蛋～</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/myWechatPay2.png" alt="桃小七 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/myAliPay2.jpeg" alt="桃小七 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/openfire/" rel="tag"># openfire</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/10/27/《暗访十年》阅读笔记/" rel="next" title="《暗访十年》 系列阅读笔记">
+                <i class="fa fa-chevron-left"></i> 《暗访十年》 系列阅读笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/11/01/openfire_note_1/" rel="prev" title="openfire学习笔记（一）系统启动流程">
+                openfire学习笔记（一）系统启动流程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
     </footer>
-</blockquote>
-
-        
-<div class="page-reward">
-    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
-</div>
+  </article>
 
 
 
-        <div class="post-footer">
-            
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openfire/">openfire</a></li></ul>
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
 
 
-            
-<div class="page-share-wrap">
+          
+  <div class="comments" id="comments">
     
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/&title=《openfire学习笔记（零）搜集资料在学习之前》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/&title=《openfire学习笔记（零）搜集资料在学习之前》 — 桃小七的博客&source=ps：这是一篇无耻的资料整合笔记。
-整体观感Openfire源码目录结构1.build目录：build目录下收录的是生成安装文件（例如：rpm）所要的一些..." data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（零）搜集资料在学习之前》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
+      <div class="ds-thread" data-thread-key="2014/10/31/openfire_note_0/"
+           data-title="openfire学习笔记（零）搜集资料在学习之前" data-url="http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/">
+      </div>
+    
+  </div>
 
 
         </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
+        
+          
   
-    <div class="waves-block waves-effect prev">
-      <a href="/2014/11/01/openfire_note_1/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">openfire学习笔记（一）系统启动流程</h4>
-      </a>
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
     </div>
-  
+  </div>
 
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2014/10/27/《暗访十年》阅读笔记/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">《暗访十年》 系列阅读笔记</h4>
-      </a>
-    </div>
-  
-</nav>
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
 
+      
 
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-    
-
-<div class="comments" id="comments">
-    <div class="ds-thread" data-thread-key="openfire_note_0" data-title="openfire学习笔记（零）搜集资料在学习之前" data-url="http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/"></div>
-</div>
-<script>
-lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
-
-var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
-lazyScripts.push('/js/embed.min.js?v=1.4.6');
-
-
-</script>
-
-
-
-
-
-
-
-</article>
-
-<div id="reward" class="page-modal reward-lay">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <h3 class="reward-title">
-        <i class="icon icon-quote-left"></i>
-        感谢您赏个荷包蛋～
-        <i class="icon icon-quote-right"></i>
-    </h3>
-    <ul class="reward-items">
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpeg"
+               alt="桃小七" />
+          <p class="site-author-name" itemprop="name">桃小七</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
         
-        <li>
-            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
-            <p>微信</p>
-        </li>
-        
-
-        
-        <li>
-            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
-            <p>支付宝</p>
-        </li>
-        
-    </ul>
-</div>
-
-
-
-</div>
-
-        <footer class="footer">
-    <div class="top">
-        
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p>
-            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
-            <span>桃小七的博客 &copy; 2014 - 2017</span>
-        </p>
-    </div>
-</footer>
-
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-
-
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/&title=《openfire学习笔记（零）搜集资料在学习之前》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/&title=《openfire学习笔记（零）搜集资料在学习之前》 — 桃小七的博客&source=ps：这是一篇无耻的资料整合笔记。
-整体观感Openfire源码目录结构1.build目录：build目录下收录的是生成安装文件（例如：rpm）所要的一些..." data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（零）搜集资料在学习之前》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/10/31/openfire_note_0/" alt="微信分享二维码">
-</div>
-
-
-
-
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
-
-
-
-</script>
-
-<script src="/js/main.min.js?v=1.4.6"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">69</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
             </div>
-            <time class="flex-col time">{date}</time>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
         </div>
-    </a>
-</li>
-</template>
 
-<script src="/js/search.min.js?v=1.4.6" async></script>
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              睦邻友好，欢迎串门！
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="94" target="_blank">94</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体观感"><span class="nav-number">1.</span> <span class="nav-text">整体观感</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命名规则"><span class="nav-number">2.</span> <span class="nav-text">命名规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#XXStarter"><span class="nav-number">2.1.</span> <span class="nav-text">XXStarter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XXListener"><span class="nav-number">2.2.</span> <span class="nav-text">XXListener</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XXDispatcher"><span class="nav-number">2.3.</span> <span class="nav-text">XXDispatcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XXPlugin"><span class="nav-number">2.4.</span> <span class="nav-text">XXPlugin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XXProvider"><span class="nav-number">2.5.</span> <span class="nav-text">XXProvider</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XXHandler"><span class="nav-number">2.6.</span> <span class="nav-text">XXHandler</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统配置项"><span class="nav-number">3.</span> <span class="nav-text">系统配置项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于MINA"><span class="nav-number">4.</span> <span class="nav-text">关于MINA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#具体实现部分"><span class="nav-number">5.</span> <span class="nav-text">具体实现部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端"><span class="nav-number">5.1.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端和服务器的连接"><span class="nav-number">5.2.</span> <span class="nav-text">客户端和服务器的连接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IoFilter："><span class="nav-number">5.2.1.</span> <span class="nav-text">IoFilter：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Protocol-Codec-Factory："><span class="nav-number">5.2.2.</span> <span class="nav-text">Protocol Codec Factory：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IoHandler"><span class="nav-number">5.2.3.</span> <span class="nav-text">IoHandler:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IOSession"><span class="nav-number">5.2.4.</span> <span class="nav-text">IOSession</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端连接的处理过程："><span class="nav-number">5.3.</span> <span class="nav-text">客户端连接的处理过程：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MessageRoute处理"><span class="nav-number">5.3.1.</span> <span class="nav-text">MessageRoute处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IQRoute-处理"><span class="nav-number">5.3.2.</span> <span class="nav-text">IQRoute 处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PresenceRoute处理"><span class="nav-number">5.3.3.</span> <span class="nav-text">PresenceRoute处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库处理"><span class="nav-number">5.3.4.</span> <span class="nav-text">数据库处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用类"><span class="nav-number">5.3.5.</span> <span class="nav-text">常用类</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">桃小七</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
 
 
 
 
 
 
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"taoyuanxiaoqi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
 
 </body>
 </html>

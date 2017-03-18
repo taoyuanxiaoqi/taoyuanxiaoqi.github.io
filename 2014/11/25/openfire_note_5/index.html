@@ -1,26 +1,93 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
-    
-
-    
-
-    
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
 
 
-    <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
     
     
+  
+
+  
+
+  
+
+  
+
+  
+
+  
     
-    <title>openfire学习笔记（五）ConnectionManager拓展模块——未完待续 | 桃小七的博客 | 文章信口雌黄易 思想锥心坦白难</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="openfire">
-    <meta name="description" content="ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。">
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="openfire," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="openfire学习笔记（五）ConnectionManager拓展模块——未完待续">
 <meta property="og:url" content="http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/index.html">
@@ -39,163 +106,295 @@
 <meta name="twitter:title" content="openfire学习笔记（五）ConnectionManager拓展模块——未完待续">
 <meta name="twitter:description" content="ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。">
 <meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/lip_image002_zpsioedm1tm.gif">
-    
-        <link rel="alternative" href="/atom.xml" title="桃小七的博客" type="application/atom+xml">
-    
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/css/style.css?v=1.4.6">
-    <script>window.lazyScripts=[]</script>
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/"/>
+
+
+
+
+
+  <title> openfire学习笔记（五）ConnectionManager拓展模块——未完待续 | 桃小七的博客 </title>
 </head>
 
-<body>
-    <div id="loading" class="active"></div>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpeg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">桃小七</h5>
-          <a href="mailto:15891428860@163.com" title="15891428860@163.com" class="mail">15891428860@163.com</a>
-        </hgroup>
-      </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">桃小七的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
     </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/tags"  >
-                <i class="icon icon-lg icon-tags"></i>
-                Tags
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/categories"  >
-                <i class="icon icon-lg icon-th-list"></i>
-                Categories
-              </a>
-            </li>
-        
-      </ul>
-    </div>
+      
+        <p class="site-subtitle">文章信口雌黄易 思想锥心坦白难</p>
+      
   </div>
-</aside>
 
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">openfire学习笔记（五）ConnectionManager拓展模块——未完待续</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
-    </div>
-</header>
-<header class="content-header post-header">
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
 
-    <div class="container fade-scale">
-        <h1 class="title">openfire学习笔记（五）ConnectionManager拓展模块——未完待续</h1>
-        <h5 class="subtitle">
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
             
-                <time datetime="2014-11-24T16:00:00.000Z" itemprop="datePublished" class="page-time">
-  2014-11-25
-</time>
-
-
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
-
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-        </h5>
-    </div>
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
 
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
     
 
-</header>
+  
 
+  
+  
+  
 
-<div class="container body-wrap">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="桃小七">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="桃小七的博客">
+    </span>
+
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ConnectionManager"><span class="post-toc-number">1.</span> <span class="post-toc-text">ConnectionManager</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装与使用"><span class="post-toc-number">2.</span> <span class="post-toc-text">安装与使用</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#运行原理"><span class="post-toc-number">3.</span> <span class="post-toc-text">运行原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#服务器与CM"><span class="post-toc-number">4.</span> <span class="post-toc-text">服务器与CM</span></a></li></ol>
-        </nav>
-    </aside>
-    
-<article id="post-openfire_note_5"
-  class="post-article article-type-post fade" itemprop="blogPost">
+      <header class="post-header">
 
-    <div class="post-card">
-        <h1 class="post-card-title">openfire学习笔记（五）ConnectionManager拓展模块——未完待续</h1>
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                openfire学习笔记（五）ConnectionManager拓展模块——未完待续
+              
+            
+          </h1>
+        
+
         <div class="post-meta">
-            <time class="post-time" title="2014年11月25日 0:00" datetime="2014-11-24T16:00:00.000Z"  itemprop="datePublished">2014-11-25</time>
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-11-25T00:00:00+08:00">
+                2014-11-25
+              </time>
+            
 
             
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/技术探究/">技术探究</a></li></ul>
-
-
 
             
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+          </span>
 
-
+          
+            <span class="post-category" >
             
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术探究/" itemprop="url" rel="index">
+                    <span itemprop="name">技术探究</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2014/11/25/openfire_note_5/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/11/25/openfire_note_5/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
 
         </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="ConnectionManager"><a href="#ConnectionManager" class="headerlink" title="ConnectionManager"></a><a href="http://www.igniterealtime.org/projects/openfire/connection_manager.jsp" target="_blank" rel="external">ConnectionManager</a></h2><p>Openfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。<br><br><a id="more"></a><br>Openfire 服务器可以连接一个或多个 Connection Manager 。每个 Connection Manager 可以处理一个或多个支持 XMPP 的客户端。为 Openfire 配置 Connection Manager 后，支持 XMPP 的客户端仅需要连接 Connection Manager ，由 Connection Manager 负责管理对来自 XMPP 客户端对 Openfire 服务器的连接。下图是Openfire 服务器配置 Connection Manager 后的系统架构。<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/lip_image002_zpsioedm1tm.gif" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="ConnectionManager"><a href="#ConnectionManager" class="headerlink" title="ConnectionManager"></a><a href="http://www.igniterealtime.org/projects/openfire/connection_manager.jsp" target="_blank" rel="external">ConnectionManager</a></h2><p>Openfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 XMPP 客户端对Openfire 服务器的联接。根据 Connection Manager 主页介绍，每个 Connection Manager 可以处理至少5000个并发用户。<br><br><a id="more"></a><br>Openfire 服务器可以连接一个或多个 Connection Manager 。每个 Connection Manager 可以处理一个或多个支持 XMPP 的客户端。为 Openfire 配置 Connection Manager 后，支持 XMPP 的客户端仅需要连接 Connection Manager ，由 Connection Manager 负责管理对来自 XMPP 客户端对 Openfire 服务器的连接。下图是Openfire 服务器配置 Connection Manager 后的系统架构。<br><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/lip_image002_zpsioedm1tm.gif" alt=""></p>
 <p>Ps：第一节是无耻的拷贝。</p>
-<h2 id="安装与使用"><a href="#安装与使用" class="headerlink" title="安装与使用"></a>安装与使用</h2><p>1.服务器设置：<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image004_zpsvmxfi5jw.jpeg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure></p>
+<h2 id="安装与使用"><a href="#安装与使用" class="headerlink" title="安装与使用"></a>安装与使用</h2><p>1.服务器设置：<br><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image004_zpsvmxfi5jw.jpeg" alt=""></p>
 <p>2.下载功能包，connection_manager_3_6_3.tar.gz，解压至任意目录CM_PATH；<br><br>3.设置CM配置文件，CM_PATH/connection_manager/conf/manager.xml，修改各路属性如下：</p>
 <ul>
 <li>domain :域名，如果DNS不支持（本文的实验环境就是这样），添加到/etc/hosts 列表，使填写的值能够ping通，如图本次添加的值为”bfc-27”；</li>
@@ -203,38 +402,14 @@
 <li>端口号和密码同服务器设置保持一致；</li>
 <li>Manager下面的name属性是显示在服务器上的CM名称，不填写的话会随即生成，注意不能包含下划线；</li>
 </ul>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image006_zpscknwbghc.jpeg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image006_zpscknwbghc.jpeg" alt=""></p>
 <p>4.运行CM，CM_PATH/connection_manager/bin/cmanager.sh脚本，可能无运行权限，加好权限即可；</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image008_zps9ukxmcxi.jpeg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image008_zps9ukxmcxi.jpeg" alt=""></p>
 <p>此时刷新服务器链接管理器页面可以看到：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image010_zpsczbtoqly.jpeg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image010_zpsczbtoqly.jpeg" alt=""></p>
 <p>5.登录，在支持XMPP的客户端，填写帐号密码，服务器设置为CM的地址，登录后，刷新服务器链接管理器页面可以看到客户端数量有所增加。</p>
 <h2 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h2><p>1.下面草草的分析下CM的运行原理，既然是使用脚本启动的，那么从脚本开始:</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image012_zpsq3gh8mhc.jpeg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image012_zpsq3gh8mhc.jpeg" alt=""></p>
 <p>前面一大坨基本是各种环境变量的设置，最后一两句切入主题，lib目录下的startup.jar包，被执行，从jar包目录很容易找到启动类所在，从官网下载源码文件：connection_manager_src_3_6_3.tar.gz；</p>
 <p>2.打开源码，在上面的包路径下找到启动类ServerStarter.java，就会发现眼熟的main函数、start函数、解压包操作和类加载操作，最后一步主函数毫不隐讳的加载了核心类ConnectionManager：</p>
 <pre><code>ClassLoader loader = new JiveClassLoader(parent, libDir);
@@ -306,22 +481,10 @@ containerClass.newInstance();
 }
 </code></pre><p>可以看到openfire中熟悉的SocketAcceptor，绑定IO端口与处理handler的操作，当然CM与openfire同是基于MINA框架的，所以它们的信息处理方式基本一致。</p>
 <p>从网络上找到一张CM的信息流程简图，可以大致说明CM的架构与信息流向：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image014_zpsismhfpvm.jpeg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image014_zpsismhfpvm.jpeg" alt=""></p>
 <p><a href="http://irusher.com/Openfire%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86%E5%99%A8/" target="_blank" rel="external">图片来源</a></p>
 <h2 id="服务器与CM"><a href="#服务器与CM" class="headerlink" title="服务器与CM"></a>服务器与CM</h2><p>CM与服务器可以是多对一的关系，并且我们在服务器网页上可以看到服务器上连接的每个CM的信息，即openfire存在获取连接在它上面的CM信息的接口，试着找出它。<br>在浏览器openfire连接管理页面查询源代码，可以得到：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image002_zpsbwhatxo3.jpeg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/ip_image002_zpsbwhatxo3.jpeg" alt=""></p>
 <p>找到网页对应的jsp代码文件openfire/src/web/connection-managers-settings.jsp ，可以找到如下代码：</p>
 <pre><code>&lt;%
 ConnectionMultiplexerManager multiplexerManager = ConnectionMultiplexerManager.getInstance();
@@ -424,276 +587,391 @@ private Map&lt;String, LocalConnectionMultiplexerSession&gt; connnectionManagerS
         new ConcurrentHashMap&lt;String, LocalConnectionMultiplexerSession&gt;();
 </code></pre><p>综上可知，以上工具类的内部都记录了CM域名、节点ID、Session的映射关系，也从侧面反映了ConnectionMultiplexerManager系的信息流程处理应当是openfire中处理CM的信息流程。</p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2015-11-09T17:20:55.000Z" itemprop="dateUpdated">2015年11月10日 1:20</time>
-</span><br>
-
-
-        转载请注明原文链接：<a href="/2014/11/25/openfire_note_5/" target="_blank" rel="external">http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/</a>
+      
     </div>
-    <footer>
-        <a href="http://taoyuanxiaoqi.com">
-            <img src="/img/avatar.jpeg" alt="桃小七">
-            桃小七
-        </a>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢您赏个荷包蛋～</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/myWechatPay2.png" alt="桃小七 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/myAliPay2.jpeg" alt="桃小七 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/openfire/" rel="tag"># openfire</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/11/21/openfire_note_4/" rel="next" title="openfire学习笔记（四）ConnectionMultiplexerManager类解析">
+                <i class="fa fa-chevron-left"></i> openfire学习笔记（四）ConnectionMultiplexerManager类解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/11/27/keduxingsuibi/" rel="prev" title="从“把代码写得简单易懂到底好不好”想到的">
+                从“把代码写得简单易懂到底好不好”想到的 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
     </footer>
-</blockquote>
-
-        
-<div class="page-reward">
-    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
-</div>
+  </article>
 
 
 
-        <div class="post-footer">
-            
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openfire/">openfire</a></li></ul>
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
 
 
-            
-<div class="page-share-wrap">
+          
+  <div class="comments" id="comments">
     
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&title=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&title=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&source=ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 ..." data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
+      <div class="ds-thread" data-thread-key="2014/11/25/openfire_note_5/"
+           data-title="openfire学习笔记（五）ConnectionManager拓展模块——未完待续" data-url="http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/">
+      </div>
+    
+  </div>
 
 
         </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
+        
+          
   
-    <div class="waves-block waves-effect prev">
-      <a href="/2014/11/27/keduxingsuibi/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">从“把代码写得简单易懂到底好不好”想到的</h4>
-      </a>
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
     </div>
-  
+  </div>
 
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2014/11/21/openfire_note_4/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">openfire学习笔记（四）ConnectionMultiplexerManager类解析</h4>
-      </a>
-    </div>
-  
-</nav>
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
 
+      
 
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-    
-
-<div class="comments" id="comments">
-    <div class="ds-thread" data-thread-key="openfire_note_5" data-title="openfire学习笔记（五）ConnectionManager拓展模块——未完待续" data-url="http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/"></div>
-</div>
-<script>
-lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
-
-var duoshuoQuery = {short_name:'ysblog', theme: 'none'};
-lazyScripts.push('/js/embed.min.js?v=1.4.6');
-
-
-</script>
-
-
-
-
-
-
-
-</article>
-
-<div id="reward" class="page-modal reward-lay">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <h3 class="reward-title">
-        <i class="icon icon-quote-left"></i>
-        感谢您赏个荷包蛋～
-        <i class="icon icon-quote-right"></i>
-    </h3>
-    <ul class="reward-items">
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpeg"
+               alt="桃小七" />
+          <p class="site-author-name" itemprop="name">桃小七</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
         
-        <li>
-            <img src="/img/myWechatPay2.png" title="微信打赏二维码" alt="微信打赏二维码">
-            <p>微信</p>
-        </li>
-        
-
-        
-        <li>
-            <img src="/img/myAliPay2.jpeg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
-            <p>支付宝</p>
-        </li>
-        
-    </ul>
-</div>
-
-
-
-</div>
-
-        <footer class="footer">
-    <div class="top">
-        
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p>
-            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
-            <span>桃小七的博客 &copy; 2014 - 2017</span>
-        </p>
-    </div>
-</footer>
-
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-
-
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&title=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&pic=http://taoyuanxiaoqi.com/img/avatar.jpeg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&title=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&source=ConnectionManagerOpenfire Connection Manager 是 Openfire 服务器的扩展，它可以透明的处理大规模并发 ..." data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openfire学习笔记（五）ConnectionManager拓展模块——未完待续》 — 桃小七的博客&url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/&via=http://taoyuanxiaoqi.com" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://taoyuanxiaoqi.com/2014/11/25/openfire_note_5/" alt="微信分享二维码">
-</div>
-
-
-
-
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
-
-
-
-</script>
-
-<script src="/js/main.min.js?v=1.4.6"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">69</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
             </div>
-            <time class="flex-col time">{date}</time>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
         </div>
-    </a>
-</li>
-</template>
 
-<script src="/js/search.min.js?v=1.4.6" async></script>
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              睦邻友好，欢迎串门！
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://macshuo.com/" title="94" target="_blank">94</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ConnectionManager"><span class="nav-number">1.</span> <span class="nav-text">ConnectionManager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装与使用"><span class="nav-number">2.</span> <span class="nav-text">安装与使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行原理"><span class="nav-number">3.</span> <span class="nav-text">运行原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务器与CM"><span class="nav-number">4.</span> <span class="nav-text">服务器与CM</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">桃小七</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
 
 
 
 
 
 
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"taoyuanxiaoqi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
 
 </body>
 </html>
