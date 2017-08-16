@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="音乐家常识," />
+  <meta name="keywords" content="android," />
 
 
 
@@ -87,21 +87,24 @@
 
 
 
-<meta name="description" content="弗朗茨·舒伯特
-弗朗茨·泽拉菲库斯·彼得·舒伯特（德语：Franz Seraphicus Peter Schubert，1797年1月31日－1828年11月19日）奥地利作曲家，他是早期浪漫主义音乐的代表人物，也被认为是古典主义音乐的最后一位巨匠。">
+<meta name="description" content="内容简介本文针对业务需求，对开源项目AdapterDelegates进行了简单的分析。感谢项目作者 Hannes Dorfmann的开源贡献。
+需求分析有类似微信卡包这样一个列表页面，要如何去实现。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="音乐家常识课（八） 舒伯特">
-<meta property="og:url" content="http://taoyuanxiaoqi.com/2017/03/12/音乐家8/index.html">
+<meta property="og:title" content="RecyclerView实现多类型Item布局--AdapterDelegates代码分析">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2017/08/16/delegate/index.html">
 <meta property="og:site_name" content="桃小七的博客">
-<meta property="og:description" content="弗朗茨·舒伯特
-弗朗茨·泽拉菲库斯·彼得·舒伯特（德语：Franz Seraphicus Peter Schubert，1797年1月31日－1828年11月19日）奥地利作曲家，他是早期浪漫主义音乐的代表人物，也被认为是古典主义音乐的最后一位巨匠。">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/Franz_Schubert_by_Wilhelm_August_Rieder_1875.jpg">
-<meta property="og:updated_time" content="2017-03-12T15:48:03.000Z">
+<meta property="og:description" content="内容简介本文针对业务需求，对开源项目AdapterDelegates进行了简单的分析。感谢项目作者 Hannes Dorfmann的开源贡献。
+需求分析有类似微信卡包这样一个列表页面，要如何去实现。">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/wechat.jpeg">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/reptiels.jpeg">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/delegateDemo.png">
+<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/delegate.png">
+<meta property="og:updated_time" content="2017-08-16T07:19:28.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="音乐家常识课（八） 舒伯特">
-<meta name="twitter:description" content="弗朗茨·舒伯特
-弗朗茨·泽拉菲库斯·彼得·舒伯特（德语：Franz Seraphicus Peter Schubert，1797年1月31日－1828年11月19日）奥地利作曲家，他是早期浪漫主义音乐的代表人物，也被认为是古典主义音乐的最后一位巨匠。">
-<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/Franz_Schubert_by_Wilhelm_August_Rieder_1875.jpg">
+<meta name="twitter:title" content="RecyclerView实现多类型Item布局--AdapterDelegates代码分析">
+<meta name="twitter:description" content="内容简介本文针对业务需求，对开源项目AdapterDelegates进行了简单的分析。感谢项目作者 Hannes Dorfmann的开源贡献。
+需求分析有类似微信卡包这样一个列表页面，要如何去实现。">
+<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/wechat.jpeg">
 
 
 
@@ -129,13 +132,13 @@
 
 
 
-  <link rel="canonical" href="http://taoyuanxiaoqi.com/2017/03/12/音乐家8/"/>
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2017/08/16/delegate/"/>
 
 
 
 
 
-  <title> 音乐家常识课（八） 舒伯特 | 桃小七的博客 </title>
+  <title> RecyclerView实现多类型Item布局--AdapterDelegates代码分析 | 桃小七的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -326,7 +329,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2017/03/12/音乐家8/">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2017/08/16/delegate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="桃小七">
@@ -347,7 +350,7 @@
             
             
               
-                音乐家常识课（八） 舒伯特
+                RecyclerView实现多类型Item布局--AdapterDelegates代码分析
               
             
           </h1>
@@ -362,8 +365,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-12T22:40:14+08:00">
-                2017-03-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-16T19:12:20+08:00">
+                2017-08-16
               </time>
             
 
@@ -385,8 +388,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/音乐家常识/" itemprop="url" rel="index">
-                    <span itemprop="name">音乐家常识</span>
+                  <a href="/categories/技术探究/" itemprop="url" rel="index">
+                    <span itemprop="name">技术探究</span>
                   </a>
                 </span>
 
@@ -404,8 +407,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/03/12/音乐家8/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count hc-comment-count" data-xid="2017/03/12/音乐家8/" itemprop="commentsCount"></span>
+                <a href="/2017/08/16/delegate/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2017/08/16/delegate/" itemprop="commentsCount"></span>
                 </a>
               </span>
               <!--/noindex-->
@@ -432,21 +435,183 @@
       
 
       
-        <h2 id="弗朗茨·舒伯特"><a href="#弗朗茨·舒伯特" class="headerlink" title="弗朗茨·舒伯特"></a>弗朗茨·舒伯特</h2><blockquote>
-<p>弗朗茨·泽拉菲库斯·彼得·舒伯特（德语：Franz Seraphicus Peter Schubert，1797年1月31日－1828年11月19日）奥地利作曲家，他是早期浪漫主义音乐的代表人物，也被认为是古典主义音乐的最后一位巨匠。</p>
-</blockquote>
-<a id="more"></a> 
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/Franz_Schubert_by_Wilhelm_August_Rieder_1875.jpg" alt=""></p>
-<h2 id="生平"><a href="#生平" class="headerlink" title="生平"></a>生平</h2><p>1797年1月31日，舒伯特出生于维也纳近郊的里希田塔尔。他的父亲是一个知名的教师，同时也是个业余音乐家；他的母亲婚前是个女仆。连他在内共有15名兄弟姊妹，不过这15人当中，有10名在出生后不久就病死。</p>
-<p>五岁开始随父亲学习，六岁进入学校，那时开始音乐启蒙。</p>
-<p>1808年8月，由于在皇家教堂童声合唱团里唱歌，他进而进入皇家神学寄宿学校。在那里舒伯特开始接触了莫札特的序曲和交响曲。同时，他的天赋引起了当时顶级作曲家安东尼奥·萨列里的注意，萨列里决定教授他作曲和音乐理论。</p>
-<p>在1813年底他离开了寄宿学校，同时为了避免服役便去了他父亲的学校作为底班的教师。之后两年创作了大量的作品。到1820年，他辞去了一切工作，安心创作，生计完全靠朋友接济。舒伯特的另一个外号是“小蘑菇”。因为他只有157公分，又是个小胖子。</p>
-<p>1820年标志着舒伯特风格走向成熟，但从那些出版社里得到的报酬是那样的可怜和微乎其微。</p>
-<p>1823年1月被感染斑疹伤寒症，这在当时是不治之症。当年秋天舒伯特入院治疗，有所好转，但次年年初他精神也受到重创，在一封信中他写到：“我感到自己是世界上最不幸，最可怜的人”。同年，完成了第一个为威廉·米勒的诗歌创作的歌曲集“美丽的磨坊女”（Die schöne Müllerin, D. 795）, 这部作品以及后来的“冬季之旅”（Winterreise，D. 911） , 广泛地认为是舒伯特歌曲作品的巅峰之作。</p>
-<p>1825年他的事业终于有了转折。作品源源不断地出版，经济上的压力有所缓和。</p>
-<p>在1828年春天他第一次也是一生仅有的一次举办个人作品音乐会，好评如潮。</p>
-<p>自从1822年起，舒伯特就在和梅毒作斗争。尽管有人提出其他的病因，最终的病症很可能是伤寒症；他晚期的病状与汞中毒的病状相似，而汞恰巧是19世纪早期用来治疗梅毒的药物；无论如何，没有足够的证据来作出确定的诊断。他于1828年11月19日死于维也纳，哥哥费迪南德的公寓里，卒年31岁。根据他的要求，死后安葬在其崇拜了一生的偶像贝多芬的墓边。 1888年，舒伯特以及贝多芬的坟墓迁到了维也纳中央公墓，与小约翰·施特劳斯以及约翰内斯·勃拉姆斯的墓为邻。</p>
-<h2 id="影响"><a href="#影响" class="headerlink" title="影响"></a>影响</h2><p>他与贝多芬称为德语国家音乐界浪漫主义音乐的奠基人。他不但继承了古典主义音乐的传统，并在其基础上开创了歌曲音乐的先河，从而奠定了他浪漫主义音乐鼻祖的地位，并为后来的作曲家如门德尔松和舒曼，以及再后来的雨果·沃尔夫和斯克里亚宾所发扬光大。在十九世纪他以艺术歌曲的创始人闻名于世，而在二十世纪他在器乐的贡献也逐渐为人们所认可。可惜在歌剧上的影响有限，主要是因为歌词的晦涩难懂和乏味，从而使作品的水准大打折扣。</p>
+        <h2 id="内容简介"><a href="#内容简介" class="headerlink" title="内容简介"></a>内容简介</h2><p>本文针对业务需求，对开源项目<a href="https://github.com/sockeqwe/AdapterDelegates" target="_blank" rel="external">AdapterDelegates</a>进行了简单的分析。感谢项目作者<a href="https://github.com/sockeqwe" target="_blank" rel="external"> Hannes Dorfmann</a>的开源贡献。</p>
+<h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><p>有类似微信卡包这样一个列表页面，要如何去实现。<a id="more"></a> </p>
+<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/wechat.jpeg" alt=""></p>
+<p>乍一看，这是一个典型的列表类型的页面。有两个大的分类，会员卡和优惠券。简单的处理下，标题+列表，如此两个来实现。然而如果哪天说需要加个证件／银行卡什么的子项，在手动去布局明显有不少重复内容的东西总是有些难受的；那么，用一个标题+子列表作为一个item，这样做一个列表就可以了。但是列表中套着个子列表，item布局和数据设计复杂度略高。</p>
+<p>真实的需求中看起来类似的item，总会存在形形色色的不一致之处，如果强行合在一个布局中实现，无论是布局文件还是对应的数据类设计都会比较复杂，可以预见的是实现上必然存在各种各样的条件分支。并且基于这种实现的可拓展性也比较差，再加入一种比较个性的item，那么布局、绘制、数据类都要加入各种各样的判断，并且冗杂在一起。</p>
+<p>假设只有一个这样的页面需求，时间又很赶的情况下，或许可以苟且一下，然而当如此这般的页面需求一下出现六七个的时候，就要慎重考虑了。</p>
+<h2 id="其实只需要一个列表"><a href="#其实只需要一个列表" class="headerlink" title="其实只需要一个列表"></a>其实只需要一个列表</h2><p>实际上 RecyclerView.Adapter 中似乎已经考虑到这种情况的存在。之前使用的 RecyclerView 都比较简单，我们仔细观察 RecyclerView.Adapter 这个十分熟悉的建立<br>ViewHolder的抽象方法：</p>
+<pre><code>/**
+ * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
+ * an item.
+ * &lt;p&gt;
+ * This new ViewHolder should be constructed with a new View that can represent the items
+ * of the given type. You can either create a new View manually or inflate it from an XML
+ * layout file.
+ * &lt;p&gt;
+ * The new ViewHolder will be used to display items of the adapter using
+ * {@link #onBindViewHolder(ViewHolder, int, List)}. Since it will be re-used to display
+ * different items in the data set, it is a good idea to cache references to sub views of
+ * the View to avoid unnecessary {@link View#findViewById(int)} calls.
+ *
+ * @param parent The ViewGroup into which the new View will be added after it is bound to
+ *               an adapter position.
+ * @param viewType The view type of the new View.
+ *
+ * @return A new ViewHolder that holds a View of the given view type.
+ * @see #getItemViewType(int)
+ * @see #onBindViewHolder(ViewHolder, int)
+ */
+public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
+</code></pre><p>有一个常被忽略的参数 —— viewType。同样的，从源码中也能找到一个默认的实现方法：    </p>
+<pre><code>/**
+ * Return the view type of the item at &lt;code&gt;position&lt;/code&gt; for the purposes
+ * of view recycling.
+ *
+ * &lt;p&gt;The default implementation of this method returns 0, making the assumption of
+ * a single view type for the adapter. Unlike ListView adapters, types need not
+ * be contiguous. Consider using id resources to uniquely identify item view types.
+ *
+ * @param position position to query
+ * @return integer value identifying the type of the view needed to represent the item at
+ *                 &lt;code&gt;position&lt;/code&gt;. Type codes need not be contiguous.
+ */
+public int getItemViewType(int position) {
+    return 0;
+}
+</code></pre><p>从注释和之前粗浅的使用 RecyclerView 的经验可以了解到，实现item不同布局应当是可行的。根据刷新接口的定义：</p>
+<pre><code>public abstract void onBindViewHolder(VH holder, int position);
+</code></pre><p>首先通过 getItemViewType 接口，在 onCreateViewHolder 中根据不同的类型建立不同的ViewHolder，然后通过一定的映射关系，在 onBindViewHolder 中可以找到正确的数据来对不同的 ViewHolder 进行刷新。</p>
+<p>那么现在可以确认，一个 RecyclerView 就可以实现各种各样的item的交互页面，那么上面所提到的需求，其实页面上只用一个RecyclerView就好了，去掉标题类别、会员卡、优惠券之间指示与从属归类的概念关系，每个条目都是一个item，高度相似的布局可以归为一类实现即可。</p>
+<p>所以新的问题就是如何设计这个Adapter，才能够尽量减少if语句的存在，做到代码的可扩展性和可维护性更加合理。如此通用的一个需求，GitHub总能给你一个很好的答案，<a href="https://github.com/sockeqwe/AdapterDelegates" target="_blank" rel="external">AdapterDelegates</a> 。它的DEMO效果图如下：</p>
+<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/reptiels.jpeg" alt=""></p>
+<p>效果上完全符合需要，剩下的就是分析一下它的实现原理，考察一下可用性如何了。</p>
+<h2 id="关于这个库的用法与实现"><a href="#关于这个库的用法与实现" class="headerlink" title="关于这个库的用法与实现"></a>关于这个库的用法与实现</h2><p>从实现上考虑 RecyclerView.Adapter 大概要考虑以下几点：</p>
+<ul>
+<li>item 布局与刷新</li>
+<li>对应的数据结构组织</li>
+<li>item 中各个子控件的交互响应回调</li>
+</ul>
+<p>最后一项可以先不考虑，这个粗糙一点还是精细一点完全根据业务实际情况来。理论上针对if条件分支的消除，就是通过一定的设计模式，利用面向对象语言接口、抽象类的特性，本质上使用继承、组合的手段来做，解除掉耦合。能够达到的理想状态是，要更改一个功能时，修改一个类即可；添加一个功能时，增加个别新类即可。</p>
+<h3 id="DEMO的分析"><a href="#DEMO的分析" class="headerlink" title="DEMO的分析"></a>DEMO的分析</h3><p>我们来看DEMO的实现方式，堆一个类图出来：</p>
+<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/delegateDemo.png" alt=""></p>
+<p>红色部分是DEMO实现类，其余部分是库中的工具类。先主要分析红色部分，作为一个库的用户要实现这样一个多样化的列表，都需要实现哪些类。</p>
+<ul>
+<li>ReptilesAdapter，RecyclerView.Adapter的实现类，它的复杂程度是我们的关注点；</li>
+<li>以Delegate为类名结尾的这些兄弟类，主要就是负责不同item的布局与刷新实现了。顾名思义，“Delegate”就是代理，对于这一部分，我们重点来看它们与Adapter之间的调用关系、或者说继承组合关系，其次就是跟数据类的对应的刷新实现；</li>
+<li>DisplayableItem 向下的一众接口实现子类，这部分属于数据类，这里需要注意的是具体的数据类与绘制部分的映射是如何实现的。</li>
+</ul>
+<h4 id="ReptilesAdapter"><a href="#ReptilesAdapter" class="headerlink" title="ReptilesAdapter"></a>ReptilesAdapter</h4><p>该类源码不到二十行，至少它很简洁。</p>
+<pre><code>public class ReptilesAdapter extends ListDelegationAdapter&lt;List&lt;DisplayableItem&gt;&gt; {
+
+  public ReptilesAdapter(Activity activity, List&lt;DisplayableItem&gt; items) {
+
+    // Delegates
+    this.delegatesManager.addDelegate(new GeckoAdapterDelegate(activity));
+    this.delegatesManager.addDelegate(new SnakeListItemAdapterDelegate(activity));
+    this.delegatesManager.setFallbackDelegate(new ReptilesFallbackDelegate(activity));
+
+    setItems(items);
+  }
+}
+</code></pre><ul>
+<li>是库类ListDelegationAdapter的子类；</li>
+<li>只有一个构造函数，需要传入数据列表，DisplayableItem接口的一个列表；</li>
+<li>构造函数中，对于delegatesManager——显然是前辈类的一个AdapterDelegatesManager实体，相当于写死增加了两个个代理Delegate和一个默认Delegate。</li>
+</ul>
+<h4 id="Delegates"><a href="#Delegates" class="headerlink" title="Delegates"></a>Delegates</h4><p>这部分兄弟类实现上都是相似的，这里只选取GeckoAdapterDelegate看看，也不长六十余行，这里截取重要的代码片段。</p>
+<pre><code>public class GeckoAdapterDelegate extends AdapterDelegate&lt;List&lt;DisplayableItem&gt;&gt; {
+    //...
+    @Override
+    public boolean isForViewType(@NonNull List&lt;DisplayableItem&gt; items, int position) {
+        //类型判断 由位置对应的数据类型判断
+        return items.get(position) instanceof Gecko;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent) {
+        //独立的view生成
+        return new GeckoViewHolder(inflater.inflate(R.layout.item_gecko, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull List&lt;DisplayableItem&gt; items, int position,
+                                 @NonNull RecyclerView.ViewHolder holder, @Nullable List&lt;Object&gt; payloads) {
+        GeckoViewHolder vh = (GeckoViewHolder) holder;
+        Gecko gecko = (Gecko) items.get(position);
+        //数据类型转换 view刷新
+        vh.name.setText(gecko.getName());
+        vh.race.setText(gecko.getRace());
+    }
+    //对应的ViewHolder
+    static class GeckoViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView name;
+        public TextView race;
+         //...
+    }
+}
+</code></pre><ul>
+<li>作为一个代理类，那么它拥有跟 RecyclerView.Adapter 长的十分相像的接口也是意料之中了；</li>
+<li>onBindViewHolder，很明显本类对应的数据实体类是 Gecko ，具体的刷新实现采用了强制类型转换的方法；</li>
+<li>isForViewType ，判断当前item与ViewHolder的类型对应关系，如果仔细读过前面挂出的注释的话，猜也可以猜到是对getItemViewType接口的一个支持接口，数据类型符合——instanceof，来完成映射。</li>
+</ul>
+<h4 id="诸多item"><a href="#诸多item" class="headerlink" title="诸多item"></a>诸多item</h4><p>从类图就能看出来，数据类比较纯粹，是一个简单的 extneds／implement 关系。最上层的是一个空接口，作为一个抽象的存在放到抽象关系的AbsDelegationAdapter占好位置。最终的数据使用是具体到Delegate的实体类中，利用类型强转，拿到真实的数据来刷新页面的。</p>
+<h3 id="使用者说"><a href="#使用者说" class="headerlink" title="使用者说"></a>使用者说</h3><p>从功能上看，这是在一个列表中以动物为主题显示不同的item分隔的实现。从开源库的DEMO——使用者的角度而言，目前有Gecko、Snake两种动物的布局item，假如要增加一个Dragon，需要如何做呢？从基本类图和上面的简单分析可以得出：</p>
+<ul>
+<li>建立一个Dragon数据类，让它继承于Animal，加入特有的属性；</li>
+<li>建立一个DragonAdapterDelegate代理类，继承 AdapterDelegate 类，定义好业务需求的ViewHolder，复写上面挂出的关键方法；</li>
+<li><p>在 ReptilesAdapter 的构造函数中把 DragonAdapterDelegate 加入到代理管理器中：</p>
+<pre><code>this.delegatesManager.addDelegate(new DragonAdapterDelegate(activity));
+</code></pre></li>
+</ul>
+<p>跟把大象装进冰箱差不多，三步之后就可以实现了。而且完全解耦，基本上通过新增类的方式解决掉了新增需求，简洁优雅。</p>
+<h3 id="再进一步，库源码"><a href="#再进一步，库源码" class="headerlink" title="再进一步，库源码"></a>再进一步，库源码</h3><p>实际上DEMO的类图已经是全工程的一个简图了，现在看黑色的部分——库中的类，忽略掉边边角角的子类，会发现核心类还是在于AbsDelegationAdapter。作为RecyclerView.Adapter的继承者，既用来持有列表数据，还持有代理管理类AdapterDelegatesManager。不难看出，基于RecyclerView.Adapter的内部调用逻辑，该类利用AdapterDelegatesManager做了一个主要抽象函数的代理调用，从而高效的实现了多类型view的需求。把关键的属性和方法加上，画一个库的类图，就更加清晰明了了：</p>
+<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/delegate.png" alt=""></p>
+<p>对于的源码，就贴一个 getItemViewType 函数：</p>
+<pre><code>/**
+* Must be called from {@link RecyclerView.Adapter#getItemViewType(int)}. Internally it scans all
+* the registered {@link AdapterDelegate} and picks the right one to return the ViewType integer.
+*
+* @param items Adapter&apos;s data source
+* @param position the position in adapters data source
+* @return the ViewType (integer). Returns {@link #FALLBACK_DELEGATE_VIEW_TYPE} in case that the
+* fallback adapter delegate should be used
+* @throws NullPointerException if no {@link AdapterDelegate} has been found that is
+* responsible for the given data element in data set (No {@link AdapterDelegate} for the given
+* ViewType)
+* @throws NullPointerException if items is null
+*/
+public int getItemViewType(@NonNull T items, int position) {
+
+    if (items == null) {
+        throw new NullPointerException(&quot;Items datasource is null!&quot;);
+    }
+
+    int delegatesCount = delegates.size();
+    for (int i = 0; i &lt; delegatesCount; i++) {
+        AdapterDelegate&lt;T&gt; delegate = delegates.valueAt(i);
+        if (delegate.isForViewType(items, position)) {
+            return delegates.keyAt(i);
+        }
+    }
+
+    if (fallbackDelegate != null) {
+        return FALLBACK_DELEGATE_VIEW_TYPE;
+    }
+
+    throw new NullPointerException(
+    &quot;No AdapterDelegate added that matches position=&quot; + position + &quot; in data source&quot;);
+}
+</code></pre><p>getItemViewType 本身在 RecyclerView.Adapter 的调用流程中就是发生在onCreateViewHolder 调用之前，本类覆盖默认的恒返回0的父类函数，通过代理的isForViewType 函数，与对应的数据列表来确认分发给 onCreateViewHolder 的类型，最终实现多类型item列表的功能，与之前对代理函数 isForViewType 的猜测相符。</p>
+<h2 id="简要的总结"><a href="#简要的总结" class="headerlink" title="简要的总结"></a>简要的总结</h2><ul>
+<li>论设计模式的重要性，针对业务需要选择合适的设计模式很重要，选对了思路对后面的拓展开发、业务维护来说事半功倍。对于这次的业务需求而言，使用这个开源库，实现好一个基础的页面模型之后，其余的五六个页面的工作基本只需要考虑数据部分设计、代理部分布局刷新与子控件交互传递的问题。写好了，往框架里塞即可，非常简单。</li>
+<li>嫁接还是需要功力的，AdapterDelegates 的实现首先是基于对 RecyclerView 整个框架体系的理解。我们常说自己新写一套代码容易、维护别人的代码比较困难，那么给予别人的代码之上开发一套使原功能更加易用的东西想必要求更高。实际上AdapterDelegates中也同时代理了Adapter中关于view管理部分的接口，也考虑了一些默认情况的处理，整体上是比较完善的。如我等只是简单使用 RecyclerView 的人，不到需求烧到眉毛是不会思考viewType这个参数到底用处在哪里的，也就无从有思考RecyclerView内部原理和二次开发的动力，这一点需要反思。</li>
+<li>类图有助于理解设计。</li>
+<li>无论是官方代码，还是AdapterDelegates，注释风格十分专业详细，在SDK的开发过程中是可以借鉴的。</li>
+</ul>
 
       
     </div>
@@ -491,7 +656,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/音乐家常识/" rel="tag"># 音乐家常识</a>
+            <a href="/tags/android/" rel="tag"># android</a>
           
         </div>
       
@@ -504,8 +669,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/05/音乐家7/" rel="next" title="音乐家常识课（七） 德彪西">
-                <i class="fa fa-chevron-left"></i> 音乐家常识课（七） 德彪西
+              <a href="/2017/08/05/希腊与华夏1/" rel="next" title="希腊与华夏（一）东方的故事">
+                <i class="fa fa-chevron-left"></i> 希腊与华夏（一）东方的故事
               </a>
             
           </div>
@@ -513,10 +678,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/03/19/希腊的生活1/" rel="prev" title="《世界文明史－希腊的生活》读书分享之一——前言">
-                《世界文明史－希腊的生活》读书分享之一——前言 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -680,7 +841,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#弗朗茨·舒伯特"><span class="nav-number">1.</span> <span class="nav-text">弗朗茨·舒伯特</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生平"><span class="nav-number">2.</span> <span class="nav-text">生平</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#影响"><span class="nav-number">3.</span> <span class="nav-text">影响</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内容简介"><span class="nav-number">1.</span> <span class="nav-text">内容简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#需求分析"><span class="nav-number">2.</span> <span class="nav-text">需求分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其实只需要一个列表"><span class="nav-number">3.</span> <span class="nav-text">其实只需要一个列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于这个库的用法与实现"><span class="nav-number">4.</span> <span class="nav-text">关于这个库的用法与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DEMO的分析"><span class="nav-number">4.1.</span> <span class="nav-text">DEMO的分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ReptilesAdapter"><span class="nav-number">4.1.1.</span> <span class="nav-text">ReptilesAdapter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Delegates"><span class="nav-number">4.1.2.</span> <span class="nav-text">Delegates</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#诸多item"><span class="nav-number">4.1.3.</span> <span class="nav-text">诸多item</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用者说"><span class="nav-number">4.2.</span> <span class="nav-text">使用者说</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#再进一步，库源码"><span class="nav-number">4.3.</span> <span class="nav-text">再进一步，库源码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简要的总结"><span class="nav-number">5.</span> <span class="nav-text">简要的总结</span></a></li></ol></div>
             
 
           </div>
@@ -820,7 +981,7 @@
 		_hcwp.push({widget:"Bloggerstream", widget_id: 88427, selector:".hc-comment-count", label: "{\%COUNT%\}" });
 
 		
-		_hcwp.push({widget:"Stream", widget_id: 88427, xid: "2017/03/12/音乐家8/"});
+		_hcwp.push({widget:"Stream", widget_id: 88427, xid: "2017/08/16/delegate/"});
 		
 
 		(function() {
