@@ -1,0 +1,1020 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="读书笔记,项目开发," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="当你将它作为一本Android工具书时，它会指导你对Android的进阶学习。
+当你将它作为一本软件架构书籍时，它会将工具和人的思想关联来调整你对架构的认知。
+当你将它作为一本思维哲学书籍时，你有可能对Android开发有新的认识。
+
+——摘自本书前言
+
+我依稀看到了一款包治百病的中药，至于它是否管用，主要是取决于你得了什么病，或者有没有病。话是有些刻薄，也许是前言给人期望太高的结果，也可能是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Android组件化架构》">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2018/07/02/AndroidComponent/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="当你将它作为一本Android工具书时，它会指导你对Android的进阶学习。
+当你将它作为一本软件架构书籍时，它会将工具和人的思想关联来调整你对架构的认知。
+当你将它作为一本思维哲学书籍时，你有可能对Android开发有新的认识。
+
+——摘自本书前言
+
+我依稀看到了一款包治百病的中药，至于它是否管用，主要是取决于你得了什么病，或者有没有病。话是有些刻薄，也许是前言给人期望太高的结果，也可能是">
+<meta property="og:updated_time" content="2018-07-02T14:27:56.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Android组件化架构》">
+<meta name="twitter:description" content="当你将它作为一本Android工具书时，它会指导你对Android的进阶学习。
+当你将它作为一本软件架构书籍时，它会将工具和人的思想关联来调整你对架构的认知。
+当你将它作为一本思维哲学书籍时，你有可能对Android开发有新的认识。
+
+——摘自本书前言
+
+我依稀看到了一款包治百病的中药，至于它是否管用，主要是取决于你得了什么病，或者有没有病。话是有些刻薄，也许是前言给人期望太高的结果，也可能是">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2018/07/02/AndroidComponent/"/>
+
+
+
+
+
+  <title> 《Android组件化架构》 | 桃小七的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a6b5efe2c3a4402f319c1d4294d5e1dc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">桃小七的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">文章信口雌黄易 思想锥心坦白难</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2018/07/02/AndroidComponent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="桃小七">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="桃小七的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                《Android组件化架构》
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-02T22:27:11+08:00">
+                2018-07-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            <!--noindex-->
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/02/AndroidComponent/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2018/07/02/AndroidComponent/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+              <!--/noindex-->
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<ul>
+<li>当你将它作为一本Android工具书时，它会指导你对Android的进阶学习。</li>
+<li>当你将它作为一本软件架构书籍时，它会将工具和人的思想关联来调整你对架构的认知。</li>
+<li>当你将它作为一本思维哲学书籍时，你有可能对Android开发有新的认识。</li>
+</ul>
+<p>——摘自本书前言</p>
+</blockquote>
+<p>我依稀看到了一款包治百病的中药，至于它是否管用，主要是取决于你得了什么病，或者有没有病。话是有些刻薄，也许是前言给人期望太高的结果，也可能是作者把思维哲学写的略有些晦涩了。</p>
+<a id="more"></a>
+<h2 id="一点体会"><a href="#一点体会" class="headerlink" title="一点体会"></a>一点体会</h2><p>本书一共八章，三百页，大概在一个星期内，每天晚上用一个小时看完。核心是第二章组件化编程，介绍了组件化的基础技术，通信、存储、跳转等各种基本的解耦操作，大概一百页；另外第五章，组件化分发，占了七十余页，不过本章包含了大量的Android基本流程图（各种生命周期）、示例代码等；其余章节一般平均在二十页上下。组件化本身是一种全方位的Android开发模式，所以涉及到琐碎的点有很多，实际上把所有的点的基础都介绍一遍，篇幅已经可以占掉不少了。作为基础书和入门书，还是老少咸宜的。</p>
+<p>整体而言，本书是一本合格的工具书。诚如背面封皮的推荐语所说，是一本系统而全面的Android组件化架构的书籍。只是搜一搜网页，看几篇博客是无法对组件化了解这样详细的。甚至于我厂的组件化项目工作已有半年多，仔细看过这本书之后，还是会看到一些没有使用过的部分。开发知识与工具浩如烟海，总有你碰不到的那一面。这本书的独到之处在于，把组件化相关的几乎所有内容都涵盖了进来，而且每一部分都会有两三节来介绍基础知识，对新手入门很友好——换句话说，对中高级的工程师而言，你恐怕不会在这里找到什么新思路，但很可能会夯实一下平时比较薄弱的部分基础，也很有可能发现一些好用的开源工具。</p>
+<p>对于一本工具书而言，特别是软件行业的工具书，最大的缺点应该就是时效性了。软件发展日新月异，书籍的再版基本没有赶上技术前沿的可能。所以有所期待的更多的是架构认知与思维哲学这部分，因为这一部分可以是经典而永恒的。然而纵观全书，每个章节的小结或多或少会有一些技术点本身细节之外的思考，但一方面仅仅是只言片语，另一方面感觉更像是开发使用tips。偶尔出现几句惊鸿一瞥的宝相庄严的句子又往往显得如无根的浮萍——不知道从哪儿飘来的，也不知道要漂去哪儿。作者本身或许对组件化、架构这些事儿经验丰富、很有认知，但就本书而言，并没有把一些深刻的东西展示出来。</p>
+<h2 id="一点认识"><a href="#一点认识" class="headerlink" title="一点认识"></a>一点认识</h2><p>非常突兀的，想聊一下最近重新听起来的施展的《中国史纲》。课程开头，就着重讲解了什么是中国，什么又是历史。对于这个，这里不做详细介绍，反正要看能耐有多大，总要先看人对基本概念的理解与说明。那么什么是组件化架构呢，当尝试从概念上解释时，发现值得思考的有很多，水平还是有限。尝试描述一下，按照套路，先解释“组件化”，组件化是一种以业务或功能为维度将代码以组件的方式来组织实现的设计思路。组件化的核心是解耦合，通过统一的通信机制解除掉业务之间的依赖。从工程角度看组件化的解耦实际上跟具体业务的实现采用MVP接耦所带来的好处和坏处都差不多，好处是职责更加明确、可维护性可测试性会有所提升；坏处则是设计变得相对复杂，需要一些学习成本，而组件化会更会带来组织打包的组件版本管理问题。按照业务组件化之后的工程打包，大概是一个壳工程维护所有的组件依赖、业务组件之间是平级的、最后组织打包出一个功能完整的APK的过程。把粒度变细到页面级别，每一个view与相对的功能组件化，就能够实现页面容器配置各个页面组件最后组织出一个完整页面的玩法。当然带来的复杂程度也是相对较高的。</p>
+<p>接着可以聊聊“架构”。这是一个很高深的词汇，看到架构会联想到什么，一个树干，软件架构师，系统方框图，服务器分布式部署……抛开一些书本上的概念不提，以目前的思考而言，我认为架构是一种约束。比如分层原则上的约束、层级依赖之间的约束、通信方式的约束等等，它可能不仅仅是一张系统框架图，它需要包涵设计者思路中所有对工程实现有约束意义的协议。应该是抽象思维还比较局限，语言功底也很不足，把简单问题复杂化了些，导致有些谈玄论道不如归去的意思了。</p>
+<p>那么结合在一起，组件化架构在我的理解是以组件化的形式来约束开发设计结构的一种实现方案。我曾听人说客户端的开发无所谓架构设计，现在想来或许是大家对架构和设计的概念定义不是很一致的原因。我的第一份工作中当时带我的前辈屡次告诫我说，“写代码一定要设计”，现在看来，小到一个功能函数，大到一个系统架构确实都是需要设计的。架构，或许也可以算是设计中抽象到比较顶层的一环。那么“Android 组件化架构”，你说它名副其实也好，说它牵强附会也罢，整本书描述的其实是开发中各个环节的横向的、纵向的、业务实现的、工具体系的一个合集。至于组件化架构本身的内容，也算是大致涵盖其中，不用过于苛求了。</p>
+<h2 id="一点收获"><a href="#一点收获" class="headerlink" title="一点收获"></a>一点收获</h2><p>下面是我在这本书中收获的一些琐碎的知识点，希望日后可以按需用到项目中。</p>
+<ul>
+<li><p>开源库</p>
+<ul>
+<li>反射 jOOR</li>
+<li>数据库 greenDao/Realm</li>
+<li>混淆 AndResGuard</li>
+<li>组件化分发 ModuleBus</li>
+<li>注解 javapoet</li>
+<li>模版预研引擎 freeMarker</li>
+</ul>
+</li>
+<li><p>gradle相关</p>
+<ul>
+<li>通过 consumerProguardFiles 配置子模块的混淆</li>
+<li>学习 fat-aar.gradle源码，可以帮助了解gradle编译流程</li>
+</ul>
+</li>
+<li><p>ctrl + L 可以将switch语句转化成if语句</p>
+</li>
+<li>无效的混淆配置会对编译效率造成影响</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢您赏个荷包蛋～</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/myWechatPay2.png" alt="桃小七 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/myAliPay2.jpeg" alt="桃小七 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/读书笔记/" rel="tag"># 读书笔记</a>
+          
+            <a href="/tags/项目开发/" rel="tag"># 项目开发</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/01/playgame/" rel="next" title="当我们在玩游戏时，人们在想什么">
+                <i class="fa fa-chevron-left"></i> 当我们在玩游戏时，人们在想什么
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="hypercomments_widget"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpeg"
+               alt="桃小七" />
+          <p class="site-author-name" itemprop="name">桃小七</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">95</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              睦邻友好，欢迎串门！
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://light3moon.com/" title="三月学长的根据地" target="_blank">三月学长的根据地</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一点体会"><span class="nav-number">1.</span> <span class="nav-text">一点体会</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一点认识"><span class="nav-number">2.</span> <span class="nav-text">一点认识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一点收获"><span class="nav-number">3.</span> <span class="nav-text">一点收获</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">桃小七</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+		<script type="text/javascript">
+		_hcwp = window._hcwp || [];
+
+		_hcwp.push({widget:"Bloggerstream", widget_id: 88427, selector:".hc-comment-count", label: "{\%COUNT%\}" });
+
+		
+		_hcwp.push({widget:"Stream", widget_id: 88427, xid: "2018/07/02/AndroidComponent/"});
+		
+
+		(function() {
+		if("HC_LOAD_INIT" in window)return;
+		HC_LOAD_INIT = true;
+		var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+		var hcc = document.createElement("script"); hcc.type = "text/javascript"; hcc.async = true;
+		hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/88427/"+lang+"/widget.js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hcc, s.nextSibling);
+		})();
+		</script>
+
+	
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="local-search-pop-overlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
