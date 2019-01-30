@@ -93,14 +93,14 @@
 <meta property="og:url" content="http://taoyuanxiaoqi.com/2018/07/14/upgradeAdmare/index.html">
 <meta property="og:site_name" content="桃小七的博客">
 <meta property="og:description" content="最近接手了一个骨灰级项目的升级任务，上一次功能代码的提测还是16年年中。由于当时支持的最高版本仅仅是5.0，两年下来Google Play上显示该应用支持的设备是寥寥无几，刚好有客户的产品需要该应用的功能支持，所以当前的可使用状态是不能够满足需求的。那么任务目标就是把应用支持的系统版本提高一些，由于8.0系统的升级有著名的service相关问题，旧代码的功能细节所剩的印象实在有限，所以暂定支持最高">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/attr_conflict.png">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/butterknife.png">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/ndkbuild.png">
-<meta property="og:updated_time" content="2018-07-16T14:23:39.007Z">
+<meta property="og:image" content="https://i.loli.net/2019/01/30/5c51755a5d9de.png">
+<meta property="og:image" content="https://i.loli.net/2019/01/30/5c5174d2af577.png">
+<meta property="og:image" content="https://i.loli.net/2019/01/30/5c5174f4b3022.png">
+<meta property="og:updated_time" content="2019-01-30T10:02:14.953Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="旧项目升级爬坑">
 <meta name="twitter:description" content="最近接手了一个骨灰级项目的升级任务，上一次功能代码的提测还是16年年中。由于当时支持的最高版本仅仅是5.0，两年下来Google Play上显示该应用支持的设备是寥寥无几，刚好有客户的产品需要该应用的功能支持，所以当前的可使用状态是不能够满足需求的。那么任务目标就是把应用支持的系统版本提高一些，由于8.0系统的升级有著名的service相关问题，旧代码的功能细节所剩的印象实在有限，所以暂定支持最高">
-<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/attr_conflict.png">
+<meta name="twitter:image" content="https://i.loli.net/2019/01/30/5c51755a5d9de.png">
 
 
 
@@ -443,105 +443,85 @@
 </ul>
 <p>无论如何，该动手还是得动手。业界有句很中肯的话叫，大意是“如果一个程序员发现自己六个月前的代码还是不错的，那么说明他这段时间没什么进步”。搞开老项目代码之后，百感交集的发现自己好像进步很大的样子——看哪儿都不怎么顺眼，又不敢乱动。时间有限，围绕需求本身开始操作吧。</p>
 <h2 id="第一步，统一配置"><a href="#第一步，统一配置" class="headerlink" title="第一步，统一配置"></a>第一步，统一配置</h2><p>发现之前的项目gradle配置十分散乱，各个module各有各的版本、support等配置，不利于统一操作。所以第一步就是整理各个module中的gradle配置，把所有共性的版本都整理到工程目录下的gradle文件的ext中去：</p>
-<pre><code>ext {
-    minSdkVersion = 15
-    targetSdkVersion = 22
-    compileSdkVersion = 22
-    buildToolsVersion = &quot;22.0.1&quot;
-    supportLibVersion = &quot;22.2.1&quot;
-}
-</code></pre><h2 id="第二步，提高版本号，迎接编译问题"><a href="#第二步，提高版本号，迎接编译问题" class="headerlink" title="第二步，提高版本号，迎接编译问题"></a>第二步，提高版本号，迎接编译问题</h2><p>统一之后，修改ext就足够了，根据需要把targetSdk和compileSdk改到25。之后就可以迎接一大波编译问题了。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ext &#123;</div><div class="line">    minSdkVersion = <span class="number">15</span></div><div class="line">    targetSdkVersion = <span class="number">22</span></div><div class="line">    compileSdkVersion = <span class="number">22</span></div><div class="line">    buildToolsVersion = <span class="string">"22.0.1"</span></div><div class="line">    supportLibVersion = <span class="string">"22.2.1"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="第二步，提高版本号，迎接编译问题"><a href="#第二步，提高版本号，迎接编译问题" class="headerlink" title="第二步，提高版本号，迎接编译问题"></a>第二步，提高版本号，迎接编译问题</h2><p>统一之后，修改ext就足够了，根据需要把targetSdk和compileSdk改到25。之后就可以迎接一大波编译问题了。</p>
 <ul>
 <li><p>apache库缺失问题 </p>
-<pre><code>Unable to find optional library: org.apache.http.legacy
-</code></pre><p>  首先碰到的是阿帕奇库不见了的问题。Android 6.0不再支持 Apache HTTP client， 建议使用 HttpURLConnection 代替。然而并没有时间替换，所以要增加配置依赖：</p>
+<p> Unable to find optional library: org.apache.http.legacy</p>
+<p> 首先碰到的是阿帕奇库不见了的问题。Android 6.0不再支持 Apache HTTP client， 建议使用 HttpURLConnection 代替。然而并没有时间替换，所以要增加配置依赖：</p>
 <pre><code>android {
 useLibrary &apos;org.apache.http.legacy&apos;
 }
 </code></pre></li>
 <li><p>接下来发现工具类中调用系统工具类FloatMath的sqrt找不到了。</p>
-<pre><code>/**
- * Math routines similar to those found in {@link java.lang.Math}.
- *
- * &lt;p&gt;Historically these methods were faster than the equivalent double-based
- * {@link java.lang.Math} methods. On versions of Android with a JIT they
- * became slower and have since been re-implemented to wrap calls to
- * {@link java.lang.Math}. {@link java.lang.Math} should be used in
- * preference.
- *
- * &lt;p&gt;All methods were removed from the public API in version 23.
- *
- * @deprecated Use {@link java.lang.Math} instead.
- */
-@Deprecated
-public class FloatMath {
-</code></pre><p>  该类deprecated ，注释建议使用Math替代。那就按建议的走，问题不大。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"></div><div class="line"> Math routines similar to those found in &#123;<span class="doctag">@link</span> java.lang.Math&#125;.</div><div class="line"> *</div><div class="line"></div><div class="line"> - &lt;p&gt;Historically these methods were faster than the equivalent double-based</div><div class="line"> - &#123;<span class="doctag">@link</span> java.lang.Math&#125; methods. On versions of Android with a JIT they</div><div class="line"> - became slower and have since been re-implemented to wrap calls to</div><div class="line"> - &#123;<span class="doctag">@link</span> java.lang.Math&#125;. &#123;<span class="doctag">@link</span> java.lang.Math&#125; should be used in</div><div class="line"> - preference.</div><div class="line"> *</div><div class="line"> - &lt;p&gt;All methods were removed from the public API in version 23.</div><div class="line"> *</div><div class="line"> - <span class="doctag">@deprecated</span> Use &#123;<span class="doctag">@link</span> java.lang.Math&#125; instead.</div><div class="line"> */</div><div class="line"><span class="meta">@Deprecated</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FloatMath</span> </span>&#123;</div></pre></td></tr></table></figure>
+<p> 该类deprecated ，注释建议使用Math替代。那就按建议的走，问题不大。</p>
 </li>
 <li><p>考虑到会用到一些新的开源库和support库，原本gradle2.2.2编译的脚本配置，修改成3.0.1，并升级25对应的support库与build tool版本。    其中一些2.x版本gradle中的配置在3.x中已经不适用，需要做对应的修改。</p>
 </li>
 <li><p>继续编译，报本地attr属性与support包属性buttonGravity冲突的错误，比较神奇</p>
-<pre><code>Error:(203, 5) error: duplicate value for resource &apos;attr/buttonGravity&apos; with config &apos;&apos;.
-Error:(203, 5) error: resource previously defined here.
-</code></pre><p>  <img src="http://7xo1uj.com1.z0.glb.clouddn.com/attr_conflict.png" alt=""></p>
-<p>  检查发现定义的style与attr并没有用到，可以说是无妄之灾了，干掉之后继续编译。</p>
+<p> Error:(203, 5) error: duplicate value for resource ‘attr/buttonGravity’ with config ‘’.</p>
+<pre><code>Error:(203, 5) error: resource previously defined here.
+</code></pre><p> <img src="https://i.loli.net/2019/01/30/5c51755a5d9de.png" alt=""></p>
+<p> 检查发现定义的style与attr并没有用到，可以说是无妄之灾了，干掉之后继续编译。</p>
 </li>
 <li><p>接下来是RecyclerView的相关方法丢失</p>
-<pre><code>Error:(95, 38) 错误: 找不到符号
-符号:   方法 setSupportsChangeAnimations(boolean)
+<p> Error:(95, 38) 错误: 找不到符号</p>
+<pre><code>符号:   方法 setSupportsChangeAnimations(boolean)
 位置: 类 ItemAnimator
-</code></pre><p>  完全记不得RecyclerView有这个接口，谷歌之，发现一片鹅厂Bugly的博文<a href="https://my.oschina.net/bugly/blog/821262" target="_blank" rel="external">腾讯Bugly干货分享】RecyclerView 必知必会</a>，有以下描述：</p>
+</code></pre><p> 完全记不得RecyclerView有这个接口，谷歌之，发现一片鹅厂Bugly的博文<a href="https://my.oschina.net/bugly/blog/821262" target="_blank" rel="external">腾讯Bugly干货分享】RecyclerView 必知必会</a>，有以下描述：</p>
 <blockquote>
 <pre><code>对于RecyclerView的Item Animator，有一个常见的坑就是”闪屏问题”。这个问题的描述是：当Item视图中有图片和文字，当更新文字并调用 notifyItemChanged()时，文字改变的同时图片会闪一下。这个问题的原因是当调用 notifyItemChanged()时，会调用DefaultItemAnimator的 animateChangeImpl()执行change动画，该动画会使得Item的透明度从0变为1，从而造成闪屏。
 
-解决办法很简单，在 rv.setAdapter()之前调用 ((SimpleItemAnimator)rv.getItemAnimator()).setSupportsChangeAnimations(false)禁用change动画。
+
+    解决办法很简单，在 rv.setAdapter()之前调用 ((SimpleItemAnimator)rv.getItemAnimator()).setSupportsChangeAnimations(false)禁用change动画。
 </code></pre></blockquote>
-<p>  想来新版本问题已经解决，该方法已经被干掉了，直接去掉处理。</p>
+<p> 想来新版本问题已经解决，该方法已经被干掉了，直接去掉处理。</p>
 </li>
-<li><p>继续，发现开源库兼容问题，ButterKnife 版本冲突<br>  <img src="http://7xo1uj.com1.z0.glb.clouddn.com/butterknife.png" alt=""></p>
-<p>  通过CSDN <a href="https://blog.csdn.net/donkor_/article/details/79020482" target="_blank" rel="external">AndroidStudio3.0 注解报错Annotation processors must be explicitly declared now.</a> 添加gradle配置解决</p>
+<li><p>继续，发现开源库兼容问题，ButterKnife 版本冲突<br><img src="https://i.loli.net/2019/01/30/5c5174d2af577.png" alt=""></p>
+<p>通过CSDN <a href="https://blog.csdn.net/donkor_/article/details/79020482" target="_blank" rel="external">AndroidStudio3.0 注解报错Annotation processors must be explicitly declared now.</a> 添加gradle配置解决</p>
 </li>
-<li><p>NDK build工具问题，如今只支持C make了，老版本的NDK不受待见了：<br>  <img src="http://7xo1uj.com1.z0.glb.clouddn.com/ndkbuild.png" alt=""><br>  好在c代码并没有更新的可能，退回老代码生成SO文件，直接引入SO库处理。</p>
-<p>  至此，终于可以打出一个APK来了。</p>
+<li><p>NDK build工具问题，如今只支持C make了，老版本的NDK不受待见了：<br><img src="https://i.loli.net/2019/01/30/5c5174f4b3022.png" alt=""><br>好在c代码并没有更新的可能，退回老代码生成SO文件，直接引入SO库处理。</p>
+<p>至此，终于可以打出一个APK来了。</p>
 </li>
 </ul>
 <h2 id="别急，还有各种crash"><a href="#别急，还有各种crash" class="headerlink" title="别急，还有各种crash"></a>别急，还有各种crash</h2><ul>
 <li><p>首当其冲的居然还是黄油刀——</p>
-<pre><code>E/AndroidRuntime: FATAL EXCEPTION: main
-                                               Process: com.mosaic.app, PID: 18549
-                                               java.lang.NoClassDefFoundError: Failed resolution of: Lbutterknife/ButterKnife;
-                                                   at com.mosaic.app.about.GuideActivity.onCreate(GuideActivity.java:92)
-                                                   at android.app.Activity.performCreate(Activity.java:7372)
-                                                   at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1218)
-                                                   at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:3147)
-                                                   at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:3302)
-                                                   at android.app.ActivityThread.-wrap12(Unknown Source:0)
-                                                   at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1891)
-                                                   at android.os.Handler.dispatchMessage(Handler.java:108)
-                                                   at android.os.Looper.loop(Looper.java:166)
-                                                   at android.app.ActivityThread.main(ActivityThread.java:7425)
-                                                   at java.lang.reflect.Method.invoke(Native Method)
-                                                   at com.android.internal.os.Zygote$MethodAndArgsCaller.run(Zygote.java:245)
-                                                   at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:921)
-                                                Caused by: java.lang.ClassNotFoundException: Didn&apos;t find class &quot;butterknife.ButterKnife&quot; on path: DexPathList[[zip file &quot;/system/framework/com.google.android.maps.jar&quot;, zip file &quot;/data/app/me.airtake-i_3R4RRH5SDyBLA_g5pipw==/base.apk&quot;],nativeLibraryDirectories=[/data/app/me.airtake-i_3R4RRH5SDyBLA_g5pipw==/lib/arm, /data/app/me.airtake-i_3R4RRH5SDyBLA_g5pipw==/base.apk!/lib/armeabi-v7a, /system/lib, /vendor/lib, /product/lib]]
-                                                   at dalvik.system.BaseDexClassLoader.findClass(BaseDexClassLoader.java:93)
-</code></pre><p>  网上的说法clean/rebuild/instent run，全都是无效的。无奈之下通过升级到最新版处理，替换失效的butterknife注解，注释掉失效的方法，这一波改动比较大，好在效果还可以。</p>
+<blockquote>
+<p>E/AndroidRuntime: FATAL EXCEPTION: main</p>
+<pre><code>Process: com.mosaic.app, PID: 18549
+java.lang.NoClassDefFoundError: Failed resolution of: Lbutterknife/ButterKnife;
+    at com.mosaic.app.about.GuideActivity.onCreate(GuideActivity.java:92)
+    at android.app.Activity.performCreate(Activity.java:7372)
+    at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1218)
+    at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:3147)
+    at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:3302)
+    at android.app.ActivityThread.-wrap12(Unknown Source:0)
+    at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1891)
+    at android.os.Handler.dispatchMessage(Handler.java:108)
+    at android.os.Looper.loop(Looper.java:166)
+    at android.app.ActivityThread.main(ActivityThread.java:7425)
+    at java.lang.reflect.Method.invoke(Native Method)
+    at com.android.internal.os.Zygote$MethodAndArgsCaller.run(Zygote.java:245)
+    at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:921)
+ Caused by: java.lang.ClassNotFoundException: Didn&apos;t find class &quot;butterknife.ButterKnife&quot; on path: DexPathList[[zip file &quot;/system/framework/com.google.android.maps.jar&quot;, zip file &quot;/data/app/me.airtake-i_3R4RRH5SDyBLA_g5pipw==/base.apk&quot;],nativeLibraryDirectories=[/data/app/me.airtake-i_3R4RRH5SDyBLA_g5pipw==/lib/arm, /data/app/me.airtake-i_3R4RRH5SDyBLA_g5pipw==/base.apk!/lib/armeabi-v7a, /system/lib, /vendor/lib, /product/lib]]
+    at dalvik.system.BaseDexClassLoader.findClass(BaseDexClassLoader.java:93)
+</code></pre><p>网上的说法clean/rebuild/instent run，全都是无效的。无奈之下通过升级到最新版处理，替换失效的butterknife注解，注释掉失效的方法，这一波改动比较大，好在效果还可以。</p>
+</blockquote>
 </li>
-</ul>
-<ul>
 <li><p>接下来就是动态权限申请这个系统自带深坑了，即使是不考虑旧项目升级这个情况，正常项目中由于国内各种五花八门定制ROM的存在，该问题也一直是个深坑，加之项目时间节点的限制。斟酌再三还是选择口碑还算不错、兼容性也还可以的AndPermission。随之而来的问题就是引入一个开源库带来的编译依赖等问题的潜在风险。</p>
-<p>  AndPermission中使用了lambada表达式，由于项目已经升级有gradle3.0.1，在app module中添加：</p>
+<p>AndPermission中使用了lambada表达式，由于项目已经升级有gradle3.0.1，在app module中添加：</p>
 <pre><code>compileOptions {
     targetCompatibility 1.8
     sourceCompatibility 1.8
 }
-</code></pre><p>  解决编译问题。其他的就是基于AndPermission对用到的具体需要动态申请的权限做业务实现，这部分新增的代码改动是最大的。</p>
+</code></pre><p>解决编译问题。其他的就是基于AndPermission对用到的具体需要动态申请的权限做业务实现，这部分新增的代码改动是最大的。</p>
+</li>
+<li><p>继续过主流程功能，有闪退中的最平凡最常见的品类出现——空指针异常。很奇怪的服务端接口返回时，调用时的context为null，有趣的是调用点是fragment中的setUserVisibleHint方法。该方法在很久以前的网文中被冠以fragment中真正的onResume/onPause的名号。似乎这货在新系统版本中找不见对应activity的context了，最快速的解决方法是：一方面对报空位置防御式判空处理，另一方面分析业务的需要，切换调用点处理。</p>
 </li>
 </ul>
-<ul>
-<li>继续过主流程功能，有闪退中的最平凡最常见的品类出现——空指针异常。很奇怪的服务端接口返回时，调用时的context为null，有趣的是调用点是fragment中的setUserVisibleHint方法。该方法在很久以前的网文中被冠以fragment中真正的onResume/onPause的名号。似乎这货在新系统版本中找不见对应activity的context了，最快速的解决方法是：一方面对报空位置防御式判空处理，另一方面分析业务的需要，切换调用点处理。</li>
-</ul>
-<pre><code>ok，这下主流程崩溃的问题暂时没有碰到了。
-</code></pre><h2 id="事情并没有完"><a href="#事情并没有完" class="headerlink" title="事情并没有完"></a>事情并没有完</h2><p>在测试主流程崩溃的时候，发现了一些让我很崩溃的问题——不少页面发生了一些奇怪的变化。有些阴影效果显示的很夸张，有些布局称满了整个屏幕，最无奈的是，如果你没有看过所有页面，就没办法确定是否所有页面都没有问题。</p>
+<p>  ok，这下主流程崩溃的问题暂时没有碰到了。</p>
+<h2 id="事情并没有完"><a href="#事情并没有完" class="headerlink" title="事情并没有完"></a>事情并没有完</h2><p>在测试主流程崩溃的时候，发现了一些让我很崩溃的问题——不少页面发生了一些奇怪的变化。有些阴影效果显示的很夸张，有些布局称满了整个屏幕，最无奈的是，如果你没有看过所有页面，就没办法确定是否所有页面都没有问题。</p>
 <ul>
 <li><p>阴影问题比较奇怪，由于需求上更加优先能用，并且问题位置只有两处，直接做去掉阴影处理。</p>
 </li>
@@ -718,7 +698,7 @@ Error:(203, 5) error: resource previously defined here.
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">100</span>
+                <span class="site-state-item-count">101</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
