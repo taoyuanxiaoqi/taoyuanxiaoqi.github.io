@@ -95,16 +95,16 @@
 <meta property="og:site_name" content="桃小七的博客">
 <meta property="og:description" content="内容简介本文针对业务需求，对开源项目AdapterDelegates进行了简单的分析。感谢项目作者 Hannes Dorfmann的开源贡献。
 需求分析有类似微信卡包这样一个列表页面，要如何去实现。">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/wechat.jpeg">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/reptiels.jpeg">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/delegateDemo.png">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/delegate.png">
-<meta property="og:updated_time" content="2017-08-16T07:19:28.000Z">
+<meta property="og:image" content="https://i.loli.net/2019/01/31/5c52584aa2aa4.jpeg">
+<meta property="og:image" content="https://i.loli.net/2019/01/31/5c5258755c9af.jpeg">
+<meta property="og:image" content="https://i.loli.net/2019/01/31/5c525861d2d4d.png">
+<meta property="og:image" content="https://i.loli.net/2019/01/31/5c52588c049d8.png">
+<meta property="og:updated_time" content="2019-01-31T02:08:27.083Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RecyclerView实现多类型Item布局--AdapterDelegates代码分析">
 <meta name="twitter:description" content="内容简介本文针对业务需求，对开源项目AdapterDelegates进行了简单的分析。感谢项目作者 Hannes Dorfmann的开源贡献。
 需求分析有类似微信卡包这样一个列表页面，要如何去实现。">
-<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/wechat.jpeg">
+<meta name="twitter:image" content="https://i.loli.net/2019/01/31/5c52584aa2aa4.jpeg">
 
 
 
@@ -437,7 +437,7 @@
       
         <h2 id="内容简介"><a href="#内容简介" class="headerlink" title="内容简介"></a>内容简介</h2><p>本文针对业务需求，对开源项目<a href="https://github.com/sockeqwe/AdapterDelegates" target="_blank" rel="external">AdapterDelegates</a>进行了简单的分析。感谢项目作者<a href="https://github.com/sockeqwe" target="_blank" rel="external"> Hannes Dorfmann</a>的开源贡献。</p>
 <h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><p>有类似微信卡包这样一个列表页面，要如何去实现。<a id="more"></a> </p>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/wechat.jpeg" alt=""></p>
+<p><img src="https://i.loli.net/2019/01/31/5c52584aa2aa4.jpeg" alt=""></p>
 <p>乍一看，这是一个典型的列表类型的页面。有两个大的分类，会员卡和优惠券。简单的处理下，标题+列表，如此两个来实现。然而如果哪天说需要加个证件／银行卡什么的子项，在手动去布局明显有不少重复内容的东西总是有些难受的；那么，用一个标题+子列表作为一个item，这样做一个列表就可以了。但是列表中套着个子列表，item布局和数据设计复杂度略高。</p>
 <p>真实的需求中看起来类似的item，总会存在形形色色的不一致之处，如果强行合在一个布局中实现，无论是布局文件还是对应的数据类设计都会比较复杂，可以预见的是实现上必然存在各种各样的条件分支。并且基于这种实现的可拓展性也比较差，再加入一种比较个性的item，那么布局、绘制、数据类都要加入各种各样的判断，并且冗杂在一起。</p>
 <p>假设只有一个这样的页面需求，时间又很赶的情况下，或许可以苟且一下，然而当如此这般的页面需求一下出现六七个的时候，就要慎重考虑了。</p>
@@ -485,7 +485,7 @@ public int getItemViewType(int position) {
 </code></pre><p>首先通过 getItemViewType 接口，在 onCreateViewHolder 中根据不同的类型建立不同的ViewHolder，然后通过一定的映射关系，在 onBindViewHolder 中可以找到正确的数据来对不同的 ViewHolder 进行刷新。</p>
 <p>那么现在可以确认，一个 RecyclerView 就可以实现各种各样的item的交互页面，那么上面所提到的需求，其实页面上只用一个RecyclerView就好了，去掉标题类别、会员卡、优惠券之间指示与从属归类的概念关系，每个条目都是一个item，高度相似的布局可以归为一类实现即可。</p>
 <p>所以新的问题就是如何设计这个Adapter，才能够尽量减少if语句的存在，做到代码的可扩展性和可维护性更加合理。如此通用的一个需求，GitHub总能给你一个很好的答案，<a href="https://github.com/sockeqwe/AdapterDelegates" target="_blank" rel="external">AdapterDelegates</a> 。它的DEMO效果图如下：</p>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/reptiels.jpeg" alt=""></p>
+<p><img src="https://i.loli.net/2019/01/31/5c5258755c9af.jpeg" alt=""></p>
 <p>效果上完全符合需要，剩下的就是分析一下它的实现原理，考察一下可用性如何了。</p>
 <h2 id="关于这个库的用法与实现"><a href="#关于这个库的用法与实现" class="headerlink" title="关于这个库的用法与实现"></a>关于这个库的用法与实现</h2><p>从实现上考虑 RecyclerView.Adapter 大概要考虑以下几点：</p>
 <ul>
@@ -495,7 +495,7 @@ public int getItemViewType(int position) {
 </ul>
 <p>最后一项可以先不考虑，这个粗糙一点还是精细一点完全根据业务实际情况来。理论上针对if条件分支的消除，就是通过一定的设计模式，利用面向对象语言接口、抽象类的特性，本质上使用继承、组合的手段来做，解除掉耦合。能够达到的理想状态是，要更改一个功能时，修改一个类即可；添加一个功能时，增加个别新类即可。</p>
 <h3 id="DEMO的分析"><a href="#DEMO的分析" class="headerlink" title="DEMO的分析"></a>DEMO的分析</h3><p>我们来看DEMO的实现方式，堆一个类图出来：</p>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/delegateDemo.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/01/31/5c525861d2d4d.png" alt=""></p>
 <p>红色部分是DEMO实现类，其余部分是库中的工具类。先主要分析红色部分，作为一个库的用户要实现这样一个多样化的列表，都需要实现哪些类。</p>
 <ul>
 <li>ReptilesAdapter，RecyclerView.Adapter的实现类，它的复杂程度是我们的关注点；</li>
@@ -569,7 +569,7 @@ public int getItemViewType(int position) {
 </ul>
 <p>跟把大象装进冰箱差不多，三步之后就可以实现了。而且完全解耦，基本上通过新增类的方式解决掉了新增需求，简洁优雅。</p>
 <h3 id="再进一步，库源码"><a href="#再进一步，库源码" class="headerlink" title="再进一步，库源码"></a>再进一步，库源码</h3><p>实际上DEMO的类图已经是全工程的一个简图了，现在看黑色的部分——库中的类，忽略掉边边角角的子类，会发现核心类还是在于AbsDelegationAdapter。作为RecyclerView.Adapter的继承者，既用来持有列表数据，还持有代理管理类AdapterDelegatesManager。不难看出，基于RecyclerView.Adapter的内部调用逻辑，该类利用AdapterDelegatesManager做了一个主要抽象函数的代理调用，从而高效的实现了多类型view的需求。把关键的属性和方法加上，画一个库的类图，就更加清晰明了了：</p>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/delegate.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/01/31/5c52588c049d8.png" alt=""></p>
 <p>对于的源码，就贴一个 getItemViewType 函数：</p>
 <pre><code>/**
 * Must be called from {@link RecyclerView.Adapter#getItemViewType(int)}. Internally it scans all
