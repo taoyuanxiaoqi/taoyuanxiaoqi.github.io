@@ -93,15 +93,15 @@
 <meta property="og:url" content="http://taoyuanxiaoqi.com/2016/02/01/输入法相关布局实现原理分析/index.html">
 <meta property="og:site_name" content="桃小七的博客">
 <meta property="og:description" content="需求类似于微信聊天界面的布局，有一些特殊的编辑功能，要求有功能布局随着输入法键盘显示，一部分要显示在键盘上方，在某些模式切换后，输入法键盘区域要替换成相应的功能布局。">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_code.png">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_class_diagram.jpg">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_bar_layout.png">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_activitys.png">
-<meta property="og:updated_time" content="2016-02-01T04:46:34.000Z">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53ed611c758.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53ed73927c5.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53ed8839364.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53ed9a01abc.png">
+<meta property="og:updated_time" content="2019-02-01T06:56:33.534Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="类微信聊天界面输入法随动布局实现原理分析">
 <meta name="twitter:description" content="需求类似于微信聊天界面的布局，有一些特殊的编辑功能，要求有功能布局随着输入法键盘显示，一部分要显示在键盘上方，在某些模式切换后，输入法键盘区域要替换成相应的功能布局。">
-<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_code.png">
+<meta name="twitter:image" content="https://i.loli.net/2019/02/01/5c53ed611c758.png">
 
 
 
@@ -437,9 +437,9 @@
 <h2 id="实现分析"><a href="#实现分析" class="headerlink" title="实现分析"></a>实现分析</h2><p>整个开源工程的功能不少，大约有四个界面。针对我所遇到的需求这里只分析com.keyboard.activity.ChattingListActivity 这个界面，是一个类似于微信聊天界面的ACTIVITY。跟所有网上的输入法使用demo一致，该功能的实现也是基于manifest中定义adjustResize：</p>
 <pre><code>android:windowSoftInputMode=&quot;adjustResize&quot;
 </code></pre><p>而此定义有效的前提是相对应的activity不能设为全屏模式。</p>
-<h3 id="结构和简析"><a href="#结构和简析" class="headerlink" title="结构和简析"></a>结构和简析</h3><p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_code.png" alt="源码目录"></p>
+<h3 id="结构和简析"><a href="#结构和简析" class="headerlink" title="结构和简析"></a>结构和简析</h3><p><img src="https://i.loli.net/2019/02/01/5c53ed611c758.png" alt="源码目录"></p>
 <p>核心源码在XhsEmoticonsKeyboard库工程中，整个随动功能在红框框出的几个类中实现，它们的类图关系如下：</p>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_class_diagram.jpg" alt=""></p>
+<p><img src="https://i.loli.net/2019/02/01/5c53ed73927c5.jpg" alt=""></p>
 <p>可以看到功能是基于ReleativeLayout实现的。其中ResizeLayout复写了onSizeChanged、onMeasure和onLayout方法，并定义了OnResizeListener接口：</p>
 <pre><code>public interface OnResizeListener {
 
@@ -504,9 +504,9 @@
 </code></pre><p>可以看出，在键盘布局发生变化时，mAutoHeightLayoutView被重新设置了布局参数，重新测绘，而mAutoHeightLayoutView需要外部通过set来设定。也就是说AutoHeightLayout本身不能直接使用，实现功能的同时也对其下一步的实现者作出了一定的约束，并且这些约束是由代码逻辑决定的，比较隐晦。</p>
 <h4 id="XhsEmoticonsKeyBoardBar-最终的实现"><a href="#XhsEmoticonsKeyBoardBar-最终的实现" class="headerlink" title="XhsEmoticonsKeyBoardBar 最终的实现"></a>XhsEmoticonsKeyBoardBar 最终的实现</h4><p>这部分是最终定制功能的实现部分，实际上对于最初的需求实现我们只要关心几个点就足够了。AutoHeightLayout对应本身的布局定义、调用的setAutoHeightLayoutView设置进去的是哪一块view、该Layout包裹的子view定义（实际上这部分在这个工程中就是Activity的布局）。</p>
 <p>对于前两个点、在 XhsEmoticonsKeyBoardBar 得到构造中就能够找到，本身在构造的过程中通过 inflate 工具解析加载 R.layout.view_keyboardbar 布局文件、并在接下来的初始化过程中将ID为 R.id.ly_foot_func 的 view 进行了 setAutoHeightLayoutView设置。代码比较简单，直接看这两处布局的定义：</p>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_bar_layout.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/02/01/5c53ed8839364.png" alt=""></p>
 <p>整个布局会在addView的复写代码中（childSum == 0）这个分支上强制布局为向父布局底部对齐，其中表情区的部分被设置为AutoHeightLayoutView。那么表情区这一部分随着输入法的变化而变化，可以预见的是：当输入法隐藏时，表情区高度重新布局为0，输入区则会紧贴父布局底部；当输入法显示是，表情区高度随输入法布局高度变化而变化，至于是否显示要依靠功能逻辑，输入区则一直紧靠输入法上端显示。</p>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_XhsEmoticonsKeyboard_activitys.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/02/01/5c53ed9a01abc.png" alt=""></p>
 <p>至于对应Activity的布局，其中唯一一个子布局（XhsEmoticonsKeyBoardBar中也仅能包含一个）会在addView的复写代码中（childSum == 1）这个分支中，布局为处于第一个子view上放，在这里也就是始终显示在输入框、分割线以上，保证了内部显示内容的输入法随动。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
 <li>移植过程中，我们只是针对XhsEmoticonsKeyBoardBar这一部分，根据自己的不同的功能部分进行改造，当然，要留意上文所提到的一些约束。再上层的两个类直接引用即可；</li>

@@ -94,8 +94,7 @@
 <meta property="og:site_name" content="桃小七的博客">
 <meta property="og:description" content="起因最近摊上个大事儿。某次迭代发布中，某一个注册流程因为密码／验证码参数传反，又恰好因为种种原因黑盒测试没有覆盖到，最终只能通过重新发包解决。反思这个问题的原因，其一，这种参数类型一致的函数调用，编译器没办法判断对错，又难免由于手抖、神智不清、敲码过快等莫名其妙的原因输入错误；其二，不能过分依赖黑盒覆盖，特别是在测试资源有限的前提下。根据很久以前的一些经验，觉得重拾一下单元测试这个技能，应该可以作">
 <meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/instrumentation_set.png">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/runtestcase.png">
-<meta property="og:updated_time" content="2016-06-29T05:29:53.000Z">
+<meta property="og:updated_time" content="2019-02-01T03:51:05.613Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="android mvp 单元测试实践">
 <meta name="twitter:description" content="起因最近摊上个大事儿。某次迭代发布中，某一个注册流程因为密码／验证码参数传反，又恰好因为种种原因黑盒测试没有覆盖到，最终只能通过重新发包解决。反思这个问题的原因，其一，这种参数类型一致的函数调用，编译器没办法判断对错，又难免由于手抖、神智不清、敲码过快等莫名其妙的原因输入错误；其二，不能过分依赖黑盒覆盖，特别是在测试资源有限的前提下。根据很久以前的一些经验，觉得重拾一下单元测试这个技能，应该可以作">
@@ -565,14 +564,8 @@ public boolean handleMessage(Message msg) {
 
     private MockTaoXiaoQiUser mMockUser;
     private boolean mIsCallLoginSuccess = false;
-
-
-    public ForkAccountConfirmPresenter(Activity activity, IAccountConfirmView validateCodeView,MockTaoXiaoQiUser user) {
-        super(activity, validateCodeView);
-        mMockUser = user;
-    }
-
-    @Override
+</code></pre><p>​<br>        public ForkAccountConfirmPresenter(Activity activity, IAccountConfirmView validateCodeView,MockTaoXiaoQiUser user) {<br>            super(activity, validateCodeView);<br>            mMockUser = user;<br>        }</p>
+<pre><code>    @Override
     protected ITaoXiaoQiUser getTaoXiaoQiUser() {
         return mMockUser;
     }
@@ -708,7 +701,7 @@ public void emailRegister() throws Exception {
     androidTestCompile &apos;com.android.support.test:rules:0.2&apos;
     androidTestCompile &apos;com.android.support.test.espresso:espresso-core:2.1&apos;
 }
-</code></pre><p>这应该不是最新版本的依赖，也可能并非都是必须的，完全取决于用例的需求。不依赖于android特殊实例（Activity、Context等）的用例属于纯功能型的，只需要testCompile的依赖，它的代码位置在src目录下的test目录中；需要android界面支持的依赖是androidTestCompile，用例代码在src的androidTest目录下。测试用例的代码最好使用android studio自带的工具方法生成，它可以保证你的用例代码在正确的位置。        </p>
+</code></pre><p>  这应该不是最新版本的依赖，也可能并非都是必须的，完全取决于用例的需求。不依赖于android特殊实例（Activity、Context等）的用例属于纯功能型的，只需要testCompile的依赖，它的代码位置在src目录下的test目录中；需要android界面支持的依赖是androidTestCompile，用例代码在src的androidTest目录下。测试用例的代码最好使用android studio自带的工具方法生成，它可以保证你的用例代码在正确的位置。        </p>
 </li>
 <li><p>异常： ‘testClasses’ not found </p>
 <p>  正常的工程目录一般都有不少的module依赖，而不是像各种实例demo中只有一个干巴巴的app module。这个时候或许会遇到这个异常：</p>
@@ -770,8 +763,6 @@ at ...
 
 Tests ran to completion.
 </code></pre><p>成功预防了参数传反的低级错误。    </p>
-<p>代码修改正确之后的运行结果：</p>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/runtestcase.png" alt="我最喜欢的绿色进度条"></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
 <li>在类似MVP架构的代码中做单元测试确实十分便捷，无法想象如果是之前把控制逻辑糅合在Activity代码中的做法如何进行测试。并且在理论上，只对presenter／module进行测试的话无需依赖android环境，测试效率会大大提高。当然，为图省事儿在本例中还是使用了android环境，后续可以考虑采用mock库来模拟Activity的行为，来摆脱对Instrumentation的依赖。</li>
 </ul>
