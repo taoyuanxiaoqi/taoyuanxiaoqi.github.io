@@ -95,14 +95,14 @@
 <meta property="og:site_name" content="桃小七的博客">
 <meta property="og:description" content="来源与原理本文是尝试对CSDN大牛 Jack_Jia 的博客 Android APK加壳技术方案【2】  进行实现的过程记录，该文介绍了一种对源程序APK加壳的思路并提供了对应的源码。
 所谓加壳，就是通过给目标APK加一层保护程序，把需要保护的内容加密、隐藏起来，来防止反编译的一种方法。说到底我们要做的是这样一个事情，首先把要加壳的APK用自己的加密算法加个密（实验过程中这步可以省掉），然后藏在另">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell1_base.gif">
-<meta property="og:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apk_shell1_dexclassloader.png">
-<meta property="og:updated_time" content="2016-02-01T07:17:33.000Z">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53fdf9f31ad.gif">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53fecbaa482.jpeg">
+<meta property="og:updated_time" content="2019-02-01T08:09:57.751Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="APK加壳【1】初步方案实现详解">
 <meta name="twitter:description" content="来源与原理本文是尝试对CSDN大牛 Jack_Jia 的博客 Android APK加壳技术方案【2】  进行实现的过程记录，该文介绍了一种对源程序APK加壳的思路并提供了对应的源码。
 所谓加壳，就是通过给目标APK加一层保护程序，把需要保护的内容加密、隐藏起来，来防止反编译的一种方法。说到底我们要做的是这样一个事情，首先把要加壳的APK用自己的加密算法加个密（实验过程中这步可以省掉），然后藏在另">
-<meta name="twitter:image" content="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell1_base.gif">
+<meta name="twitter:image" content="https://i.loli.net/2019/02/01/5c53fdf9f31ad.gif">
 
 
 
@@ -439,7 +439,7 @@
 <li>通过反射置换android.app.ActivityThread 中的mClassLoader为加载解密出APK的DexClassLoader，该DexClassLoader一方面加载了源程序、另一方面以原mClassLoader为父节点，这就保证了即加载了源程序又没有放弃原先加载的资源与系统代码；</li>
 <li>找到源程序的Application，通过反射建立并运行；</li>
 </ol>
-<p><img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_apkshell1_base.gif" alt="基本流程"></p>
+<p><img src="https://i.loli.net/2019/02/01/5c53fdf9f31ad.gif" alt="基本流程"></p>
 <h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>整个方案里面涉及到三种角色：</p>
 <ol>
 <li>源程序——等待被加壳的目标程序，一个APK；【原文中的加密工具代码、DexShellTool中的g:/payload.apk】</li>
@@ -450,199 +450,14 @@
 <h3 id="源程序"><a href="#源程序" class="headerlink" title="源程序"></a>源程序</h3><p>源程序其实没什么好讲的，最好是有个带有服务、广播、网络操作什么的基础功能比较全面的示例程序，这样测试可行性更加有说服力一些。</p>
 <h3 id="加密工具"><a href="#加密工具" class="headerlink" title="加密工具"></a>加密工具</h3><p>加密工具其实原文中给出的很容易看懂，因为没有涉及到加密算法，所以不到两百行。基本做了这样一件事：把源程序加密之后接到壳工程的dex文件尾，然后修改dex文件的文件长度、校验和什么的。这种隐藏方式略诡异。</p>
 <h3 id="壳工程"><a href="#壳工程" class="headerlink" title="壳工程"></a>壳工程</h3><p>壳工程既是壳又要有解壳功能，原文只给了两个类，实际上也只需要这两个类。ProxyApplication里有解壳与反射实现动态加载源程序的代码逻辑、RefInvoke则是反射工具。许多童鞋表示反射不好理解，一开始我也是这么觉得。不过经过一行行注释下来、对比系统源码，其实也没有多难。这里要说，静下心来分析，不到三百行的代码，能有多复杂呢？</p>
-<pre><code>protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        Log.d(TAG, &quot;attachBaseContext hello world~&quot;);
-        try {
-            File odex = this.getDir(&quot;payload_odex&quot;, MODE_PRIVATE);
-            File libs = this.getDir(&quot;payload_lib&quot;, MODE_PRIVATE);
-            odexPath = odex.getAbsolutePath();
-            libPath = libs.getAbsolutePath();
-            apkFileName = odex.getAbsolutePath() + &quot;/payload.apk&quot;;
-            File dexFile = new File(apkFileName);
-            if (!dexFile.exists())
-                dexFile.createNewFile();
-            // 读取程序classes.dex文件
-            byte[] dexdata = this.readDexFileFromApk();
-            // 分离出解壳后的apk文件已用于动态加载
-            this.splitPayLoadFromDex(dexdata);
-            // 配置动态加载环境
-            Object currentActivityThread = RefInvoke.invokeStaticMethod(
-                    &quot;android.app.ActivityThread&quot;, &quot;currentActivityThread&quot;,
-                    new Class[] {}, new Object[] {});
-            String packageName = this.getPackageName();
-            HashMap mPackages = (HashMap) RefInvoke.getFieldOjbect(
-                    &quot;android.app.ActivityThread&quot;, currentActivityThread,
-                    &quot;mPackages&quot;);
-            WeakReference wr = (WeakReference) mPackages.get(packageName);
-            //换Loader操作 动态加载如被加密又装换回来的apk文件
-            DexClassLoader dLoader = new DexClassLoader(apkFileName, odexPath,
-                    libPath, (ClassLoader) RefInvoke.getFieldOjbect(
-                            &quot;android.app.LoadedApk&quot;, wr.get(), &quot;mClassLoader&quot;));
-            RefInvoke.setFieldOjbect(&quot;android.app.LoadedApk&quot;, &quot;mClassLoader&quot;,
-                    wr.get(), dLoader);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onCreate() {
-        Log.d(TAG, &quot;on create hello world~&quot;);
-        // 如果源应用配置有Appliction对象，则替换为源应用Applicaiton，以便不影响源程序逻辑。
-        String appClassName = null;
-        try {
-            ApplicationInfo ai = this.getPackageManager().getApplicationInfo(
-                    this.getPackageName(), PackageManager.GET_META_DATA);
-            Bundle bundle = ai.metaData;
-            if (bundle != null &amp;&amp; bundle.containsKey(&quot;APPLICATION_CLASS_NAME&quot;)) {
-                appClassName = bundle.getString(&quot;APPLICATION_CLASS_NAME&quot;);
-            } else {
-                return;
-            }
-        } catch (NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        Log.d(TAG, &quot;the app aplication name is &quot; + appClassName);
-        /**
-         * 调用静态方法android.app.ActivityThread.currentActivityThread
-         * 获取当前activity所在的线程对象
-         */
-        Object currentActivityThread = RefInvoke.invokeStaticMethod(
-                &quot;android.app.ActivityThread&quot;, &quot;currentActivityThread&quot;,
-                new Class[] {}, new Object[] {});
-        /**
-         * 获取currentActivityThread中的mBoundApplication属性对象，该对象是一个
-         *  AppBindData类对象，该类是ActivityThread的一个内部类
-         */
-        Object mBoundApplication = RefInvoke.getFieldOjbect(
-                &quot;android.app.ActivityThread&quot;, currentActivityThread,
-                &quot;mBoundApplication&quot;);
-        /**
-         * 获取mBoundApplication中的info属性，info 是 LoadedApk类对象
-         */
-        Object loadedApkInfo = RefInvoke.getFieldOjbect(
-                &quot;android.app.ActivityThread$AppBindData&quot;, mBoundApplication,
-                &quot;info&quot;);
-        /**
-         * loadedApkInfo对象的mApplication属性置为null
-         */
-        RefInvoke.setFieldOjbect(&quot;android.app.LoadedApk&quot;, &quot;mApplication&quot;,
-                loadedApkInfo, null);
-
-        /**
-         * 获取currentActivityThread对象中的mInitialApplication属性
-         * 这货是个正牌的 Application
-         */
-        Object oldApplication = RefInvoke.getFieldOjbect(
-                &quot;android.app.ActivityThread&quot;, currentActivityThread,
-                &quot;mInitialApplication&quot;);
-        /**
-         * 获取currentActivityThread对象中的mAllApplications属性
-         * 这货是 装Application的列表
-         */
-        ArrayList&lt;Application&gt; mAllApplications = (ArrayList&lt;Application&gt;) RefInvoke
-                .getFieldOjbect(&quot;android.app.ActivityThread&quot;,
-                        currentActivityThread, &quot;mAllApplications&quot;);
-        //列表对象终于可以直接调用了 remove调了之前获取的application 抹去记录的样子
-        mAllApplications.remove(oldApplication);
-        /**
-         * 获取前面得到LoadedApk对象中的mApplicationInfo属性，是个ApplicationInfo对象
-         */
-        ApplicationInfo appinfo_In_LoadedApk = (ApplicationInfo) RefInvoke
-                .getFieldOjbect(&quot;android.app.LoadedApk&quot;, loadedApkInfo,
-                        &quot;mApplicationInfo&quot;);
-        /**
-         * 获取前面得到AppBindData对象中的appInfo属性，也是个ApplicationInfo对象
-         */
-        ApplicationInfo appinfo_In_AppBindData = (ApplicationInfo) RefInvoke
-                .getFieldOjbect(&quot;android.app.ActivityThread$AppBindData&quot;,
-                        mBoundApplication, &quot;appInfo&quot;);
-        //把这两个对象的className属性设置为从meta-data中获取的被加密apk的application路径
-        appinfo_In_LoadedApk.className = appClassName;
-        appinfo_In_AppBindData.className = appClassName;
-        /**
-         * 调用LoadedApk中的makeApplication 方法 造一个application
-         * 前面改过路径了 
-         */
-        Application app = (Application) RefInvoke.invokeMethod(
-                &quot;android.app.LoadedApk&quot;, &quot;makeApplication&quot;, loadedApkInfo,
-                new Class[] { boolean.class, Instrumentation.class },
-                new Object[] { false, null });
-        RefInvoke.setFieldOjbect(&quot;android.app.ActivityThread&quot;,
-                &quot;mInitialApplication&quot;, currentActivityThread, app);
-
-        HashMap mProviderMap = (HashMap) RefInvoke.getFieldOjbect(
-                &quot;android.app.ActivityThread&quot;, currentActivityThread,
-                &quot;mProviderMap&quot;);
-        Iterator it = mProviderMap.values().iterator();
-        while (it.hasNext()) {
-            Object providerClientRecord = it.next();
-            Object localProvider = RefInvoke.getFieldOjbect(
-                    &quot;android.app.ActivityThread$ProviderClientRecord&quot;,
-                    providerClientRecord, &quot;mLocalProvider&quot;);
-            RefInvoke.setFieldOjbect(&quot;android.content.ContentProvider&quot;,
-                    &quot;mContext&quot;, localProvider, app);
-        }
-
-        if(null == app){
-            Log.e(TAG, &quot;application get is null !&quot;);
-        }else{
-            app.onCreate();
-        }
-    }
-</code></pre><p>辅助源码看实际上还是很好理解的，不多说。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">attachBaseContext</span><span class="params">(Context base)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>.attachBaseContext(base);</div><div class="line">		Log.d(TAG, <span class="string">"attachBaseContext hello world~"</span>);</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			File odex = <span class="keyword">this</span>.getDir(<span class="string">"payload_odex"</span>, MODE_PRIVATE);</div><div class="line">			File libs = <span class="keyword">this</span>.getDir(<span class="string">"payload_lib"</span>, MODE_PRIVATE);</div><div class="line">			odexPath = odex.getAbsolutePath();</div><div class="line">			libPath = libs.getAbsolutePath();</div><div class="line">			apkFileName = odex.getAbsolutePath() + <span class="string">"/payload.apk"</span>;</div><div class="line">			File dexFile = <span class="keyword">new</span> File(apkFileName);</div><div class="line">			<span class="keyword">if</span> (!dexFile.exists())</div><div class="line">				dexFile.createNewFile();</div><div class="line">			<span class="comment">// 读取程序classes.dex文件</span></div><div class="line">			<span class="keyword">byte</span>[] dexdata = <span class="keyword">this</span>.readDexFileFromApk();</div><div class="line">			<span class="comment">// 分离出解壳后的apk文件已用于动态加载</span></div><div class="line">			<span class="keyword">this</span>.splitPayLoadFromDex(dexdata);</div><div class="line">			<span class="comment">// 配置动态加载环境</span></div><div class="line">			Object currentActivityThread = RefInvoke.invokeStaticMethod(</div><div class="line">					<span class="string">"android.app.ActivityThread"</span>, <span class="string">"currentActivityThread"</span>,</div><div class="line">					<span class="keyword">new</span> Class[] &#123;&#125;, <span class="keyword">new</span> Object[] &#123;&#125;);</div><div class="line">			String packageName = <span class="keyword">this</span>.getPackageName();</div><div class="line">			HashMap mPackages = (HashMap) RefInvoke.getFieldOjbect(</div><div class="line">					<span class="string">"android.app.ActivityThread"</span>, currentActivityThread,</div><div class="line">					<span class="string">"mPackages"</span>);</div><div class="line">			WeakReference wr = (WeakReference) mPackages.get(packageName);</div><div class="line">			<span class="comment">//换Loader操作 动态加载如被加密又装换回来的apk文件</span></div><div class="line">			DexClassLoader dLoader = <span class="keyword">new</span> DexClassLoader(apkFileName, odexPath,</div><div class="line">					libPath, (ClassLoader) RefInvoke.getFieldOjbect(</div><div class="line">							<span class="string">"android.app.LoadedApk"</span>, wr.get(), <span class="string">"mClassLoader"</span>));</div><div class="line">			RefInvoke.setFieldOjbect(<span class="string">"android.app.LoadedApk"</span>, <span class="string">"mClassLoader"</span>,</div><div class="line">					wr.get(), dLoader);</div><div class="line"></div><div class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</div><div class="line">		Log.d(TAG, <span class="string">"on create hello world~"</span>);</div><div class="line">		<span class="comment">// 如果源应用配置有Appliction对象，则替换为源应用Applicaiton，以便不影响源程序逻辑。</span></div><div class="line">		String appClassName = <span class="keyword">null</span>;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			ApplicationInfo ai = <span class="keyword">this</span>.getPackageManager().getApplicationInfo(</div><div class="line">					<span class="keyword">this</span>.getPackageName(), PackageManager.GET_META_DATA);</div><div class="line">			Bundle bundle = ai.metaData;</div><div class="line">			<span class="keyword">if</span> (bundle != <span class="keyword">null</span> &amp;&amp; bundle.containsKey(<span class="string">"APPLICATION_CLASS_NAME"</span>)) &#123;</div><div class="line">				appClassName = bundle.getString(<span class="string">"APPLICATION_CLASS_NAME"</span>);</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				<span class="keyword">return</span>;</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">catch</span> (NameNotFoundException e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		Log.d(TAG, <span class="string">"the app aplication name is "</span> + appClassName);</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 调用静态方法android.app.ActivityThread.currentActivityThread</div><div class="line">		 * 获取当前activity所在的线程对象</div><div class="line">		 */</div><div class="line">		Object currentActivityThread = RefInvoke.invokeStaticMethod(</div><div class="line">				<span class="string">"android.app.ActivityThread"</span>, <span class="string">"currentActivityThread"</span>,</div><div class="line">				<span class="keyword">new</span> Class[] &#123;&#125;, <span class="keyword">new</span> Object[] &#123;&#125;);</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 获取currentActivityThread中的mBoundApplication属性对象，该对象是一个</div><div class="line">		 *  AppBindData类对象，该类是ActivityThread的一个内部类</div><div class="line">		 */</div><div class="line">		Object mBoundApplication = RefInvoke.getFieldOjbect(</div><div class="line">				<span class="string">"android.app.ActivityThread"</span>, currentActivityThread,</div><div class="line">				<span class="string">"mBoundApplication"</span>);</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 获取mBoundApplication中的info属性，info 是 LoadedApk类对象</div><div class="line">		 */</div><div class="line">		Object loadedApkInfo = RefInvoke.getFieldOjbect(</div><div class="line">				<span class="string">"android.app.ActivityThread$AppBindData"</span>, mBoundApplication,</div><div class="line">				<span class="string">"info"</span>);</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * loadedApkInfo对象的mApplication属性置为null</div><div class="line">		 */</div><div class="line">		RefInvoke.setFieldOjbect(<span class="string">"android.app.LoadedApk"</span>, <span class="string">"mApplication"</span>,</div><div class="line">				loadedApkInfo, <span class="keyword">null</span>);</div><div class="line">		</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 获取currentActivityThread对象中的mInitialApplication属性</div><div class="line">		 * 这货是个正牌的 Application</div><div class="line">		 */</div><div class="line">		Object oldApplication = RefInvoke.getFieldOjbect(</div><div class="line">				<span class="string">"android.app.ActivityThread"</span>, currentActivityThread,</div><div class="line">				<span class="string">"mInitialApplication"</span>);</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 获取currentActivityThread对象中的mAllApplications属性</div><div class="line">		 * 这货是 装Application的列表</div><div class="line">		 */</div><div class="line">		ArrayList&lt;Application&gt; mAllApplications = (ArrayList&lt;Application&gt;) RefInvoke</div><div class="line">				.getFieldOjbect(<span class="string">"android.app.ActivityThread"</span>,</div><div class="line">						currentActivityThread, <span class="string">"mAllApplications"</span>);</div><div class="line">		<span class="comment">//列表对象终于可以直接调用了 remove调了之前获取的application 抹去记录的样子</span></div><div class="line">		mAllApplications.remove(oldApplication);</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 获取前面得到LoadedApk对象中的mApplicationInfo属性，是个ApplicationInfo对象</div><div class="line">		 */</div><div class="line">		ApplicationInfo appinfo_In_LoadedApk = (ApplicationInfo) RefInvoke</div><div class="line">				.getFieldOjbect(<span class="string">"android.app.LoadedApk"</span>, loadedApkInfo,</div><div class="line">						<span class="string">"mApplicationInfo"</span>);</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 获取前面得到AppBindData对象中的appInfo属性，也是个ApplicationInfo对象</div><div class="line">		 */</div><div class="line">		ApplicationInfo appinfo_In_AppBindData = (ApplicationInfo) RefInvoke</div><div class="line">				.getFieldOjbect(<span class="string">"android.app.ActivityThread$AppBindData"</span>,</div><div class="line">						mBoundApplication, <span class="string">"appInfo"</span>);</div><div class="line">		<span class="comment">//把这两个对象的className属性设置为从meta-data中获取的被加密apk的application路径</span></div><div class="line">		appinfo_In_LoadedApk.className = appClassName;</div><div class="line">		appinfo_In_AppBindData.className = appClassName;</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 调用LoadedApk中的makeApplication 方法 造一个application</div><div class="line">		 * 前面改过路径了 </div><div class="line">		 */</div><div class="line">		Application app = (Application) RefInvoke.invokeMethod(</div><div class="line">				<span class="string">"android.app.LoadedApk"</span>, <span class="string">"makeApplication"</span>, loadedApkInfo,</div><div class="line">				<span class="keyword">new</span> Class[] &#123; <span class="keyword">boolean</span>.class, Instrumentation.class &#125;,</div><div class="line">				<span class="keyword">new</span> Object[] &#123; <span class="keyword">false</span>, <span class="keyword">null</span> &#125;);</div><div class="line">		RefInvoke.setFieldOjbect(<span class="string">"android.app.ActivityThread"</span>,</div><div class="line">				<span class="string">"mInitialApplication"</span>, currentActivityThread, app);</div><div class="line"></div><div class="line">		HashMap mProviderMap = (HashMap) RefInvoke.getFieldOjbect(</div><div class="line">				<span class="string">"android.app.ActivityThread"</span>, currentActivityThread,</div><div class="line">				<span class="string">"mProviderMap"</span>);</div><div class="line">		Iterator it = mProviderMap.values().iterator();</div><div class="line">		<span class="keyword">while</span> (it.hasNext()) &#123;</div><div class="line">			Object providerClientRecord = it.next();</div><div class="line">			Object localProvider = RefInvoke.getFieldOjbect(</div><div class="line">					<span class="string">"android.app.ActivityThread$ProviderClientRecord"</span>,</div><div class="line">					providerClientRecord, <span class="string">"mLocalProvider"</span>);</div><div class="line">			RefInvoke.setFieldOjbect(<span class="string">"android.content.ContentProvider"</span>,</div><div class="line">					<span class="string">"mContext"</span>, localProvider, app);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="keyword">if</span>(<span class="keyword">null</span> == app)&#123;</div><div class="line">			Log.e(TAG, <span class="string">"application get is null !"</span>);</div><div class="line">		&#125;<span class="keyword">else</span>&#123;</div><div class="line">			app.onCreate();</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>辅助源码看实际上还是很好理解的，不多说。 </p>
 <p>顺手推荐个android在线源码浏览网址 <a href="http://androidxref.com/" target="_blank" rel="external">http://androidxref.com/</a></p>
 <p>为了方便后续调试代码，弄了个shell脚本，同时也可以基本解释整个加壳的流程：<br></p>
-<pre><code>#!/bin/bash
-ENCRYPT_PATH=&quot;/home/kf2lc/develop/apk_encrypt&quot;
-UNSHELL_PATH=&quot;/home/kf2lc/develop/workspace/BFC/UnShell&quot;
-DEX_SHELL_TOOL_PATH=&quot;/home/kf2lc/develop/workspace/BFC/DexShellTool&quot;
-DEMO_TEMP_PATH=&quot;./demopac&quot;
-TEMP_PATH=&quot;./apk&quot;
-ARM_SO_PATH=&quot;/libs/armeabi-v7a/libNativeTool.so&quot;
-ARM_MIPS_PATH=&quot;/libs/mips/libNativeTool.so&quot;
-
-echo  &quot;清理中间文件...&quot;
-cd $ENCRYPT_PATH
-rm Demo-*.apk
-rm *.dex
-rm UnShell.apk
-
-echo  &quot;编译解壳工程...&quot;
-cd $UNSHELL_PATH
-rm -rf gen bin
-android update project -p .
-ant clean debug
-
-echo &quot;拷贝壳工程dex文件到工作目录...&quot;
-cp $UNSHELL_PATH&quot;/bin/classes.dex&quot; $ENCRYPT_PATH&quot;/unshell.dex&quot;
-cp $UNSHELL_PATH&quot;/bin/BlankActivity-debug-unaligned.apk&quot; $ENCRYPT_PATH&quot;/UnShell.apk&quot;
-
-echo &quot;编译加壳工程... 生成新的classes.dex文件到工作目录...&quot;
-cd $DEX_SHELL_TOOL_PATH
-ant clean compile jar run
-
-echo &quot;解压待加密apk... 替换classes.dex文件为加壳.dex文件...&quot;
-cd $ENCRYPT_PATH
-unzip -d $TEMP_PATH  UnShell.apk
-rm $TEMP_PATH&quot;/classes.dex&quot;
-mv ./classes.dex $TEMP_PATH
-
-echo &quot;删除签名文件夹 重新打包apk...&quot;
-cd $TEMP_PATH
-rm -rf ./META-INF
-zip -r ../Demo-encrypt-unsign.apk ./*
-cd ../
-echo &quot;清理中间目录...&quot;
-rm -rf $TEMP_PATH
-
-echo &quot;为加壳后的apk重新签名...&quot;
-jarsigner -verbose -keystore bfc.keystore -signedjar Demo-encrypt.apk Demo-encrypt-unsign.apk bfc.keystore
-</code></pre><h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">ENCRYPT_PATH=&quot;/home/kf2lc/develop/apk_encrypt&quot;</div><div class="line">UNSHELL_PATH=&quot;/home/kf2lc/develop/workspace/BFC/UnShell&quot;</div><div class="line">DEX_SHELL_TOOL_PATH=&quot;/home/kf2lc/develop/workspace/BFC/DexShellTool&quot;</div><div class="line">DEMO_TEMP_PATH=&quot;./demopac&quot;</div><div class="line">TEMP_PATH=&quot;./apk&quot;</div><div class="line">ARM_SO_PATH=&quot;/libs/armeabi-v7a/libNativeTool.so&quot;</div><div class="line">ARM_MIPS_PATH=&quot;/libs/mips/libNativeTool.so&quot;</div><div class="line"> </div><div class="line">echo  &quot;清理中间文件...&quot;</div><div class="line">cd $ENCRYPT_PATH</div><div class="line">rm Demo-*.apk</div><div class="line">rm *.dex</div><div class="line">rm UnShell.apk</div><div class="line"> </div><div class="line">echo  &quot;编译解壳工程...&quot;</div><div class="line">cd $UNSHELL_PATH</div><div class="line">rm -rf gen bin</div><div class="line">android update project -p .</div><div class="line">ant clean debug</div><div class="line"> </div><div class="line">echo &quot;拷贝壳工程dex文件到工作目录...&quot;</div><div class="line">cp $UNSHELL_PATH&quot;/bin/classes.dex&quot; $ENCRYPT_PATH&quot;/unshell.dex&quot;</div><div class="line">cp $UNSHELL_PATH&quot;/bin/BlankActivity-debug-unaligned.apk&quot; $ENCRYPT_PATH&quot;/UnShell.apk&quot;</div><div class="line"> </div><div class="line">echo &quot;编译加壳工程... 生成新的classes.dex文件到工作目录...&quot;</div><div class="line">cd $DEX_SHELL_TOOL_PATH</div><div class="line">ant clean compile jar run</div><div class="line"> </div><div class="line">echo &quot;解压待加密apk... 替换classes.dex文件为加壳.dex文件...&quot;</div><div class="line">cd $ENCRYPT_PATH</div><div class="line">unzip -d $TEMP_PATH  UnShell.apk</div><div class="line">rm $TEMP_PATH&quot;/classes.dex&quot;</div><div class="line">mv ./classes.dex $TEMP_PATH</div><div class="line"> </div><div class="line">echo &quot;删除签名文件夹 重新打包apk...&quot;</div><div class="line">cd $TEMP_PATH</div><div class="line">rm -rf ./META-INF</div><div class="line">zip -r ../Demo-encrypt-unsign.apk ./*</div><div class="line">cd ../</div><div class="line">echo &quot;清理中间目录...&quot;</div><div class="line">rm -rf $TEMP_PATH</div><div class="line"> </div><div class="line">echo &quot;为加壳后的apk重新签名...&quot;</div><div class="line">jarsigner -verbose -keystore bfc.keystore -signedjar Demo-encrypt.apk Demo-encrypt-unsign.apk bfc.keystore</div></pre></td></tr></table></figure>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
 <li>无论是虚拟机还是手机、平板，测试时一定要统一使用一个签名，否则很容易出无签名的安装错误；</li>
-<li>由于本方案使用DexClassLoader作为动态加载的方案，从接口上看：<img src="http://7xo1uj.com1.z0.glb.clouddn.com/android_apk_shell1_dexclassloader.png" alt=""><br>很明显，这货是需要一个文件路径的，这意味着如果直接使用该类，就必须要有个解密好的文件老老实实的躺在存储器上，这样一来无论你放在什么地方、该文件存在的时间有多短，破解者都有可能绕过壳、直接拿到解密的文件，这明显不科学；</li>
+<li>由于本方案使用DexClassLoader作为动态加载的方案，从接口上看：<img src="https://i.loli.net/2019/02/01/5c53fecbaa482.jpeg" alt=""><br>很明显，这货是需要一个文件路径的，这意味着如果直接使用该类，就必须要有个解密好的文件老老实实的躺在存储器上，这样一来无论你放在什么地方、该文件存在的时间有多短，破解者都有可能绕过壳、直接拿到解密的文件，这明显不科学；</li>
 <li>资源加载，这里面我偷了个懒，壳工程的资源文件和源程序的资源文件是完全一致的，所以加载起来没有问题。但是这样一来整个加壳的APK实际上内部有两份资源文件了，示例APK还好，碰见图片多的那这个数据增量完全无法接受；</li>
 <li>本文仅是个人理解，虽然跑通了但是也不免有瞎猫撞上死耗子的几率，错误加上错误产生正确也是可能的，仅供参考，欢迎质疑。</li>
 </ol>

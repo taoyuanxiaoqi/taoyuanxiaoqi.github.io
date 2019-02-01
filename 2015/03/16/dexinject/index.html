@@ -93,13 +93,13 @@
 <meta property="og:url" content="http://taoyuanxiaoqi.com/2015/03/16/dexinject/index.html">
 <meta property="og:site_name" content="桃小七的博客">
 <meta property="og:description" content="最近在研究Android绿色安全这一块，具体到上层的业务就是“去第三方APP的广告”。如果既想使用第三方APP，又不想看到一些无良的广告，那dex注入基本无法避免。本文针对网上一些大牛分享的文章，进行了一些简单的实现，总结和分享自是不能少的。Ps：感谢金山毒霸实现了该功能，感谢大牛们破解之后的无私分享。">
-<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/runinjec_zpszoboirlu.png">
-<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/injeclog_zpsexo6xapb.png">
-<meta property="og:updated_time" content="2015-11-04T12:25:48.000Z">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53f8116c481.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53f7fc878f7.png">
+<meta property="og:updated_time" content="2019-02-01T07:41:13.211Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="dex注入实现详解">
 <meta name="twitter:description" content="最近在研究Android绿色安全这一块，具体到上层的业务就是“去第三方APP的广告”。如果既想使用第三方APP，又不想看到一些无良的广告，那dex注入基本无法避免。本文针对网上一些大牛分享的文章，进行了一些简单的实现，总结和分享自是不能少的。Ps：感谢金山毒霸实现了该功能，感谢大牛们破解之后的无私分享。">
-<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/runinjec_zpszoboirlu.png">
+<meta name="twitter:image" content="https://i.loli.net/2019/02/01/5c53f8116c481.png">
 
 
 
@@ -480,6 +480,7 @@ private class H extends Handler {
                 ActivityClientRecord r = (ActivityClientRecord)msg.obj;
 
 
+
                 r.packageInfo = getPackageInfoNoCheck(
                         r.activityInfo.applicationInfo, r.compatInfo);
                 handleLaunchActivity(r, null);
@@ -590,16 +591,8 @@ int invoke_dex_method(const char* dexPath, const char* dexOptDir, const char* cl
      public HookCallback(Callback parentCallback){
                mParentCallback = parentCallback;
      }
-
-
-     @Override
-     public boolean handleMessage(Message msg) {
-               switch (msg.what) {
-               case RESUME_ACTIVITY:
-                        Log.d(HookTool.TAG, &quot;hook activity resume!!!&quot;);
-                        break;
-
-               case PAUSE_ACTIVITY:
+</code></pre><p>​<br>         @Override<br>         public boolean handleMessage(Message msg) {<br>                   switch (msg.what) {<br>                   case RESUME_ACTIVITY:<br>                            Log.d(HookTool.TAG, “hook activity resume!!!”);<br>                            break;</p>
+<pre><code>               case PAUSE_ACTIVITY:
                         Log.d(HookTool.TAG, &quot;hook activity pause!!!&quot;);
                default:
                         Log.d(HookTool.TAG, &quot;hook a &quot; + msg.what);
@@ -643,9 +636,9 @@ int invoke_dex_method(const char* dexPath, const char* dexOptDir, const char* cl
 <li><p>运行注入工具：</p>
 </li>
 </ol>
-<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/runinjec_zpszoboirlu.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/02/01/5c53f8116c481.png" alt=""></p>
 <p>这是按home退出APP再进入，通过日志过滤器可以得到：</p>
-<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/injeclog_zpsexo6xapb.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/02/01/5c53f7fc878f7.png" alt=""></p>
 
       
     </div>

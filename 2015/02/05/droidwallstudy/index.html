@@ -87,21 +87,24 @@
 
 
 
-<meta name="description" content="Droid Wall是什么Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种">
+<meta name="description" content="Droid Wall是什么
+Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两">
 <meta property="og:type" content="article">
 <meta property="og:title" content="droidwall源码实现分析">
 <meta property="og:url" content="http://taoyuanxiaoqi.com/2015/02/05/droidwallstudy/index.html">
 <meta property="og:site_name" content="桃小七的博客">
-<meta property="og:description" content="Droid Wall是什么Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种">
-<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallclasslist_zps0m9zuvfu.png">
-<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwall_zpszva8yx80.png">
-<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallapiclass_zpsogfsuxet.png">
-<meta property="og:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/apifunctionslist_zpsgdclx2ep.png">
-<meta property="og:updated_time" content="2015-11-04T12:26:17.000Z">
+<meta property="og:description" content="Droid Wall是什么
+Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53f66990b34.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53f67b0fd46.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53f6a4a120f.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/01/5c53f6c9b2caf.png">
+<meta property="og:updated_time" content="2019-02-01T07:36:09.194Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="droidwall源码实现分析">
-<meta name="twitter:description" content="Droid Wall是什么Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种">
-<meta name="twitter:image" content="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallclasslist_zps0m9zuvfu.png">
+<meta name="twitter:description" content="Droid Wall是什么
+Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两">
+<meta name="twitter:image" content="https://i.loli.net/2019/02/01/5c53f66990b34.png">
 
 
 
@@ -432,20 +435,23 @@
       
 
       
-        <h2 id="Droid-Wall是什么"><a href="#Droid-Wall是什么" class="headerlink" title="Droid Wall是什么"></a>Droid Wall是什么</h2><p>Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。<br>软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种模式，可设定允许（白名单）访问的程序或禁止（单名单）访问的程序。<br>                                                    ——<a href="http://baike.baidu.com/link?url=6pxcRaKqs12Y25NoT_5zAW4kXINotK1rOG4dUcrWQGKhUf8Wc9Itsms6viljfWmYAL8bQcT10d4z1EcdqUOeOa" target="_blank" rel="external">百度百科</a><br><a id="more"></a></p>
-<h2 id="Iptables是什么"><a href="#Iptables是什么" class="headerlink" title="Iptables是什么"></a>Iptables是什么</h2><p>iptables 是与最新的 3.5 版本 Linux 内核集成的 IP 信息包过滤系统。如果 Linux 系统连接到因特网或 LAN、服务器或连接 LAN 和因特网的代理服务器， 则该系统有利于在 Linux 系统上更好地控制 IP 信息包过滤和防火墙配置。<br>                                                    ——<a href="http://&gt; baike.baidu.com/view/504557.htm" target="_blank" rel="external">百度百科</a></p>
-<blockquote>
+        <h2 id="Droid-Wall是什么"><a href="#Droid-Wall是什么" class="headerlink" title="Droid Wall是什么"></a>Droid Wall是什么</h2><blockquote>
+<p>Droid Wall是Android平台上一款强大的防火墙前端软件，与iptables配套使用，让你从此开着gprs不烧钱，如果你没有不限流量包月，那么它必然会被明智的你安装到手机里，这个不到40kb软件的伟大之处在于让你来决定哪些软件可以联接上网，在你允许的软件前面打上勾，而且支持按3g/wifi区分网络。<br>软件需要Root权限（就是手机需要破解）。支持黑名单与白名单两种模式，可设定允许（白名单）访问的程序或禁止（单名单）访问的程序。<br>                                                    ——<a href="http://baike.baidu.com/link?url=6pxcRaKqs12Y25NoT_5zAW4kXINotK1rOG4dUcrWQGKhUf8Wc9Itsms6viljfWmYAL8bQcT10d4z1EcdqUOeOa" target="_blank" rel="external">百度百科</a></p>
+</blockquote>
+<a id="more"></a>
+<h2 id="Iptables是什么"><a href="#Iptables是什么" class="headerlink" title="Iptables是什么"></a>Iptables是什么</h2><blockquote>
+<p>iptables 是与最新的 3.5 版本 Linux 内核集成的 IP 信息包过滤系统。如果 Linux 系统连接到因特网或 LAN、服务器或连接 LAN 和因特网的代理服务器， 则该系统有利于在 Linux 系统上更好地控制 IP 信息包过滤和防火墙配置。<br>                                                    ——<a href="http://&gt; baike.baidu.com/view/504557.htm" target="_blank" rel="external">百度百科</a></p>
 <p>root@android:/ # iptables –help<br>iptables v1.4.11.1</p>
-<p>Usage: iptables -[ACD] chain rule-specification [options]<br>       iptables -I chain [rulenum] rule-specification [options]<br>       iptables -R chain rulenum rule-specification [options]<br>       iptables -D chain rulenum [options]<br>       iptables -[LS] [chain [rulenum]] [options]<br>       iptables -[FZ] [chain] [options]<br>       iptables -[NX] chain<br>       iptables -E old-chain-name new-chain-name<br>       iptables -P chain target [options]<br>       iptables -h (print this help information)</p>
+<p>Usage: iptables -[ACD] chain rule-specification [options]<br>    iptables -I chain [rulenum] rule-specification [options]<br>    iptables -R chain rulenum rule-specification [options]<br>    iptables -D chain rulenum [options]<br>    iptables -[LS] [chain [rulenum]] [options]<br>    iptables -[FZ] [chain] [options]<br>    iptables -[NX] chain<br>    iptables -E old-chain-name new-chain-name<br>    iptables -P chain target [options]<br>    iptables -h (print this help information)</p>
 </blockquote>
 <p>由此可见，测试的android平板系统中，是支持iptables的。</p>
 <h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>Droid Wall是一个开源的android项目，其核心是系统中的iptables指令功能。拿到Droid Wall源码之后，下面我们来一步一步的分析它的实现方式。</p>
 <h3 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h3><p>源码目录十分简单：</p>
-<p><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallclasslist_zps0m9zuvfu.png" alt=""></p>
-<p>除了Api.java之外，其他类代码量都很少。所有的代码功能单一，非常好区分：<br><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwall_zpszva8yx80.png" alt=""></p>
+<p><img src="https://i.loli.net/2019/02/01/5c53f66990b34.png" alt=""></p>
+<p>除了Api.java之外，其他类代码量都很少。所有的代码功能单一，非常好区分：<br><img src="https://i.loli.net/2019/02/01/5c53f67b0fd46.png" alt=""></p>
 <p>可以看出，整个DroidWall的核心功能是在Api.java中实现，其他类都是界面、说明、规则配置等实现。</p>
-<h3 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h3><p>Iptables是DroidWall功能实现的核心，这里主要简单分析一下Api类中是如何调用iptables来执行命令的即可大致掌握整个应用的方向。<br><br>大体观感：<br><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/droidwallapiclass_zpsogfsuxet.png" alt=""></p>
-<p>Api.java代码量在一千行以右，主要是围绕Android系统内部的iptables工具，执行相关的脚本、来达到控制整机的网络的目的，由于有针对某个应用的网络控制功能，所以这里还要有获取机器应用列表等接口操作。从Api类相关的类图和函数列表可以看出，该类有以下几个特点：<br><br>⦁    内部类，该类有三个内部类，功能分别是日志结构、Android应用信息结构和脚本执行器；<br><br>⦁    该类实际上是个静态工具类，它对外提供的都是静态方法；<br><br>⦁    所有的静态方法中，以合成规则和执行脚本类型的方法为主，其余的方法则多事纯工具类型：使能操作、判断root、日志操作等；<br><img src="http://i36.photobucket.com/albums/e33/taoyuanxiaoqi/apifunctionslist_zpsgdclx2ep.png" alt=""></p>
+<h3 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h3><p>Iptables是DroidWall功能实现的核心，这里主要简单分析一下Api类中是如何调用iptables来执行命令的即可大致掌握整个应用的方向。<br><br>大体观感：<br><img src="https://i.loli.net/2019/02/01/5c53f6a4a120f.png" alt=""></p>
+<p>Api.java代码量在一千行以右，主要是围绕Android系统内部的iptables工具，执行相关的脚本、来达到控制整机的网络的目的，由于有针对某个应用的网络控制功能，所以这里还要有获取机器应用列表等接口操作。从Api类相关的类图和函数列表可以看出，该类有以下几个特点：<br><br>⦁    内部类，该类有三个内部类，功能分别是日志结构、Android应用信息结构和脚本执行器；<br><br>⦁    该类实际上是个静态工具类，它对外提供的都是静态方法；<br><br>⦁    所有的静态方法中，以合成规则和执行脚本类型的方法为主，其余的方法则多事纯工具类型：使能操作、判断root、日志操作等；<br><img src="https://i.loli.net/2019/02/01/5c53f6c9b2caf.png" alt=""></p>
 <h3 id="实现分析"><a href="#实现分析" class="headerlink" title="实现分析"></a>实现分析</h3><p>⦁    脚本执行<br><br>我们跟踪runScriptXXX 相关的函数，到最后总是会跟踪到内部类ScriptRunner中，该类是具体执行脚本的工具实现类。<br>该类是Thread的拓展子类，那么我们注意一下它的构造和run函数就会有一定的收获：<br>构造如下：</p>
 <pre><code>/**
 * Creates a new script runner.
