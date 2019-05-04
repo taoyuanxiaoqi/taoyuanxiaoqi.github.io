@@ -1,0 +1,1043 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="工具简介微信自研 APM 利器，Matrix 正式开源了
+Matrix-ApkChecker — Apk 分析减包利器
+Matrix是微信开源的APM工具，APKChecker是其中针对APK文件做静态分析的工具，是Matrix的一部分。上面两篇腾讯云的相关文章，介绍了Matrix&amp;amp;ApkChecker的一些基本功能。本文针对APKChecker的源码做一个简单的分析，聊一下该工具各个功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Matrix-APKChecker源码分析（1）">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2019/04/18/apkCheckerAnalisys/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="工具简介微信自研 APM 利器，Matrix 正式开源了
+Matrix-ApkChecker — Apk 分析减包利器
+Matrix是微信开源的APM工具，APKChecker是其中针对APK文件做静态分析的工具，是Matrix的一部分。上面两篇腾讯云的相关文章，介绍了Matrix&amp;amp;ApkChecker的一些基本功能。本文针对APKChecker的源码做一个简单的分析，聊一下该工具各个功能">
+<meta property="og:image" content="https://i.loli.net/2019/04/26/5cc2609b247ec.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/18/5cb8729e5e316.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/18/5cb87287a7cd6.png">
+<meta property="og:updated_time" content="2019-04-26T01:37:11.214Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Matrix-APKChecker源码分析（1）">
+<meta name="twitter:description" content="工具简介微信自研 APM 利器，Matrix 正式开源了
+Matrix-ApkChecker — Apk 分析减包利器
+Matrix是微信开源的APM工具，APKChecker是其中针对APK文件做静态分析的工具，是Matrix的一部分。上面两篇腾讯云的相关文章，介绍了Matrix&amp;amp;ApkChecker的一些基本功能。本文针对APKChecker的源码做一个简单的分析，聊一下该工具各个功能">
+<meta name="twitter:image" content="https://i.loli.net/2019/04/26/5cc2609b247ec.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2019/04/18/apkCheckerAnalisys/"/>
+
+
+
+
+
+  <title> Matrix-APKChecker源码分析（1） | 桃小七的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a6b5efe2c3a4402f319c1d4294d5e1dc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">桃小七的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">文章信口雌黄易 思想锥心坦白难</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2019/04/18/apkCheckerAnalisys/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="桃小七">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="桃小七的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Matrix-APKChecker源码分析（1）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-18T21:15:26+08:00">
+                2019-04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术探究/" itemprop="url" rel="index">
+                    <span itemprop="name">技术探究</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            <!--noindex-->
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/04/18/apkCheckerAnalisys/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2019/04/18/apkCheckerAnalisys/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+              <!--/noindex-->
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="工具简介"><a href="#工具简介" class="headerlink" title="工具简介"></a>工具简介</h2><p><a href="https://cloud.tencent.com/developer/article/1377724" target="_blank" rel="external">微信自研 APM 利器，Matrix 正式开源了</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/1367458" target="_blank" rel="external">Matrix-ApkChecker — Apk 分析减包利器</a></p>
+<p>Matrix是微信开源的APM工具，APKChecker是其中针对APK文件做静态分析的工具，是Matrix的一部分。上面两篇腾讯云的相关文章，介绍了Matrix&amp;ApkChecker的一些基本功能。本文针对APKChecker的源码做一个简单的分析，聊一下该工具各个功能的实现原理。采用的是<a href="https://github.com/Tencent/matrix.git" target="_blank" rel="external">Matrix</a>工程，master分支4月16号的代码为分析源码。</p>
+<a id="more"></a>
+<h2 id="依赖库"><a href="#依赖库" class="headerlink" title="依赖库"></a>依赖库</h2><p>简单看一下工程目录和gradle配置的依赖关系。显然，前文链接中的ApkChecker的代码目录是matrix-apk-canary。</p>
+<p><img src="https://i.loli.net/2019/04/26/5cc2609b247ec.png" alt=""></p>
+<ul>
+<li>libs文件夹中，有apktool的jar包，反编译工具在这里也是意料之中</li>
+<li>resources目录中，有android的framework jar包，分析APK文件一些基础数据类型在Android framework层中定义</li>
+<li>gradle配置中，可以看到依赖了常用的gson工具类、Android的common工具包、本地工程matrix-common</li>
+<li>走读一下matrix-common，基本上可以判定该module主要是matrix公用的数据结构与工具组件</li>
+</ul>
+<h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><p><img src="https://i.loli.net/2019/04/18/5cb8729e5e316.png" alt=""></p>
+<p>从代码目录上看，它的包名目录定义的十分清晰，基本上可以一目了然：</p>
+<ul>
+<li>exception：异常定义</li>
+<li>job：工作任务，包含任务管理、配置和常量定义</li>
+<li>output：输出</li>
+<li>result：分析结果相关</li>
+<li>task：分析任务，基本可以通过任务命名直接对应上相关文档中的功能</li>
+<li>ApkChecker类：最后输出jar包的程序入口</li>
+</ul>
+<p>简单梳理一下类图关系，能够进一步了解源码的设计思路。</p>
+<p><img src="https://i.loli.net/2019/04/18/5cb87287a7cd6.png" alt=""></p>
+<p>可以看出，基本上可以分为四部分：</p>
+<ul>
+<li>左侧是入口类和核心任务类，里面封装了主要的分析实现过程</li>
+<li>上侧是基础的任务实现部分，图中省略了很多功能任务类，只列了三个，可以看到一个简单的继承关系，和一个工厂模式的处理</li>
+<li>右侧是任务结果部分，可以看到主要有Json和html两种格式。这部分主要是针对每个任务的结果输出，同样是一个继承关系和相应的工厂处理</li>
+<li>下侧是整个分析任务的结果输出，可以简单认为它是对TaskResult的整理和真正的结果文件化输出。依然是两种格式的继承关系和工厂处理</li>
+</ul>
+<p>综合起来看，如果对执行流程感兴趣，去看ApkJob类的实现就好了；对每个分析功能感兴趣，去task包目录下找对应的功能实现类就好了；对最后分析结果是如何输出的感兴趣，可以查一下TaskResult和JobResult相关的实现就好了。</p>
+<h2 id="核心流程走读"><a href="#核心流程走读" class="headerlink" title="核心流程走读"></a>核心流程走读</h2><p>这里简单分析入口类ApkChecker和任务管理类ApkJob。</p>
+<h3 id="ApkChecker"><a href="#ApkChecker" class="headerlink" title="ApkChecker"></a>ApkChecker</h3><p>入口类只有不到一百行的代码，十分简洁。主要除了封装了main函数入口，还处理了输入参数异常情况下输出HELP提示的过程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (args.length &gt; <span class="number">0</span>) &#123;</div><div class="line">        ApkChecker m = <span class="keyword">new</span> ApkChecker();</div><div class="line">        m.run(args);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        System.out.println(INTRODUCT + HELP);</div><div class="line">        System.exit(<span class="number">0</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">  ApkJob job = <span class="keyword">new</span> ApkJob(args);</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">      job.run();</div><div class="line">  &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">      e.printStackTrace();</div><div class="line">      System.exit(-<span class="number">1</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>很明显，main函数封装的主要是ApkJob，核心函数是它的run接口。此处注意，输入参数args，作为ApkJob的构造函数参数传入，想来是作为了该类的成员变量处理了。</p>
+<h3 id="ApkJob"><a href="#ApkJob" class="headerlink" title="ApkJob"></a>ApkJob</h3><p>该类有530行左右的代码，如前文类图描述的，成员属性包括了两个分析任务的ApkTask的列表、一个输出结果工具JobResult的列表。除此之外，还有前面传进来的参数args和相关的配置参数描述类JobConfig、一个多线程执行器ExecutorService。构造方法中基本上做一些初始化工作。</p>
+<p>run函数比较函数流程比较易懂，只有十几行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span>  Exception </span>&#123;</div><div class="line">    <span class="keyword">if</span> (parseParams()) &#123;</div><div class="line">        ApkTask unzipTask = TaskFactory.factory(TaskFactory.TASK_TYPE_UNZIP, jobConfig, <span class="keyword">new</span> HashMap&lt;String, String&gt;());</div><div class="line">        preTasks.add(unzipTask);</div><div class="line">        <span class="keyword">for</span> (String format : jobConfig.getOutputFormatList()) &#123;</div><div class="line">            JobResult result = JobResultFactory.factory(format, jobConfig);</div><div class="line">            <span class="keyword">if</span> (result != <span class="keyword">null</span>) &#123;</div><div class="line">                jobResults.add(result);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                Log.w(TAG, <span class="string">"Unknown output format name '%s' !"</span>, format);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        execute();</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        ApkChecker.printHelp();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>解析参数</p>
+<p>解析参数函数涉及到代码量，比较大。因为支持配置文件和参数两种形式的参数，核心解析函数parseGlobalParams()长达126行，经过解析和校验后，在成功的情况下，jobConfig成员被参数设置好，用于后续的分析任务。</p>
+</li>
+<li><p>在预处理任务列表中添加一个解压任务</p>
+<p>预处理任务列表在整个类中，只有此处添加了一个解压任务。之所以设计成列表，应该是考虑代码的可拓展性。从业务上说，在每项检查点的任务执行之前，要先把目标APK解压出来，也是应有之意。</p>
+</li>
+<li><p>处理配置的输出格式，将所有格式加入输出结果工具列表</p>
+<p>可以理解是参数解析好之后，通过传入参数做的第一件事。就是先把输出工具处理好，为后续分析结果的输出做好准备。</p>
+</li>
+<li><p>执行execute 函数</p>
+<p>预处理执行完，就是正经的任务分析流程了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line"></div><div class="line">        <span class="keyword">for</span> (ApkTask preTask : preTasks) &#123;</div><div class="line">            preTask.init();</div><div class="line">            TaskResult taskResult = preTask.call();</div><div class="line">            <span class="keyword">if</span> (taskResult != <span class="keyword">null</span>) &#123;</div><div class="line">                TaskResult formatResult = <span class="keyword">null</span>;</div><div class="line">                <span class="keyword">for</span> (JobResult jobResult : jobResults) &#123;</div><div class="line">                    formatResult = TaskResultFactory.transferTaskResult(taskResult.taskType, taskResult, jobResult.getFormat(), jobConfig);</div><div class="line">                    <span class="keyword">if</span> (formatResult != <span class="keyword">null</span>) &#123;</div><div class="line">                        jobResult.addTaskResult(formatResult);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">for</span> (ApkTask task : taskList) &#123;</div><div class="line">            task.init();</div><div class="line">        &#125;</div><div class="line">        List&lt;Future&lt;TaskResult&gt;&gt; futures = executor.invokeAll(taskList, timeoutSeconds, TimeUnit.SECONDS);</div><div class="line">        <span class="keyword">for</span> (Future&lt;TaskResult&gt; future : futures) &#123;</div><div class="line">            TaskResult taskResult = future.get();</div><div class="line">            <span class="keyword">if</span> (taskResult != <span class="keyword">null</span>) &#123;</div><div class="line">                TaskResult formatResult = <span class="keyword">null</span>;</div><div class="line">                <span class="keyword">for</span> (JobResult jobResult : jobResults) &#123;</div><div class="line">                    formatResult = TaskResultFactory.transferTaskResult(taskResult.taskType, taskResult, jobResult.getFormat(), jobConfig);</div><div class="line">                    <span class="keyword">if</span> (formatResult != <span class="keyword">null</span>) &#123;</div><div class="line">                        jobResult.addTaskResult(formatResult);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        executor.shutdownNow();</div><div class="line"></div><div class="line">        <span class="keyword">for</span> (JobResult jobResult : jobResults) &#123;</div><div class="line">            jobResult.output();</div><div class="line">        &#125;</div><div class="line">        Log.d(TAG, <span class="string">"parse apk end, try to delete tmp un zip files"</span>);</div><div class="line">        FileUtils.deleteDirectory(<span class="keyword">new</span> File(jobConfig.getUnzipPath()));</div><div class="line"></div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">        Log.e(TAG, <span class="string">"Task executor execute with error:"</span> + e.getMessage());</div><div class="line">        <span class="keyword">throw</span> e;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该函数45行，分开看还是很好理解的。</p>
+<ul>
+<li>第一个for循环。执行预处理列表任务，主要是解压目标APK的任务，并输出结果</li>
+<li>中间两个for循环及相关部分。初始化参数配置指定的每个检查任务；executor多线程执行每个任务；将每个任务的检查结果依次添加到输出结果中；关闭executor</li>
+<li>第三个for循环及相关部分。结果输出工具把分析结果按照参数指定的格式依次输出到文件中；删除解压的APK文件。</li>
+</ul>
+</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>这里主要分析了Matrix/ApkChecker的代码结构和主要执行流程。可以大致总结出几点：</p>
+<ul>
+<li>总体上，代码在各层级命名、包划分、结构设计、函数实现等各方面可读性都很强</li>
+<li>利用继承和组合特性，使用工厂模式，让代码可拓展性也不错。比如新增一个分析功能，只需要实现一个ApkTask和相关参数类型即可；新增一种输出格式，只需要新增JobResult/TaskResult相关子类和关系即可</li>
+<li>参数解析部分代码有些冗余，不太利于拓展和阅读</li>
+</ul>
+<p>下一篇会学习一下具体检查任务的实现。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢您赏个荷包蛋～</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/myWechatPay2.png" alt="桃小七 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/myAliPay2.jpeg" alt="桃小七 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/29/dsp1/" rel="next" title="短书评-2019.1">
+                <i class="fa fa-chevron-left"></i> 短书评-2019.1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/04/apkCheckerAnalisys2/" rel="prev" title="Matrix-APKChecker源码分析（2）">
+                Matrix-APKChecker源码分析（2） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="hypercomments_widget"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpeg"
+               alt="桃小七" />
+          <p class="site-author-name" itemprop="name">桃小七</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">103</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              睦邻友好，欢迎串门！
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://light3moon.com/" title="三月学长的根据地" target="_blank">三月学长的根据地</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#工具简介"><span class="nav-number">1.</span> <span class="nav-text">工具简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#依赖库"><span class="nav-number">2.</span> <span class="nav-text">依赖库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码结构"><span class="nav-number">3.</span> <span class="nav-text">代码结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心流程走读"><span class="nav-number">4.</span> <span class="nav-text">核心流程走读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ApkChecker"><span class="nav-number">4.1.</span> <span class="nav-text">ApkChecker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ApkJob"><span class="nav-number">4.2.</span> <span class="nav-text">ApkJob</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">桃小七</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+		<script type="text/javascript">
+		_hcwp = window._hcwp || [];
+
+		_hcwp.push({widget:"Bloggerstream", widget_id: 88427, selector:".hc-comment-count", label: "{\%COUNT%\}" });
+
+		
+		_hcwp.push({widget:"Stream", widget_id: 88427, xid: "2019/04/18/apkCheckerAnalisys/"});
+		
+
+		(function() {
+		if("HC_LOAD_INIT" in window)return;
+		HC_LOAD_INIT = true;
+		var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+		var hcc = document.createElement("script"); hcc.type = "text/javascript"; hcc.async = true;
+		hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/88427/"+lang+"/widget.js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hcc, s.nextSibling);
+		})();
+		</script>
+
+	
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="local-search-pop-overlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

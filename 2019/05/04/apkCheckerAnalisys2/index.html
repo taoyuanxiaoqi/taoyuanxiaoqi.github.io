@@ -1,0 +1,1139 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="根据文档ApkChecker目前支持13种功能检测。
+
+
+读取 manifest 的信息
+按文件大小排序列出 apk 中包含的文件（2）
+统计方法数 （1）
+检查是否经过了资源混淆(AndResGuard)（2）
+搜索不含 alpha 通道的 png 文件（2）
+检查是否包含多个ABI版本的动态库（3）
+搜索未经压缩的文件类型（2）
+统计apk中包含的R类以及R类中的 field count（1）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Matrix-APKChecker源码分析（2）">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2019/05/04/apkCheckerAnalisys2/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="根据文档ApkChecker目前支持13种功能检测。
+
+
+读取 manifest 的信息
+按文件大小排序列出 apk 中包含的文件（2）
+统计方法数 （1）
+检查是否经过了资源混淆(AndResGuard)（2）
+搜索不含 alpha 通道的 png 文件（2）
+检查是否包含多个ABI版本的动态库（3）
+搜索未经压缩的文件类型（2）
+统计apk中包含的R类以及R类中的 field count（1）">
+<meta property="og:image" content="https://i.loli.net/2019/05/04/5ccd9079a3646.png">
+<meta property="og:updated_time" content="2019-05-04T13:15:51.101Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Matrix-APKChecker源码分析（2）">
+<meta name="twitter:description" content="根据文档ApkChecker目前支持13种功能检测。
+
+
+读取 manifest 的信息
+按文件大小排序列出 apk 中包含的文件（2）
+统计方法数 （1）
+检查是否经过了资源混淆(AndResGuard)（2）
+搜索不含 alpha 通道的 png 文件（2）
+检查是否包含多个ABI版本的动态库（3）
+搜索未经压缩的文件类型（2）
+统计apk中包含的R类以及R类中的 field count（1）">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/04/5ccd9079a3646.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2019/05/04/apkCheckerAnalisys2/"/>
+
+
+
+
+
+  <title> Matrix-APKChecker源码分析（2） | 桃小七的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a6b5efe2c3a4402f319c1d4294d5e1dc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">桃小七的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">文章信口雌黄易 思想锥心坦白难</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2019/05/04/apkCheckerAnalisys2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="桃小七">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="桃小七的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Matrix-APKChecker源码分析（2）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-04T21:03:17+08:00">
+                2019-05-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术探究/" itemprop="url" rel="index">
+                    <span itemprop="name">技术探究</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            <!--noindex-->
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/05/04/apkCheckerAnalisys2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2019/05/04/apkCheckerAnalisys2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+              <!--/noindex-->
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>根据文档ApkChecker目前支持13种功能检测。</p>
+<blockquote>
+<ul>
+<li>读取 manifest 的信息</li>
+<li>按文件大小排序列出 apk 中包含的文件（2）</li>
+<li>统计方法数 （1）</li>
+<li>检查是否经过了资源混淆(AndResGuard)（2）</li>
+<li>搜索不含 alpha 通道的 png 文件（2）</li>
+<li>检查是否包含多个ABI版本的动态库（3）</li>
+<li>搜索未经压缩的文件类型（2）</li>
+<li>统计apk中包含的R类以及R类中的 field count（1）</li>
+<li>搜索冗余的文件（2）</li>
+<li>检查是否有多个动态库静态链接了 STL（3）</li>
+<li>搜索 apk 中包含的无用资源（2）</li>
+<li>搜索apk中包含的无用 assets 文件（2）</li>
+<li>搜索 apk 中未经裁剪的动态库文件 （3）</li>
+</ul>
+</blockquote>
+<p>官方定义这个工具是【Apk 分析减包利器】，可以通过这些功能点看出，控制APK包大小的一些思路。基本可以分为几类：</p>
+<ul>
+<li>方法/属性/R文件等，可能引起multiDex的方向，主要从dex文件方面做约束——代码方面</li>
+<li>资源文件，是否存在可压缩的、重复冗余的、没使用的、可替换格式的文件——资源方面</li>
+<li>so库相关，是否可以去掉用户量极少的abi库、是否可剪裁、是否可以优化掉STL链接等——so方面</li>
+</ul>
+<p>在Matrix的github文档中，有专门说明ApkChecker的部分——<a href="https://github.com/Tencent/matrix/wiki/Matrix-Android-ApkChecker" target="_blank" rel="external">Matrix Android ApkChecker</a>。其中描述了各个配置项、执行流程、每个检查项的基本原理和具体的分析实例，比较全面。这里参考文档和代码，对其中一些关键点，做一些笔记。</p>
+<a id="more"></a>
+<h2 id="代码方面"><a href="#代码方面" class="headerlink" title="代码方面"></a>代码方面</h2><p>代码方面的检查项基本是从dex下手，检查方法数、属性数、R类等。我们知道apk就是一个zip包，使用解压工具解压apk文件，就可以看到dex文件，一般来说稍微大一点的应用就得是多个dex文件了。根据官方文档介绍：</p>
+<blockquote>
+<ul>
+<li><strong>MethodCountTask</strong> 可以统计出各个Dex中的方法数，并按照类名或者包名来分组输出结果。</li>
+</ul>
+<blockquote>
+<p>实现方法：利用google开源的 <em>com.android.dexdeps</em> 类库来读取dex文件，统计方法数。</p>
+</blockquote>
+</blockquote>
+<p>类似的，<strong>CountRTask</strong>任务也是一样的原理。看一部分MethodCountTask解析代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; dexFileList.size(); i++) &#123;</div><div class="line">    RandomAccessFile dexFile = dexFileList.get(i);</div><div class="line">    DexData dexData = <span class="keyword">new</span> DexData(dexFile);</div><div class="line">    dexData.load();</div><div class="line">    dexFile.close();</div><div class="line">    ClassRef[] defClassRefs = dexData.getInternalReferences();</div><div class="line">    Set&lt;String&gt; classNameSet = <span class="keyword">new</span> HashSet&lt;&gt;();</div><div class="line">    <span class="keyword">for</span> (ClassRef classRef : defClassRefs) &#123;</div><div class="line">      String className = ApkUtil.getNormalClassName(classRef.getName());</div><div class="line">                    <span class="keyword">if</span> (classProguardMap.containsKey(className)) &#123;</div><div class="line">                        className = classProguardMap.get(className);</div><div class="line">                    &#125;</div><div class="line">                    <span class="keyword">if</span> (className.indexOf(<span class="string">'.'</span>) == -<span class="number">1</span>) &#123;</div><div class="line">                        <span class="keyword">continue</span>;</div><div class="line">                    &#125;</div><div class="line">                    classNameSet.add(className);</div><div class="line">    &#125;</div><div class="line">  <span class="comment">//...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>dexFileList 应该是在解压任务之后，将所有dex文件放入了该列表，具体可以参考MethodCountTask的init方法</li>
+<li>针对每个dex文件，使用DexData类加载/解析文件，直接可以取出其中的类信息来做统计</li>
+</ul>
+<p><img src="https://i.loli.net/2019/05/04/5ccd9079a3646.png" alt=""></p>
+<p>可以找到DexData及相关的工具源码被放在了commons module中，看来是直接把源码拉到了工程中。具体看这几个类里面的源码，基本上是按照dex规则、解析出其中的包/类/方法/属性等各级信息的功能实现。以后有涉及到解析dex相关需求的，可以使用该工具。走读一下CountRTask规则的代码，跟MethodCountTask的套路几无不同。</p>
+<h2 id="资源方面"><a href="#资源方面" class="headerlink" title="资源方面"></a>资源方面</h2><p>资源方面是个大头，大部分检查项都是在从各种角度分析是不是可以减少各种资源的大小。比较常见的是<strong>UnusedResourceTask</strong>，无用资源检查。官方文档已经把流程写得很详细了。</p>
+<blockquote>
+<p>实现方法： （1）过读取R.txt获取apk中声明的所有资源得到declareResourceSet； （2）通过读取smali文件中引用资源的指令（包括通过reference和直接通过资源id引用资源）得出class中引用的资源classRefResourceSet； （3）通过ApkTool解析res目录下的xml文件、<em>AndroidManifest.xml</em> 以及 <em>resource.arsc</em> 得出资源之间的引用关系； （4）根据上述几步得到的中间数据即可确定出apk中未使用到的资源。</p>
+</blockquote>
+<p>可以这简述一下:</p>
+<ul>
+<li>找到所有资源</li>
+<li>找到代码里使用的资源</li>
+<li>找到xml文件里使用的资源</li>
+<li>所有资源去掉使用的资源，就是我们要的结果了</li>
+</ul>
+<p>核心代码流程很清楚：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> TaskResult <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> TaskExecuteException </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="comment">//...</span></div><div class="line">        readMappingTxtFile();</div><div class="line">        readResourceTxtFile();</div><div class="line">        unusedResSet.addAll(resourceDefMap.values());</div><div class="line">        Log.i(TAG, <span class="string">"find resource declarations %d items."</span>, unusedResSet.size());</div><div class="line">        decodeCode();</div><div class="line">        Log.i(TAG, <span class="string">"find resource references in classes: %d items."</span>, resourceRefSet.size());</div><div class="line">        decodeResources();</div><div class="line">        Log.i(TAG, <span class="string">"find resource references %d items."</span>, resourceRefSet.size());</div><div class="line">        unusedResSet.removeAll(resourceRefSet);</div><div class="line">        Log.i(TAG, <span class="string">"find unused references %d items"</span>, unusedResSet.size());</div><div class="line">        Log.d(TAG, <span class="string">"find unused references %s"</span>, unusedResSet.toString());</div><div class="line">        <span class="comment">//...</span></div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> TaskExecuteException(e.getMessage(), e);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>读取mapping文件，这里主要采集混淆中的R文件的映射关系，为后面做smali分析做准备</li>
+<li>读取R.txt文件，主要是采集R文件中所有属性的值，同样是为后面smali分析做准备</li>
+<li>把所有资源名称和ID缓存到unusedResSet</li>
+<li>解析smali代码，更新resourceRefSet缓存</li>
+<li>解析资源文件，更新resourceRefSet缓存</li>
+<li>unusedResSet中移除掉resourceRefSet，剩下的就是真正的unusedResSet了</li>
+</ul>
+<p>这里涉及几个文件的解析和apktool反编译工具的使用。</p>
+<h4 id="mapping-txt"><a href="#mapping-txt" class="headerlink" title="mapping.txt"></a>mapping.txt</h4><p>mapping文件是混淆之后ProGuard提供的源码和混淆后类/方法/字段等映射关系，一般情况下在上架包中采用混淆，除了一定程度上保证代码能有点反破解能力之外，还有<a href="https://developer.android.com/studio/build/shrink-code?hl=zh-cn" target="_blank" rel="external">压缩代码和资源</a>的作用。该文件一般坐落于【工程目录/app目录/build/outputs/mapping/Variants目录】下，一般情况长这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">    46:46:android.os.IBinder onBind(android.content.Intent) -&gt; onBind</div><div class="line">android.support.customtabs.PostMessageService$1 -&gt; android.support.customtabs.PostMessageService$1:</div><div class="line">    android.support.customtabs.PostMessageService this$0 -&gt; this$0</div><div class="line">    29:29:void &lt;init&gt;(android.support.customtabs.PostMessageService) -&gt; &lt;init&gt;</div><div class="line">    34:35:void onMessageChannelReady(android.support.customtabs.ICustomTabsCallback,android.os.Bundle) -&gt; onMessageChannelReady</div><div class="line">    40:41:void onPostMessage(android.support.customtabs.ICustomTabsCallback,java.lang.String,android.os.Bundle) -&gt; onPostMessage</div><div class="line">android.support.customtabs.PostMessageServiceConnection -&gt; android.support.customtabs.PostMessageServiceConnection:</div><div class="line">    java.lang.Object mLock -&gt; mLock</div><div class="line">android.support.customtabs.R$bool -&gt; android.support.customtabs.R$bool:</div><div class="line">    int abc_action_bar_embed_tabs -&gt; abc_action_bar_embed_tabs</div><div class="line">    21:21:void &lt;init&gt;() -&gt; &lt;init&gt;</div><div class="line">android.support.customtabs.R$color -&gt; android.support.customtabs.R$color:</div></pre></td></tr></table></figure>
+<p>从代码逻辑上看，似乎静态类的映射是顶格写的，其他属性和类的映射在行首会有一些空格或者是一个tab。没有查到mapping文件在哪里有官方的格式定义，所以这个规则会不会一直适用也未可知。另外一个规则是”-&gt;”符号，表示混淆前后的映射关系，解析完前后的类路径之后，通过工具类ApkUtil中的getPureClassName、isRClassName方法来判断当前行是否是R类映射。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> *  determine if the class if R class</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isRClassName</span><span class="params">(String className)</span> </span>&#123;</div><div class="line">    Pattern pattern = Pattern.compile(<span class="string">"^R\\$\\w+"</span>);</div><div class="line">    <span class="keyword">return</span> pattern.matcher(className).matches();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="R-txt"><a href="#R-txt" class="headerlink" title="R.txt"></a>R.txt</h4><p>可以说是见名知意了，应该是app在便衣过程中，合并掉所有module之后生成的一个R文件内容的映射文件。具体位置大致在【工程目录/app目录/build/intermediates/symbols/Variants目录】下。一般情况下长这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">int anim abc_fade_in 0x7f050000</div><div class="line">int anim abc_fade_out 0x7f050001</div><div class="line">int anim abc_grow_fade_in_from_bottom 0x7f050002</div><div class="line">int anim abc_popup_enter 0x7f050003</div><div class="line">int anim abc_popup_exit 0x7f050004</div></pre></td></tr></table></figure>
+<p>可以有针对性的对比下对应的分析部分代码,主要解析功能实现在readResourceTxtFile函数中。</p>
+<h4 id="smali"><a href="#smali" class="headerlink" title="smali"></a>smali</h4><p>拿到所有资源相关的ID信息后，该分析代码中用到了哪些资源了。第一步是分析代码，具体下来是使用apktool工具解析dex文件为smali格式（decodeCode方法），然后依次分析每行代码（readSmaliLines方法）。</p>
+<ul>
+<li><p>decodeCode</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">decodeCode</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    <span class="keyword">for</span> (String dexFileName : dexFileNameList) &#123;</div><div class="line">        DexBackedDexFile dexFile = DexFileFactory.loadDexFile(<span class="keyword">new</span> File(inputFile, dexFileName), Opcodes.forApi(<span class="number">15</span>));</div><div class="line"></div><div class="line">        BaksmaliOptions options = <span class="keyword">new</span> BaksmaliOptions();</div><div class="line">        List&lt;? extends ClassDef&gt; classDefs = Ordering.natural().sortedCopy(dexFile.getClasses());</div><div class="line"></div><div class="line">        <span class="keyword">for</span> (ClassDef classDef : classDefs) &#123;</div><div class="line">            String[] lines = ApkUtil.disassembleClass(classDef, options);</div><div class="line">            <span class="keyword">if</span> (lines != <span class="keyword">null</span>) &#123;</div><div class="line">                readSmaliLines(lines);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>DexBackedDexFile、BaksmaliOptions、ClassDef都是ApkTool中的相关工具方法，具体实现可以参考源码</li>
+<li>经过apktool解析，获取ClassDef的拷贝排序列表，通过工具类ApkUtil的disassembleClass过滤一些不需要处理的类，同时读取处需要处理的smali类的每行数据</li>
+</ul>
+</li>
+<li><p>readSmaliLines</p>
+<p>解析smali这个函数就不贴代码了，这个函数注释很不错，说明了这里的基本原则：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"></div><div class="line">    1. const</div><div class="line"></div><div class="line">    const v6, 0x7f0c0061</div><div class="line"></div><div class="line">    2. sget</div><div class="line"></div><div class="line">    sget v6, Lcom/tencent/mm/R$string;-&gt;chatting_long_click_menu_revoke_msg:I</div><div class="line">    sget v1, Lcom/tencent/mm/libmmui/R$id;-&gt;property_anim:I</div><div class="line"></div><div class="line">    3. sput</div><div class="line"></div><div class="line">    sput-object v0, Lcom/tencent/mm/plugin_welab_api/R$styleable;-&gt;ActionBar:[I   //define resource in R.java</div><div class="line"></div><div class="line">    4. array-data</div><div class="line"></div><div class="line">    :array_0</div><div class="line">    .array-data 4</div><div class="line">        0x7f0a0022</div><div class="line">        0x7f0a0023</div><div class="line">    .end array-data</div><div class="line"></div><div class="line">*/</div></pre></td></tr></table></figure>
+<ul>
+<li>常量const/array-data，这个主要用来对比R文件中的值，是否有被定义到这里的，如果有，那么说明对应的资源应该是被使用的</li>
+<li>sget/sput，操作指令，具体可以参考下<a href="https://source.android.com/devices/tech/dalvik/dalvik-bytecode" target="_blank" rel="external">Android开发者官网对字节码格式的说明</a>。按照规则解析出第二个参数，如果符合R文件资源的规律，可以认为该资源也是被使用的</li>
+</ul>
+</li>
+</ul>
+<h4 id="resources"><a href="#resources" class="headerlink" title="resources"></a>resources</h4><p>该任务对资源文件的分析代码在decodeResources函数中，处理了manifest文件、resources.arsc文件和资源文件目录res。主要的文件解析逻辑，在工具类ApkResourceDecoder的decodeResourcesRef中。流程主要如下：</p>
+<ul>
+<li><p>校验输入文件的合法性</p>
+</li>
+<li><p>解析resources.arsc文件</p>
+<ul>
+<li>解析ResTable，decodeArscFile函数</li>
+<li>遍历resTable.listMainPackages，初始化xml解析工具AXmlResourceParser、XmlPullParser</li>
+<li>针对每一个ResPackage，获取所有件引用和有使用的引用</li>
+</ul>
+</li>
+<li><p>解析manifest文件</p>
+<ul>
+<li>使用XmlPullResourceRefDecoder工具，解析出manifest文件中的关联引用，放入有使用的资源set中</li>
+</ul>
+</li>
+</ul>
+<p>完成解析后，获得一个所有的资源引用set和有使用的资源set。再配合参数设定的【ignore】、子引用的分析等继续处理资源的分析。</p>
+<p>这部分的处理主要还是依靠apktool的解析能力，很多数据结构和工具类的使用都需要有对这个工具具有一定的掌控能力。目前可以大致看到这些实现方式，如果需要具体研究，还得深入到apktool的源码和apk打包流程各个环节的文件格式等来具体分析。网络上有一些文章可以参考理解，如<a href="https://juejin.im/post/5ae8b2b26fb9a07abf724ebf" target="_blank" rel="external">ApkTool项目解析resources.arsc详解</a>。</p>
+<p>资源类其他规则如是否有可压缩的文件、是否存在不含 alpha 通道的 png 文件、是否有使用混淆工具等，都是挺有意思的规则实现。这里不进行逐一分析了，具体可以参考各自的task源代码学习。</p>
+<h2 id="so方面"><a href="#so方面" class="headerlink" title="so方面"></a>so方面</h2><p>关于so相关对apk大小的优化，网上有一些文章可以参考，比如<a href="https://www.jianshu.com/p/872e909deec2" target="_blank" rel="external">Android ndk之so体积缩减</a>。这里的三条规则，其中一个本质上是建议只保留一个abi的支持，这个的实现想起来都不比较容易。另外两个，一个是是否存在可剪裁的so库；另一个是是否有多个so库静态链接了 STL。通过源码可以知道，是通过java调用命令行，使用ndk工具链实现的。以下是两段关键代码：</p>
+<ul>
+<li>可剪裁判断：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isSoStripped</span><span class="params">(File libFile)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</div><div class="line">    ProcessBuilder processBuilder = <span class="keyword">new</span> ProcessBuilder(toolnmPath, libFile.getAbsolutePath());</div><div class="line">    Process process = processBuilder.start();</div><div class="line">    BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(process.getErrorStream()));</div><div class="line">    String line = reader.readLine();</div><div class="line">    <span class="keyword">boolean</span> result = <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">if</span> (!Util.isNullOrNil(line)) &#123;</div><div class="line">        Log.d(TAG, <span class="string">"%s"</span>, line);</div><div class="line">        String[] columns = line.split(<span class="string">":"</span>);</div><div class="line">        <span class="keyword">if</span> (columns.length == <span class="number">3</span> &amp;&amp; columns[<span class="number">2</span>].trim().equalsIgnoreCase(<span class="string">"no symbols"</span>)) &#123;</div><div class="line">            result = <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    reader.close();</div><div class="line">    process.waitFor();</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以下是文档原理解释：</p>
+<blockquote>
+<ul>
+<li>UnStrippedSoCheckTask** 可以检测出apk中未经裁剪的动态库文件</li>
+</ul>
+<blockquote>
+<p>实现方法：使用nm工具读取动态库文件的符号表，若输出结果中包含<em>no symbols</em>字样则表示该动态库已经过裁剪</p>
+</blockquote>
+</blockquote>
+<ul>
+<li>STL判断：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isStlLinked</span><span class="params">(File libFile)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</div><div class="line">    ProcessBuilder processBuilder = <span class="keyword">new</span> ProcessBuilder(toolnmPath, <span class="string">"-D"</span>, <span class="string">"-C"</span>, libFile.getAbsolutePath());</div><div class="line">    Process process = processBuilder.start();</div><div class="line">    BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(process.getInputStream()));</div><div class="line">    String line = reader.readLine();</div><div class="line">    <span class="keyword">while</span> (line != <span class="keyword">null</span>) &#123;</div><div class="line">        String[] columns = line.split(<span class="string">" "</span>);</div><div class="line">        Log.d(TAG, <span class="string">"%s"</span>, line);</div><div class="line">        <span class="keyword">if</span> (columns.length &gt;= <span class="number">3</span> &amp;&amp; columns[<span class="number">1</span>].equals(<span class="string">"T"</span>) &amp;&amp; columns[<span class="number">2</span>].startsWith(<span class="string">"std::"</span>)) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">        line = reader.readLine();</div><div class="line">    &#125;</div><div class="line">    reader.close();</div><div class="line">    process.waitFor();</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以下是文档原理解释：</p>
+<blockquote>
+<ul>
+<li><strong>CheckMultiSTLTask</strong> 可以检测apk中的so是否静态链接STL</li>
+</ul>
+<blockquote>
+<p>实现方法：通过nm工具来读取so的符号表，如果出现 <em>std::</em> 即表示so静态链接了STL。</p>
+</blockquote>
+</blockquote>
+<p>通过工具命令行的输出的一些特征，分析so的状态结果。这里需要有一定的ndk开发经验来支撑判断规则的实现。可以参考官网的一些说明<a href="https://developer.android.com/ndk/guides/cpp-support?hl=zh-cn" target="_blank" rel="external">C++ 库支持</a>。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>关于静态分析工具，整个代码走读下来，有一些简单的思考。</p>
+<ul>
+<li>要对apk打包的各个环节的流程、各个部分的依赖关系和组合形式都了解的比较透彻</li>
+<li>统计所有可以优化的点，以及各个点工具化的实现方式</li>
+<li>知识面要足够广，在每个检查点的实现上才不会一筹莫展或者重复造轮子</li>
+<li>检查项要可量化，有输出</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢您赏个荷包蛋～</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/myWechatPay2.png" alt="桃小七 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/myAliPay2.jpeg" alt="桃小七 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/apkCheckerAnalisys/" rel="next" title="Matrix-APKChecker源码分析（1）">
+                <i class="fa fa-chevron-left"></i> Matrix-APKChecker源码分析（1）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="hypercomments_widget"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpeg"
+               alt="桃小七" />
+          <p class="site-author-name" itemprop="name">桃小七</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">103</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              睦邻友好，欢迎串门！
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://light3moon.com/" title="三月学长的根据地" target="_blank">三月学长的根据地</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#代码方面"><span class="nav-number">1.</span> <span class="nav-text">代码方面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源方面"><span class="nav-number">2.</span> <span class="nav-text">资源方面</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mapping-txt"><span class="nav-number">2.0.1.</span> <span class="nav-text">mapping.txt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#R-txt"><span class="nav-number">2.0.2.</span> <span class="nav-text">R.txt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#smali"><span class="nav-number">2.0.3.</span> <span class="nav-text">smali</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#resources"><span class="nav-number">2.0.4.</span> <span class="nav-text">resources</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#so方面"><span class="nav-number">3.</span> <span class="nav-text">so方面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">桃小七</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+		<script type="text/javascript">
+		_hcwp = window._hcwp || [];
+
+		_hcwp.push({widget:"Bloggerstream", widget_id: 88427, selector:".hc-comment-count", label: "{\%COUNT%\}" });
+
+		
+		_hcwp.push({widget:"Stream", widget_id: 88427, xid: "2019/05/04/apkCheckerAnalisys2/"});
+		
+
+		(function() {
+		if("HC_LOAD_INIT" in window)return;
+		HC_LOAD_INIT = true;
+		var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+		var hcc = document.createElement("script"); hcc.type = "text/javascript"; hcc.async = true;
+		hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/88427/"+lang+"/widget.js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hcc, s.nextSibling);
+		})();
+		</script>
+
+	
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="local-search-pop-overlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
