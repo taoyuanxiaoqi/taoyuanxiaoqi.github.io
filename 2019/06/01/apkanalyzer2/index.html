@@ -1,0 +1,1009 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="接下来选两个具体的命令，来走读一遍实现功能的流程、使用了哪些功能库。第一个选择解析dex的最后一个功能，打印指定类、方法的反编译代码；第二个选择资源文件解析的最后一个命令，输出指定xml二进制文件对应的可读版本。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="apkanalyzer(3)-走读dex/arsc解析命令">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2019/06/01/apkanalyzer2/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="接下来选两个具体的命令，来走读一遍实现功能的流程、使用了哪些功能库。第一个选择解析dex的最后一个功能，打印指定类、方法的反编译代码；第二个选择资源文件解析的最后一个命令，输出指定xml二进制文件对应的可读版本。">
+<meta property="og:image" content="https://i.loli.net/2019/06/01/5cf205e79df4451296.png">
+<meta property="og:updated_time" content="2019-06-01T05:00:15.278Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="apkanalyzer(3)-走读dex/arsc解析命令">
+<meta name="twitter:description" content="接下来选两个具体的命令，来走读一遍实现功能的流程、使用了哪些功能库。第一个选择解析dex的最后一个功能，打印指定类、方法的反编译代码；第二个选择资源文件解析的最后一个命令，输出指定xml二进制文件对应的可读版本。">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/01/5cf205e79df4451296.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2019/06/01/apkanalyzer2/"/>
+
+
+
+
+
+  <title> apkanalyzer(3)-走读dex/arsc解析命令 | 桃小七的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a6b5efe2c3a4402f319c1d4294d5e1dc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">桃小七的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">文章信口雌黄易 思想锥心坦白难</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2019/06/01/apkanalyzer2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="桃小七">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="桃小七的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                apkanalyzer(3)-走读dex/arsc解析命令
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-01T12:56:17+08:00">
+                2019-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术探究/" itemprop="url" rel="index">
+                    <span itemprop="name">技术探究</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            <!--noindex-->
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/06/01/apkanalyzer2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2019/06/01/apkanalyzer2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+              <!--/noindex-->
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>接下来选两个具体的命令，来走读一遍实现功能的流程、使用了哪些功能库。第一个选择解析dex的最后一个功能，打印指定类、方法的反编译代码；第二个选择资源文件解析的最后一个命令，输出指定xml二进制文件对应的可读版本。</p>
+<a id="more"></a>
+<h2 id="1-打印dex中某个类、方法的smali代码"><a href="#1-打印dex中某个类、方法的smali代码" class="headerlink" title="1. 打印dex中某个类、方法的smali代码"></a>1. 打印dex中某个类、方法的smali代码</h2><p>首先，一定是从cli库中找到对应的命令枚举类型实现。           </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">DEX_CODE(<span class="string">"dex"</span>, <span class="string">"code"</span>, <span class="string">"Prints the bytecode of a class or method in smali format"</span>) &#123;</div><div class="line">          <span class="keyword">public</span> ArgumentAcceptingOptionSpec&lt;String&gt; classSpec;</div><div class="line">          <span class="keyword">public</span> ArgumentAcceptingOptionSpec&lt;String&gt; methodSpec;</div><div class="line">          <span class="keyword">public</span> OptionParser parser;</div><div class="line">      </div><div class="line">      <span class="meta">@Override</span></div><div class="line">      <span class="function"><span class="keyword">public</span> OptionParser <span class="title">getParser</span><span class="params">()</span> </span>&#123;</div><div class="line">        	<span class="comment">// 参数解析</span></div><div class="line">          <span class="keyword">if</span> (<span class="keyword">this</span>.parser == <span class="keyword">null</span>) &#123;</div><div class="line">              <span class="keyword">this</span>.parser = <span class="keyword">super</span>.getParser();</div><div class="line">              <span class="keyword">this</span>.classSpec = (ArgumentAcceptingOptionSpec&lt;String&gt;)<span class="keyword">this</span>.parser.accepts(<span class="string">"class"</span>, <span class="string">"Fully qualified class name to decompile."</span>).withRequiredArg().ofType((Class)String.class).required();</div><div class="line">              <span class="keyword">this</span>.methodSpec = (ArgumentAcceptingOptionSpec&lt;String&gt;)<span class="keyword">this</span>.parser.accepts(<span class="string">"method"</span>, <span class="string">"Method to decompile. Format: name(params)returnType, e.g. someMethod(Ljava/lang/String;I)V"</span>).withRequiredArg().ofType((Class)String.class);</div><div class="line">          &#125;</div><div class="line">          <span class="keyword">return</span> <span class="keyword">this</span>.parser;</div><div class="line">      &#125;</div><div class="line">      </div><div class="line">      <span class="meta">@Override</span></div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(<span class="keyword">final</span> PrintStream out, <span class="keyword">final</span> PrintStream err, <span class="keyword">final</span> ApkAnalyzerImpl impl, <span class="keyword">final</span> String... args)</span> </span>&#123;</div><div class="line">          <span class="keyword">final</span> OptionParser parser = <span class="keyword">this</span>.getParser();</div><div class="line">          <span class="keyword">final</span> OptionSet opts = parseOrPrintHelp(parser, err, args);</div><div class="line">        	<span class="comment">// 解析dex部分</span></div><div class="line">          impl.dexCode(((File)opts.valueOf((OptionSpec)<span class="keyword">this</span>.getFileSpec())).toPath(), (String)opts.valueOf((OptionSpec)<span class="keyword">this</span>.classSpec), (String)opts.valueOf((OptionSpec)<span class="keyword">this</span>.methodSpec));</div><div class="line">      &#125;</div><div class="line">  &#125;,</div></pre></td></tr></table></figure>
+<p>在DEX_CODE类型的执行函数部分，可以找到impl类中对应的方法dexCode——ApkAnalyzerImpl类的功能函数代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dexCode</span><span class="params">(<span class="keyword">final</span> Path apk, <span class="keyword">final</span> String fqcn, String method)</span> </span>&#123;</div><div class="line">  			<span class="comment">//解压apk文件</span></div><div class="line">        <span class="keyword">try</span> (<span class="keyword">final</span> Archive archive = Archives.open(apk)) &#123;</div><div class="line">            <span class="keyword">final</span> Collection&lt;Path&gt; dexPaths = Files.list(archive.getContentRoot()).filter(path -&gt; Files.isRegularFile(path, <span class="keyword">new</span> LinkOption[<span class="number">0</span>]) &amp;&amp; path.getFileName().toString().endsWith(<span class="string">".dex"</span>)).collect((Collector&lt;? <span class="keyword">super</span> Path, ?, Collection&lt;Path&gt;&gt;)Collectors.toList());</div><div class="line">            <span class="keyword">boolean</span> dexFound = <span class="keyword">false</span>;</div><div class="line">          	<span class="comment">//遍历dex文件</span></div><div class="line">            <span class="keyword">for</span> (<span class="keyword">final</span> Path dexPath : dexPaths) &#123;</div><div class="line">              	<span class="comment">//核心文件解析类</span></div><div class="line">                <span class="keyword">final</span> DexBackedDexFile dexBackedDexFile = DexFiles.getDexFile(dexPath);</div><div class="line">              	<span class="comment">//核心文件反编译的管理类</span></div><div class="line">                <span class="keyword">final</span> DexDisassembler disassembler = <span class="keyword">new</span> DexDisassembler(dexBackedDexFile);</div><div class="line">                <span class="keyword">if</span> (method == <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                      	<span class="comment">//打印该文件的所有反编译代码</span></div><div class="line">                        <span class="keyword">this</span>.out.println(disassembler.disassembleClass(fqcn));</div><div class="line">                        dexFound = <span class="keyword">true</span>;</div><div class="line">                    &#125;</div><div class="line">                    <span class="keyword">catch</span> (IllegalStateException ex) &#123;&#125;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="keyword">final</span> Optional&lt;? extends DexBackedClassDef&gt; classDef = (Optional&lt;? extends DexBackedClassDef&gt;)dexBackedDexFile.getClasses().stream().filter(c -&gt; fqcn.equals(SigUtils.signatureToName(c.getType()))).findFirst();</div><div class="line">                  	<span class="comment">//找到参数指定的方法</span></div><div class="line">                    <span class="keyword">if</span> (classDef.isPresent()) &#123;</div><div class="line">                        method = ((DexBackedClassDef)classDef.get()).getType() + <span class="string">"-&gt;"</span> + method;</div><div class="line">                    &#125;</div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                      	<span class="comment">//打印方法对应的反编译代码段</span></div><div class="line">                        <span class="keyword">this</span>.out.println(disassembler.disassembleMethod(fqcn, method));</div><div class="line">                        dexFound = <span class="keyword">true</span>;</div><div class="line">                    &#125;</div><div class="line">                    <span class="keyword">catch</span> (IllegalStateException ex2) &#123;&#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">          <span class="comment">//异常情况处理</span></div><div class="line">            <span class="keyword">if</span> (!dexFound) &#123;</div><div class="line">                <span class="keyword">if</span> (method == <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(String.format(<span class="string">"The given class (%s) not found"</span>, fqcn));</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(String.format(<span class="string">"The given class (%s) or method (%s) not found"</span>, fqcn, method));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UncheckedIOException(e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>流程比较明确，加了一些简单的注释。</p>
+<h3 id="第一步，解压APK"><a href="#第一步，解压APK" class="headerlink" title="第一步，解压APK"></a>第一步，解压APK</h3><p>Archives工具类在apkanalyzer.jar中，open这个函数基本上是所有命令的调用必经之路——毕竟解析内容第一步就是解压APK文件。可以看到里面根据zip和其他两种情况，使用了不同的工具类来做解压：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Archive <span class="title">open</span><span class="params">(<span class="keyword">final</span> Path archive)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    <span class="keyword">if</span> (archive.getFileName().toString().toLowerCase().endsWith(<span class="string">".zip"</span>)) &#123;</div><div class="line">        <span class="keyword">return</span> ZipArtifact.fromZippedBundle(archive);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">final</span> FileSystem fileSystem = FileUtils.createZipFilesystem(archive);</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> AndroidArtifact(archive, fileSystem);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>open函数返回的Archive是个接口，具体如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Archive</span> <span class="keyword">extends</span> <span class="title">AutoCloseable</span></span></div><div class="line">&#123;</div><div class="line">    <span class="function">Path <span class="title">getPath</span><span class="params">()</span></span>;</div><div class="line">    </div><div class="line">    <span class="function">Path <span class="title">getContentRoot</span><span class="params">()</span></span>;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isBinaryXml</span><span class="params">(<span class="keyword">final</span> Path p0, <span class="keyword">final</span> <span class="keyword">byte</span>[] p1)</span></span>;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结合Archives来看，无非是使用java nio的一些文件工具，来实现解压方法。具体到AndroidArtifact上，有一些特殊的分析功能。</p>
+<h3 id="第二步，解析dex文件"><a href="#第二步，解析dex文件" class="headerlink" title="第二步，解析dex文件"></a>第二步，解析dex文件</h3><p>DexBackedDexFile，该类在dexlib2-2.2.1.jar包中，包名路径是org.jf.dexlib2.dexbacked。这个包在sdk同目录下，也可以在网络上找到它的信息——<a href="https://javalibs.com/artifact/org.smali/dexlib2" target="_blank" rel="external">dexlib2</a>。</p>
+<blockquote>
+<p>dexlib2 is a library for reading/modifying/writing Android dex files</p>
+</blockquote>
+<p>简单讲，这个库可以读、写、改dex文件，很多搞hook、修改dex的工具插件等黑科技都会使用到这个库。可以查询它的javadoc看它具体的功能接口。</p>
+<p><img src="https://i.loli.net/2019/06/01/5cf205e79df4451296.png" alt=""></p>
+<p>呃……不是很友好，没有什么注释的样子。这个类走读的话，看下构造就好了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="title">DexBackedDexFile</span><span class="params">(@Nonnull Opcodes opcodes, @Nonnull <span class="keyword">byte</span>[] buf, <span class="keyword">int</span> offset, <span class="keyword">boolean</span> verifyMagic)</span></span></div><div class="line"> &#123;</div><div class="line">   <span class="keyword">super</span>(buf, offset);</div><div class="line">   </div><div class="line">   <span class="keyword">this</span>.opcodes = opcodes;</div><div class="line">   <span class="keyword">if</span> (verifyMagic) &#123;</div><div class="line">     DexUtil.verifyDexHeader(buf, offset);</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">this</span>.stringCount = readSmallUint(<span class="number">56</span>);</div><div class="line">   <span class="keyword">this</span>.stringStartOffset = readSmallUint(<span class="number">60</span>);</div><div class="line">   <span class="keyword">this</span>.typeCount = readSmallUint(<span class="number">64</span>);</div><div class="line">   <span class="keyword">this</span>.typeStartOffset = readSmallUint(<span class="number">68</span>);</div><div class="line">   <span class="keyword">this</span>.protoCount = readSmallUint(<span class="number">72</span>);</div><div class="line">   <span class="keyword">this</span>.protoStartOffset = readSmallUint(<span class="number">76</span>);</div><div class="line">   <span class="keyword">this</span>.fieldCount = readSmallUint(<span class="number">80</span>);</div><div class="line">   <span class="keyword">this</span>.fieldStartOffset = readSmallUint(<span class="number">84</span>);</div><div class="line">   <span class="keyword">this</span>.methodCount = readSmallUint(<span class="number">88</span>);</div><div class="line">   <span class="keyword">this</span>.methodStartOffset = readSmallUint(<span class="number">92</span>);</div><div class="line">   <span class="keyword">this</span>.classCount = readSmallUint(<span class="number">96</span>);</div><div class="line">   <span class="keyword">this</span>.classStartOffset = readSmallUint(<span class="number">100</span>);</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>成员属性的初始化，各种数据是如何从dex文件流中解析出来的，找对应的read函数就好了。</p>
+<p>DexDisassembler 该类是apkanalyzer.jar里面的类，包名目录是com.android.tools.apk.analyzer.dex。它只有不到70行的长度，构造参数要求传入DexBackedDexFile实体，其中只有两个公用方法：</p>
+<ul>
+<li>public String disassembleMethod(final String fqcn, final String methodDescriptor) throws IOException</li>
+<li>public String disassembleClass(final String fqcn) throws IOException </li>
+</ul>
+<p>逻辑也比较简单，通过构造传入的DexBackedDexFile实体，获得dex文件的解析的class信息，然后根据方法需要来输方法或者类的反编译信息。</p>
+<h3 id="第三步，根据参数要求输出，并处理异常情况"><a href="#第三步，根据参数要求输出，并处理异常情况" class="headerlink" title="第三步，根据参数要求输出，并处理异常情况"></a>第三步，根据参数要求输出，并处理异常情况</h3><p>后面的输出逻辑也是一目了然的。根据是否有method参数，走不通的逻辑。有的话，查找对应的method；没有就输出整个类。如果找不到或者发生其他解析问题，抛出异常。</p>
+<h2 id="2-把二进制XML文件的转换成可读的XML文件打印出来"><a href="#2-把二进制XML文件的转换成可读的XML文件打印出来" class="headerlink" title="2. 把二进制XML文件的转换成可读的XML文件打印出来"></a>2. 把二进制XML文件的转换成可读的XML文件打印出来</h2><p>相比而言，这条命令同样是代码的还原，只不过针对的是资源文件的二进制文件。同样的，找到对应的命令枚举类型的实现定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">RESOURCES_XML(<span class="string">"resources"</span>, <span class="string">"xml"</span>, <span class="string">"Prints the human readable form of a binary XML"</span>) &#123;</div><div class="line">            <span class="keyword">public</span> OptionParser parser;</div><div class="line">            <span class="keyword">private</span> ArgumentAcceptingOptionSpec&lt;String&gt; filePathSpec;</div><div class="line">            </div><div class="line">  					<span class="comment">//解析参数</span></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> OptionParser <span class="title">getParser</span><span class="params">()</span> </span>&#123;</div><div class="line">                <span class="keyword">if</span> (<span class="keyword">this</span>.parser == <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="keyword">this</span>.parser = <span class="keyword">super</span>.getParser();</div><div class="line">                    <span class="keyword">this</span>.filePathSpec = (ArgumentAcceptingOptionSpec&lt;String&gt;)<span class="keyword">this</span>.parser.accepts(<span class="string">"file"</span>, <span class="string">"File path within the APK."</span>).withRequiredArg().ofType((Class)String.class);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">this</span>.parser;</div><div class="line">            &#125;</div><div class="line">            </div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(<span class="keyword">final</span> PrintStream out, <span class="keyword">final</span> PrintStream err, <span class="keyword">final</span> ApkAnalyzerImpl impl, <span class="keyword">final</span> String... args)</span> </span>&#123;</div><div class="line">                <span class="keyword">final</span> OptionParser parser = <span class="keyword">this</span>.getParser();</div><div class="line">                <span class="keyword">final</span> OptionSet opts = parseOrPrintHelp(parser, err, args);</div><div class="line">                <span class="keyword">assert</span> <span class="keyword">this</span>.filePathSpec != <span class="keyword">null</span>;</div><div class="line">              	<span class="comment">//执行解析</span></div><div class="line">                impl.resXml(((File)opts.valueOf((OptionSpec)<span class="keyword">this</span>.getFileSpec())).toPath(), (String)opts.valueOf((OptionSpec)<span class="keyword">this</span>.filePathSpec));</div><div class="line">            &#125;</div><div class="line">        &#125;;</div></pre></td></tr></table></figure>
+<p>同样具体功能函数会追溯到impl类中，找到对应的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resXml</span><span class="params">(<span class="keyword">final</span> Path apk, <span class="keyword">final</span> String filePath)</span> </span>&#123;</div><div class="line">  	<span class="comment">//解压apk</span></div><div class="line">    <span class="keyword">try</span> (<span class="keyword">final</span> Archive archive = Archives.open(apk)) &#123;</div><div class="line">        <span class="keyword">final</span> Path path = archive.getContentRoot().resolve(filePath);</div><div class="line">      	<span class="comment">//读文件</span></div><div class="line">        <span class="keyword">final</span> <span class="keyword">byte</span>[] bytes = Files.readAllBytes(path);</div><div class="line">      	<span class="comment">//校验</span></div><div class="line">        <span class="keyword">if</span> (!archive.isBinaryXml(path, bytes)) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"The supplied file is not a binary XML resource."</span>);</div><div class="line">        &#125;</div><div class="line">      	<span class="comment">//解析xml二进制码</span></div><div class="line">        <span class="keyword">this</span>.out.write(BinaryXmlParser.decodeXml(path.getFileName().toString(), bytes));</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> UncheckedIOException(e);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>同样的open函数，解压好目标APK文件。在校验好文件类型后，调用了BinaryXmlParser的静态方法，该类在apkanalyzer.jar中，具体实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] decodeXml(<span class="keyword">final</span> String fileName, <span class="keyword">final</span> <span class="keyword">byte</span>[] bytes) &#123;</div><div class="line">  <span class="comment">//文件解析  </span></div><div class="line">  <span class="keyword">final</span> BinaryResourceFile file = <span class="keyword">new</span> BinaryResourceFile(bytes);</div><div class="line">    <span class="keyword">final</span> List&lt;Chunk&gt; chunks = (List&lt;Chunk&gt;)file.getChunks();</div><div class="line">    <span class="comment">//各种情况处理</span></div><div class="line">  	<span class="keyword">if</span> (chunks.size() != <span class="number">1</span>) &#123;</div><div class="line">        <span class="keyword">return</span> bytes;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">  	<span class="keyword">if</span> (!(chunks.get(<span class="number">0</span>) <span class="keyword">instanceof</span> XmlChunk)) &#123;</div><div class="line">        <span class="keyword">return</span> bytes;</div><div class="line">    &#125;</div><div class="line">  	</div><div class="line">    <span class="keyword">final</span> XmlPrinter printer = <span class="keyword">new</span> XmlPrinter();</div><div class="line">    <span class="keyword">final</span> XmlChunk xmlChunk = (XmlChunk)chunks.get(<span class="number">0</span>);</div><div class="line">    visitChunks(xmlChunk.getChunks(), printer);</div><div class="line">    <span class="keyword">final</span> String reconstructedXml = <span class="string">"&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;\n"</span> + printer.getReconstructedXml();</div><div class="line">    <span class="keyword">return</span> reconstructedXml.getBytes(Charsets.UTF_8);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="文件解析"><a href="#文件解析" class="headerlink" title="文件解析"></a>文件解析</h3><p>核心的文件解析部分在binary-resources.jar中，即BinaryResourceFile、Chunk类，包名目录是com.google.devrel.gmscore.tools.apk.arsc。根据BinaryResourceFile的构造可以看出这一点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">BinaryResourceFile</span><span class="params">(<span class="keyword">byte</span>[] buf)</span></span></div><div class="line">&#123;</div><div class="line">  ByteBuffer buffer = ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);</div><div class="line">  <span class="keyword">while</span> (buffer.remaining() &gt; <span class="number">0</span>) &#123;</div><div class="line">    <span class="keyword">this</span>.chunks.add(Chunk.newInstance(buffer));</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Chunk略上，贴一部分代码基本就可以看出，是个根据资源文件二进制的数据结构特点来处理的具体解析类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Chunk</span></span></div><div class="line">  <span class="keyword">implements</span> <span class="title">SerializableResource</span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PAD_BOUNDARY = <span class="number">4</span>;</div><div class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> METADATA_SIZE = <span class="number">8</span>;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CHUNK_SIZE_OFFSET = <span class="number">4</span>;</div><div class="line">  <span class="meta">@Nullable</span></div><div class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Chunk parent;</div><div class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> headerSize;</div><div class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> chunkSize;</div><div class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> offset;</div><div class="line">  </div><div class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">enum</span> Type</div><div class="line">  &#123;</div><div class="line">    NULL(<span class="number">0</span>),  STRING_POOL(<span class="number">1</span>),  TABLE(<span class="number">2</span>),  XML(<span class="number">3</span>),  XML_START_NAMESPACE(<span class="number">256</span>),  XML_END_NAMESPACE(<span class="number">257</span>),  XML_START_ELEMENT(<span class="number">258</span>),  XML_END_ELEMENT(<span class="number">259</span>),  XML_CDATA(<span class="number">260</span>),  XML_RESOURCE_MAP(<span class="number">384</span>),  TABLE_PACKAGE(<span class="number">512</span>),  TABLE_TYPE(<span class="number">513</span>),  TABLE_TYPE_SPEC(<span class="number">514</span>),  TABLE_LIBRARY(<span class="number">515</span>);</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">short</span> code;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;Short, Type&gt; FROM_SHORT;</div><div class="line">    ...</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="各种情况处理"><a href="#各种情况处理" class="headerlink" title="各种情况处理"></a>各种情况处理</h3><p>解析后有几种情况。具体情况需要分析BinaryResourceFile的具体实现，来看。这里不做深入。最后一种情况则是解析XmlChunk。对应的使用XmlPrinter，该类是BinaryXmlParser中的一个内部工具类。看代码基本可以推断是转化各种Chunk内容的一个内容管理类。通过visitChunks，把XmlChunk的各种属性、元素内容写入XmlPrinter，最终输出可读的xml内容。</p>
+<p>这里面除了上面提到的binary-resources相关的工具类和数据Bean之外，还涉及到一个XmlBuilder类，包名目录是com.android.xml，在common-26.0.0-dev.jar中，用于组装xml的各种零部件。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>也仅仅是走读代码，读其大略而已。没有深入研究dex、arsc具体的文件格式。</p>
+<ul>
+<li>sdk tools里面有很多工具jar，基本上可以包含所有的apk打包相关的各个环节</li>
+<li>了解一些反编译的细节之后，多少对打包这件事本身会有更进一步的掌控</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢您赏个荷包蛋～</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/myWechatPay2.png" alt="桃小七 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/myAliPay2.jpeg" alt="桃小七 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/25/apkanalyzer1/" rel="next" title="apkanalyzer(2)-命令实现基本结构">
+                <i class="fa fa-chevron-left"></i> apkanalyzer(2)-命令实现基本结构
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="hypercomments_widget"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpeg"
+               alt="桃小七" />
+          <p class="site-author-name" itemprop="name">桃小七</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">106</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              睦邻友好，欢迎串门！
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://light3moon.com/" title="三月学长的根据地" target="_blank">三月学长的根据地</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-打印dex中某个类、方法的smali代码"><span class="nav-number">1.</span> <span class="nav-text">1. 打印dex中某个类、方法的smali代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步，解压APK"><span class="nav-number">1.1.</span> <span class="nav-text">第一步，解压APK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步，解析dex文件"><span class="nav-number">1.2.</span> <span class="nav-text">第二步，解析dex文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步，根据参数要求输出，并处理异常情况"><span class="nav-number">1.3.</span> <span class="nav-text">第三步，根据参数要求输出，并处理异常情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-把二进制XML文件的转换成可读的XML文件打印出来"><span class="nav-number">2.</span> <span class="nav-text">2. 把二进制XML文件的转换成可读的XML文件打印出来</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件解析"><span class="nav-number">2.1.</span> <span class="nav-text">文件解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各种情况处理"><span class="nav-number">2.2.</span> <span class="nav-text">各种情况处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">桃小七</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+		<script type="text/javascript">
+		_hcwp = window._hcwp || [];
+
+		_hcwp.push({widget:"Bloggerstream", widget_id: 88427, selector:".hc-comment-count", label: "{\%COUNT%\}" });
+
+		
+		_hcwp.push({widget:"Stream", widget_id: 88427, xid: "2019/06/01/apkanalyzer2/"});
+		
+
+		(function() {
+		if("HC_LOAD_INIT" in window)return;
+		HC_LOAD_INIT = true;
+		var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+		var hcc = document.createElement("script"); hcc.type = "text/javascript"; hcc.async = true;
+		hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/88427/"+lang+"/widget.js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hcc, s.nextSibling);
+		})();
+		</script>
+
+	
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="local-search-pop-overlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
