@@ -1,0 +1,1022 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="读书笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="虽然镇楼的漫画有点反讽架构设计的意思，但是本文还是主要记录上半年重点在啃的一本书——《架构整洁之道》。Bob大叔的整洁三件套大概是值得每个软件开发从业者都不断去深入学习的一个系列了，所谓“不断”，就是指三年读一遍、五年读一遍、十年再读一遍，估计不同的时间点读到的体会都不一样。经典大概就是这个意思了吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《架构整洁之道》读后小结">
+<meta property="og:url" content="http://taoyuanxiaoqi.com/2020/08/21/aboutcleanarchitect/index.html">
+<meta property="og:site_name" content="桃小七的博客">
+<meta property="og:description" content="虽然镇楼的漫画有点反讽架构设计的意思，但是本文还是主要记录上半年重点在啃的一本书——《架构整洁之道》。Bob大叔的整洁三件套大概是值得每个软件开发从业者都不断去深入学习的一个系列了，所谓“不断”，就是指三年读一遍、五年读一遍、十年再读一遍，估计不同的时间点读到的体会都不一样。经典大概就是这个意思了吧。">
+<meta property="og:image" content="https://i.loli.net/2020/08/14/5hBvct9YQC3jlGV.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/taoyuanxiaoqi/picBed/master/img/clean.png">
+<meta property="og:updated_time" content="2020-08-21T12:25:54.846Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《架构整洁之道》读后小结">
+<meta name="twitter:description" content="虽然镇楼的漫画有点反讽架构设计的意思，但是本文还是主要记录上半年重点在啃的一本书——《架构整洁之道》。Bob大叔的整洁三件套大概是值得每个软件开发从业者都不断去深入学习的一个系列了，所谓“不断”，就是指三年读一遍、五年读一遍、十年再读一遍，估计不同的时间点读到的体会都不一样。经典大概就是这个意思了吧。">
+<meta name="twitter:image" content="https://i.loli.net/2020/08/14/5hBvct9YQC3jlGV.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://taoyuanxiaoqi.com/2020/08/21/aboutcleanarchitect/"/>
+
+
+
+
+
+  <title> 《架构整洁之道》读后小结 | 桃小七的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a6b5efe2c3a4402f319c1d4294d5e1dc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">桃小七的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">文章信口雌黄易 思想锥心坦白难</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://taoyuanxiaoqi.com/2020/08/21/aboutcleanarchitect/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="桃小七">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="桃小七的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                《架构整洁之道》读后小结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-21T20:24:11+08:00">
+                2020-08-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            <!--noindex-->
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/08/21/aboutcleanarchitect/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2020/08/21/aboutcleanarchitect/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+              <!--/noindex-->
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://i.loli.net/2020/08/14/5hBvct9YQC3jlGV.jpg" alt="architect.jpeg"></p>
+<p>虽然镇楼的漫画有点反讽架构设计的意思，但是本文还是主要记录上半年重点在啃的一本书——《架构整洁之道》。Bob大叔的整洁三件套大概是值得每个软件开发从业者都不断去深入学习的一个系列了，所谓“不断”，就是指三年读一遍、五年读一遍、十年再读一遍，估计不同的时间点读到的体会都不一样。经典大概就是这个意思了吧。</p>
+<a id="more"></a>
+<h2 id="内容结构"><a href="#内容结构" class="headerlink" title="内容结构"></a>内容结构</h2><p><img src="https://raw.githubusercontent.com/taoyuanxiaoqi/picBed/master/img/clean.png" alt=""></p>
+<p>先从内容结构上看，整本书的逻辑大概是这样的：</p>
+<ul>
+<li>概述部分主要说明架构的重要性。因为架构的优化对产品功能本身来说从外面看没什么影响，所以第一部分处理介绍是什么之外，主要是鼓励工程师跟业务方作斗争，争取到架构重构的迭代时间</li>
+<li>第2到5章是递进式的理论讲述。<ul>
+<li>编程范式的部分。大概是从最基层的语言层面来解释一些最基础的核心原则</li>
+<li>设计原则。向下一层派生出基础的设计原则，以面向对象为例的话，类与类之间的关系就开始需要参考这些原则了。我认为设计模式的来源，也正是这些设计原则</li>
+<li>组件构建原则。软件规模再具化到组件的级别，同样有这个层级的原则。而在论述过程中也会发现，组件的构建原则跟它的上一个层级——设计原则——是有一定的映射关系的</li>
+<li>前面三个部分的篇幅基本一致，有了前面的铺垫，第五章重点讲述了软件架构的部分，篇幅大概是前面几章的总和还多。在这一部分的正中，提到了整洁架构；同时出现最多的关键词是【边界】</li>
+</ul>
+</li>
+<li>最后一部分是具体的实例讲解</li>
+</ul>
+<p>所以整体上大概是讲：为啥要做架构设计、递进式将整洁架构是啥、举个案例告诉你怎么做。呃，这么一看居然暗合了why、what和how的结构，希望不算是生搬硬套。</p>
+<h2 id="重新理解软件规则"><a href="#重新理解软件规则" class="headerlink" title="重新理解软件规则"></a>重新理解软件规则</h2><p>不得不说这本书帮助我重新梳理了对软件研发各个层级的理论认知，并且它的理论抽象度很高。举个例子，编程范式这种东西30页描述了结构化、面向对象和函数式这三种，其实每一个方向都够出一本书了。这三十页的内容，配合一本叫《七周七语言 理解多种编程范型》的书搭配来看，倒是可以相互印证，提高理解。随便摘几句，感觉每一句都值得深入的思考：</p>
+<blockquote>
+<p>结构化编程对程序控制权的直接转移进行了规范</p>
+<p>面向对象编程对程序控制权的间接转移进行了规范</p>
+<p>函数式编程对程序中的赋值进行了限制和规范</p>
+<p>goto语句，函数指针和赋值语句</p>
+<p>多态是跨越架构边界的手段，函数式规范和限制数据存放位置与访问权限的手段，结构化是各模块算法实现的基础</p>
+<p>与软件架构的三大关注点不谋而合，功能性、组件独立性以及数据管理</p>
+</blockquote>
+<p>同样的道理，一些基础的设计原则在不同层次的展现，也同样刷新了我对于软件设计的结构化认知。我觉得目前的水平还不足以准确的描述出这些认知，这里只留一些摘记。</p>
+<blockquote>
+<p>设计原则</p>
+<ol>
+<li>SRP 单一职责原则。任何一个软件模块都应该只对某一类行为者负责。强调低耦合。主要讨论的是函数和类之间的关系，主要在两个层面，在组件层面，称为共同闭包原则；在软件架构层面，用于奠定架构边界变更的轴心</li>
+<li>OCP 开闭原则。良好的软件应该易于扩展，同时抗拒修改。好的架构师会努力将旧代码的修改量降至最小，一般会先将满足不同需求的代码分组（SRP）;再调整分组之间的依赖关系（DIP）。该原则让系统易于拓展，并限制其修改所带来的影响范围。</li>
+<li>LSP 里氏替换原则。认为接口的类之间具有可替换性，是指导接口与其实现方式的设计原则。正例：个人证书和企业证书，系统的计费方式；反例：长方形和正方形</li>
+<li>ISP 接口隔离原则。任何层次的软件设计如果依赖不需要的东西，都是有害的。</li>
+<li>DIP 依赖反转原则。在代码中多使用抽象接口，避免使用多变的具体实现类；不要在具体实现类上创建衍生类；不要覆盖包含具体实现的函数；避免在代码中写入与具体任何实现相关的名字，或其他容易变动的事物的名字。总之，少用继承。抽象层与具体实现层之间应该存在一个架构边界，控制流跨越该边界的方向与源代码依赖关系跨越该边界的方向必然相反，即所谓依赖反转</li>
+</ol>
+<p>组件构建基本原则</p>
+<ul>
+<li>REP：复用/发布原则。软件复用的最小粒度应等同于其发布的最小粒度。一方面组件中的类与模块应该有共同的主题和大方向；另外它们会共享相同的版本号和版本追踪。</li>
+<li>CCP：共同闭包原则。将会同时修改、并且为相同目的修改的类放到同一个组件中，反之，不会同时修改和不会为了相同目的修改的类放到不同组件中。CCP可以认为是SRP的组件版。</li>
+<li>CRP：共同复用原则。不是紧密相关联的类不要放到一个组件中。可以理解为是ISP的普适版，这两条规则可以统一认为是：不要依赖不需要用到的东西。</li>
+</ul>
+<p>组件耦合原则</p>
+<ul>
+<li>ADP：无依赖环原则。在组件依赖结构图中，不应该出现环式的依赖关系，因为环式依赖会影响可维护性和可测试性。可以根据DIP优化掉。</li>
+<li>SDP：稳定依赖原则。依赖关系必须要指向更稳定的方向。什么是稳定的组件，让很多其他组件依赖于它，它就应该是稳定的。稳定性指标计算方法：fan-in：入向依赖的组件数量、fan-out：出向依赖的组件数量、不稳定性I=out/(in+out)。不稳定性为1意味着该组件最不稳定。本原则即一个组件的I指标一定是大于它所依赖的组件的I指标。</li>
+<li>SAP：稳定抽象原则。一个组件的抽象化程度应与其稳定性保持一致。要求稳定的组件同时应该是抽象的，这样它的稳定性就不会影响到拓展性；另一方面，不稳定的组件应当包含具体的实现代码，这样它的不稳定性就可以通过具体的代码被轻易修改。SAP与SDP就是组件层级的DIP,因为SDP要求让依赖关系指向更稳定的方向；SAP告诉我们稳定性本身就隐含了对抽象化的要求。即依赖关系应该指向更抽象的方向。抽象化程度计算方式：A=组件中抽象类和接口的数量/组件中所有类的数量。</li>
+<li>以抽象度A为纵坐标，稳定度I为横坐标 通过区域分析系统的架构健康程度</li>
+</ul>
+</blockquote>
+<h2 id="组件分析的量化"><a href="#组件分析的量化" class="headerlink" title="组件分析的量化"></a>组件分析的量化</h2><p>从组件分析的一些原则中，我看到了一些可以量化和工具化的东西 —— 组件耦合原则。比如依赖环的检查、稳定性和抽象性的关系分析。这意味着整个工程的架构健康程度，在依赖关系这个层级上，是可以去做有指标的持续性优化的。</p>
+<p>对于组件化的Android工程来说，可以通过编译过程中的产物，从字节码的维度分析出各个组件的内部成分和组件之间的依赖关系。把这些数据记录下来之后就可以做二次的架构健康度的分析，这样算来也可以说这是代码静态质量分析的一种方式。</p>
+<p>恰好团队中有类似分析某个组件api变更导致其他依赖方crash这种比较常见的情况的工具，原理相似。借助其中间产物的数据，做了二次分析。确实可以做到类似的分析产出，此外还有附属产物——可以通过这些中间数据产出单组件的依赖关系图，使用plantUML来描述既方便又好用，拓展开来看，似乎也可以生产整个工程视角的组件依赖关系图。当APP完成组件化并且经历业务爆发、组件数量上升到一定程度之后，很难从全局角度看到依赖上的问题，这种分析结果在一定程度上可以指明一些优化方向。</p>
+<h2 id="整洁架构"><a href="#整洁架构" class="headerlink" title="整洁架构"></a>整洁架构</h2><p>我理解到整洁架构的核心是定义好哪些东西是稳定的、哪些东西是不稳定的，然后使用各种设计技巧调整这两个方向的业务块的方向。同时利用面向接口的思路，让不稳定的部分都是可替换、可拓展的。</p>
+<p>这个思考模式对于做惯了简单的业务层-中间层-底层这种分层的客户端APP研发而言，还是具有一定的冲击性的。因为对于整洁架构中认为不稳定的部分，比如设备依赖——对于APP而言可能是Android framework层——在原有的分层设计中的位置可能是在最底层。从简单分层到洋葱型，还是需要一定的持续思考和实践，才能够融会贯通。所以一些博客上讲clean架构的学习成本比较高，可能也是有道理的。</p>
+<p>所以架构设计越优雅，似乎整体就会显得越复杂。不过这种复杂可能会换来更高的可拓展性和可测试性，复杂的结构似乎会降低整体的可读性，但是对单点而言可维护性也会提升。从ROI的角度来看，还是要看业务是否复杂到要做这么高阶的架构设计。因为对大多数APP端而言，应用在业务上都会做的比较薄，大部分逻辑和配置都是云端决定的，比如出于动态更新、可降级等方面的考虑。那么也就决定了大部分APP研发可能根本触及不到复杂的架构设计，跟随Google爸爸的脚步从MVP到MVVM基本也就够用了。但是业务到了一定的量级，或者整个业务模型不是简单的客户端-云端模型，而是iot这种三端或者四端的模型，同时又需要产出整体的PAAS方案，那么就不得不向更复杂的架构来靠拢了——clean似乎是一种可行的思路。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>对于这种传道的书，还是需要花大力气去精读的。并且如果是处理复杂业务的、需要较大规模团队协作的、有很多研发痛点的同学，更加需要读一读这本书，或许可以找到一些思路、来解决实际的研发问题。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢您赏个荷包蛋～</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/myWechatPay2.png" alt="桃小七 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/myAliPay2.jpeg" alt="桃小七 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/读书笔记/" rel="tag"># 读书笔记</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/12/用户体验/" rel="next" title="聊聊用户体验">
+                <i class="fa fa-chevron-left"></i> 聊聊用户体验
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="hypercomments_widget"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpeg"
+               alt="桃小七" />
+          <p class="site-author-name" itemprop="name">桃小七</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">110</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              睦邻友好，欢迎串门！
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://light3moon.com/" title="三月学长的根据地" target="_blank">三月学长的根据地</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内容结构"><span class="nav-number">1.</span> <span class="nav-text">内容结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重新理解软件规则"><span class="nav-number">2.</span> <span class="nav-text">重新理解软件规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组件分析的量化"><span class="nav-number">3.</span> <span class="nav-text">组件分析的量化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#整洁架构"><span class="nav-number">4.</span> <span class="nav-text">整洁架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">桃小七</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+		<script type="text/javascript">
+		_hcwp = window._hcwp || [];
+
+		_hcwp.push({widget:"Bloggerstream", widget_id: 88427, selector:".hc-comment-count", label: "{\%COUNT%\}" });
+
+		
+		_hcwp.push({widget:"Stream", widget_id: 88427, xid: "2020/08/21/aboutcleanarchitect/"});
+		
+
+		(function() {
+		if("HC_LOAD_INIT" in window)return;
+		HC_LOAD_INIT = true;
+		var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+		var hcc = document.createElement("script"); hcc.type = "text/javascript"; hcc.async = true;
+		hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/88427/"+lang+"/widget.js";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hcc, s.nextSibling);
+		})();
+		</script>
+
+	
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="local-search-pop-overlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
